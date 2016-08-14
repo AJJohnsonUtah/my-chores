@@ -1,0 +1,158 @@
+html {
+    background-color: #EEEFF7;
+    color: #445878; 
+}
+
+body {
+    text-align: center;
+}
+
+input {
+    padding: 8px;
+    border-radius: 5px;
+    margin: 8px;
+}
+
+button {
+    padding: 8px;
+    border-radius: 5px;
+    margin: 2px;
+    background-color: #445878;
+    color: #EEEFF7;
+}
+
+::-webkit-input-placeholder {
+   color: #92CDCF;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: #92CDCF;  
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #92CDCF;  
+}
+
+:-ms-input-placeholder {  
+   color: #92CDCF;  
+}
+
+#account-forms form {
+    width: 375px;
+    margin-left: 75px;
+    margin-right: 75px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+#main-content {
+    width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#account-forms {
+    margin-top: 200px;
+}
+
+#account-forms form input {
+    width: 20em;
+    font-size: 13pt;
+}
+
+#account-forms form button {
+    font-size: 13pt;
+}
+
+.row-bg {
+    width: 100%;
+    background-color: #31353D;
+}
+
+.row-bg h1, .row-bg h2, .row-bg h3, .row-bg h4, .row-bg h5, .row-bg h6 {
+    color: #EEEFF7;
+}
+
+#logout-button-wrapper {
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
+    z-index: 1000;
+}
+
+#navbar {
+    background-color: #445878;
+    color: #E0E5A1;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+#navbar-logo {
+    float: left;
+    font-size: 23pt;
+    font-weight: 200;
+}
+
+#user-info {
+    float: right;
+    font-size: 20pt;
+}
+
+#navbar a {
+    color: #E0E5A1
+}
+
+#navbar a:hover {
+    color: #C0C094;
+}
+
+#navbar a:visited {
+    color: #E0E5A1;
+}
+
+.animate-show {
+  line-height:20px;
+  opacity:1;
+  padding:10px;
+}
+
+.animate-show.ng-hide-add.ng-hide-add-active,
+.animate-show.ng-hide-remove.ng-hide-remove-active {
+  -webkit-transition:all linear 0.5s;
+  transition:all linear 0.5s;
+}
+
+.animate-show.ng-hide {
+  line-height:0;
+  opacity:0;
+  padding:0 10px;
+}
+
+.chore-group-accordion-wrapper {
+    border: 6px solid #445878;
+    border-radius: 28px;
+    margin: 15px;
+}
+
+.chore-group-heading-wrapper {
+    font-size: 24pt;
+    text-align: left;
+    padding-left:18px;
+    padding-right:18px;
+    cursor: pointer;
+}
+
+.chore-group-heading {
+    display: inline-block;
+}
+
+.chore-group-heading-icon {
+    margin-top: 6px;
+    float: right;
+}
+
+hr {
+    border-top: 1px solid #445878;
+    margin-top: 4px;
+    margin-bottom: 4px
+}

@@ -1,0 +1,31 @@
+<div id="account-forms">
+    <form name="newUserForm" id="new-user-form" data-ng-submit="submitNewUser()" autocomplete="off">
+        <div class="row-bg">
+            <h1>New User</h1>
+        </div>
+        <input type="email" data-ng-model="newEmailText" placeholder="Email..." required>
+        <br>
+        <input type="password" name="newPassword" data-ng-model="newPasswordText" placeholder="Password..." required>
+        <span data-ng-if="newUserForm.newPassword.$touched && newPasswordText.length < 8" class="form-error">Password must be at least 8 characters long.</span>
+        <br>
+        <input type="password" name="newPasswordVerify" data-ng-model="newPasswordVerifyText" placeholder="Verify Password" required>
+        <span data-ng-if="(newUserForm.newPassword.$touched && newUserForm.newPasswordVerify.$touched) && (newPasswordText != newPasswordVerifyText)" class="form-error">The passwords do not match!</span>
+        <br>
+        <button type="submit">Create Account</button>
+        <br>
+        <span data-ng-if="newErrorMessage" class="form-error">Error creating new user: {{newErrorMessage}}</span>
+
+    </form>
+    <form id="existing-user-form" data-ng-submit="submitLogin()">
+        <div class="row-bg">
+            <h1>Existing User</h1>
+        </div>
+        <input type="email" data-ng-model="emailText" placeholder="Email..." required>
+        <br>
+        <input type="password" data-ng-model="passwordText" placeholder="Password..." required>
+        <br>
+        <button type="submit">Log In</button>
+        <br>
+        <span data-ng-if="errorMessage" class="form-error">Error logging in: {{errorMessage}}</span>
+    </form>
+</div>

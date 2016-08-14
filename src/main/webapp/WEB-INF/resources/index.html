@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html data-ng-app="myChoresApp">
+    <head>
+        <title>My Chore Tracker</title>
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta charset="utf-8">
+        <meta name="robots" content="index, follow">
+        <meta name="description" content="A simple, online tool for manage everyday chores for everyday households.">
+        
+        <base href="/">
+        
+        <script type="text/javascript" src="/resources/vendor/angular/angular.min.js"></script>
+        <script type="text/javascript" src="/resources/vendor/angular/cookies.min.js"></script> 
+        <script type="text/javascript" src="/resources/vendor/angular/routes.min.js"></script> 
+        <script type="text/javascript" src="/resources/vendor/ui-bootstrap-tpls-2.0.0.min.js"></script>
+        <script type="text/javascript" src="/resources/vendor/angular/angular-animate.min.js"></script>
+
+        <link rel="stylesheet" href="/resources/vendor/bootstrap-3.3.6-dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/resources/styles/mychores.css">
+    </head>
+    <body>
+        <nav data-ng-controller="authController" class="navbar" role="navigation" id="navbar">
+            <div id="navbar-logo"><a href="/">My Chores</a></div>
+            <div data-ng-if="authData.isLoggedIn" id="user-info">
+                <a href="#" data-ng-click="logout()">Logout</a>
+            </div>
+        </nav>
+        
+        <div id="main-content" class="container" data-ng-view></div>
+        <script type="text/javascript" src="/resources/MyChoresApp.js"></script>                      
+        <script type="text/javascript" src="/resources/controllers/HomeController.js"></script>
+        <script type="text/javascript" src="/resources/controllers/RegisterLoginController.js"></script>
+        <script type="text/javascript" src="/resources/services/ApiServices.js"></script>              
+        <script type="text/javascript" src="/resources/services/AuthService.js"></script>
+    </body>
+</html>
