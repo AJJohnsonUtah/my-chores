@@ -14,11 +14,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author aj
  */
 @Controller
-@RequestMapping(value = "/**")
+@RequestMapping
 public class SiteController {
     
-    @RequestMapping(method=RequestMethod.GET) 
-    public String home() {
+    /**
+     * Any page visits that are not mapped to an appropriate call land here.
+     * @return 
+     */
+    @RequestMapping(method=RequestMethod.GET)
+    public String sendToHomePage() {
         return "/resources/index.html";
     }
 }

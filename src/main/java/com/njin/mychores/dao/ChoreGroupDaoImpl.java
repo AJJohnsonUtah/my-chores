@@ -5,33 +5,34 @@
  */
 package com.njin.mychores.dao;
 
-import com.njin.mychores.model.ChoreUser;
+import com.njin.mychores.model.ChoreGroup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
 /**
  *
- * @author aj
+ * @author AJ
  */
 @Repository
-public class UserDaoImpl implements UserDao {
-    
+public class ChoreGroupDaoImpl implements ChoreGroupDao {
+
     @PersistenceContext
     private EntityManager entityManager;
     
     @Override
-    public ChoreUser findUser(Long id) {
-        return entityManager.find(ChoreUser.class, id);
-    }
-    
-    @Override
-    public void createUser(ChoreUser user) {
-        entityManager.persist(user);
+    public ChoreGroup findChoreGroup(Long choreGroupId) {
+        return entityManager.find(ChoreGroup.class, choreGroupId);
     }
 
     @Override
-    public ChoreUser findUserForAuthentication(String email) {
-        return entityManager.createNamedQuery("findUserToAuthenticate", ChoreUser.class).setParameter("email", email).getSingleResult();        
+    public void createChoreGroup(ChoreGroup choreGroup) {
+        entityManager.persist(choreGroup);
     }
+
+    @Override
+    public void updateChoreGroup(ChoreGroup choreGroup) {
+        entityManager.merge(choreGroup);
+    }
+    
 }

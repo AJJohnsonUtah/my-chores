@@ -16,33 +16,24 @@ function registerLoginController($http, $scope, $location, authService) {
             return true;
         },
         handleSuccessfulCreation: function (data) {
-            if (data.data.status !== 'Okay') {
-                $scope.handleUnsuccessfulCreation(data);
-            } else {
-                $scope.submitLogin($scope.newEmailText, $scope.newPasswordText);
-            }
+            $scope.submitLogin($scope.newEmailText, $scope.newPasswordText);            
         },
-        handleSuccessfulLogin: function (data) {
-            if (data.data.status !== 'Okay') {
-                $scope.handleUnsuccessfulLogin(data);
-                authService.setIsLoggedIn(false);
-            } else {
-                $location.path('/');
-                authService.setIsLoggedIn(true);
-            }
+        handleSuccessfulLogin: function (data) {            
+            $location.path('/');
+            authService.setIsLoggedIn(true);            
         },
-        handleUnsuccessfulLogin: function (data) {
-            $scope.errorMessage = data.data.reason;
+        handleUnsuccessfulLogin: function (response) {
+            $scope.errorMessage = response.data.message;
         },
-        handleUnsuccessfulCreation: function (data) {
-            $scope.newErrorMessage = data.data.reason;
+        handleUnsuccessfulCreation: function (response) {
+            $scope.newErrorMessage = response.data.message;
         },
         submitNewUser: function () {
             var url, postData;
-            url = '/api/users/new-user.php';
+            url = '/api/user/create';
             postData = {
-                email: $scope.newEmailText,
-                password: $scope.newPasswordText
+                "email": $scope.newEmailText,
+                "password": $scope.newPasswordText
             };
             if (!$scope.newUserDataIsValid()) {
                 return;
@@ -52,16 +43,16 @@ function registerLoginController($http, $scope, $location, authService) {
         },
         submitLogin: function (em, pass) {
             var url, postData;
-            url = '/api/users/login.php';
+            url = '/api/user/login';
             if (em && pass) {
                 postData = {
-                    email: em,
-                    password: pass
+                    "email": em,
+                    "password": pass
                 };
             } else {
                 postData = {
-                    email: $scope.emailText,
-                    password: $scope.passwordText
+                    "email": $scope.emailText,
+                    "password": $scope.passwordText
                 };
             }
             

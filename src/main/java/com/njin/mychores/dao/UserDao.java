@@ -5,14 +5,14 @@
  */
 package com.njin.mychores.dao;
 
-import com.njin.mychores.model.User;
+import com.njin.mychores.model.ChoreUser;
 
 /**
  *
  * @author aj
  */
 public interface UserDao {
-    public User findUser(Long id);
-    public User findUserForAuthentication(String email);
-    public void createUser(User user);
+    public ChoreUser findUser(Long id);
+    public ChoreUser findUserForAuthentication(String email);
+    public void createUser(ChoreUser user);
 }

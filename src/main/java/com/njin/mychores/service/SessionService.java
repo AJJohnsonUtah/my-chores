@@ -9,10 +9,9 @@ import com.njin.mychores.model.ChoreUser;
 
 /**
  *
- * @author aj
+ * @author AJ
  */
-public interface UserService {
-    public ChoreUser findUser(Long id);
-    public boolean authenticateUser(ChoreUser user);
-    public void createUser(ChoreUser user);
+public interface SessionService {
+    public void setCurrentUser(ChoreUser user);
+    public ChoreUser getCurrentUser();
 }

@@ -5,20 +5,18 @@
  */
 package com.njin.mychores.controller;
 
-import com.njin.mychores.model.User;
+import com.njin.mychores.model.ChoreUser;
+import com.njin.mychores.service.SessionService;
 import com.njin.mychores.service.UserService;
-import java.util.Locale;
-import javax.servlet.http.HttpSession;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -28,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/user")
 @ControllerAdvice
-public class UserController {
+public class UserController extends BaseController {
 
     @Autowired
     UserService userService;
@@ -37,26 +35,18 @@ public class UserController {
     MessageSource messageSource;
     
     @Autowired
-    HttpSession httpSession;
-    
-    @ExceptionHandler    
-    ResponseEntity<String> handleException(Exception e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(messageSource.getMessage("non.unique.email", new String[]{"notReally@this.one"}, Locale.getDefault()));
-    }
+    SessionService sessionService;
     
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<User> createUser(@RequestParam("email") String email, @RequestParam("password") String password) {
-        User user = new User();
-        user.setEmail(email);
-        user.setPasswordHash(BCrypt.hashpw(password, BCrypt.gensalt()));
-        userService.createUser(user);
+    public ResponseEntity<ChoreUser> createUser(@RequestBody ChoreUser user) {        
+        user.setPasswordHash(BCrypt.hashpw(user.getPasswordHash(), BCrypt.gensalt()));
+        userService.createUser(user);    
         return ResponseEntity.ok(user);
     }
     
     @RequestMapping(value = "/find/{userId}", method= RequestMethod.GET)
-    public ResponseEntity<User> findUser(Long userId) {
-        User user = userService.findUser(userId);      
+    public ResponseEntity<ChoreUser> findUser(Long userId) {
+        ChoreUser user = userService.findUser(userId);      
         if(user == null) {
             return ResponseEntity.ok(user);
         } else {
@@ -65,11 +55,16 @@ public class UserController {
     }
     
     @RequestMapping(value="/login", method=RequestMethod.POST)
-    public ResponseEntity<User> login(@RequestParam("email") String email, @RequestParam("password") String password) {
-        if(userService.authenticateUser(email, password)) {
-            return ResponseEntity.ok((User) httpSession.getAttribute("user"));
+    public ResponseEntity<ChoreUser> login(@RequestBody ChoreUser user) {
+        if(userService.authenticateUser(user)) {
+            return ResponseEntity.ok((ChoreUser) sessionService.getCurrentUser());
         } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
+    }
+    
+    @RequestMapping(value="/current", method=RequestMethod.GET)
+    public ResponseEntity<ChoreUser> getCurrentUser() {
+        return ResponseEntity.ok(sessionService.getCurrentUser());
     }
 }
