@@ -24,6 +24,6 @@ public class WebInitializer implements WebApplicationInitializer {
         ctx.setServletContext(servletContext);    
         Dynamic servlet = servletContext.addServlet("dispatcher", new DispatcherServlet(ctx));  
         servlet.addMapping("/");  
-        servlet.setLoadOnStartup(1);
+        servlet.setLoadOnStartup(1);        
     }
 }

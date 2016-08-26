@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
@@ -44,10 +45,10 @@ public class ChoreUser implements Serializable {
     @Column(name = "screen_name")
     private String screenName;
     
-    @OneToMany(mappedBy="choreUser")
+    @OneToMany(mappedBy="choreUser", fetch = FetchType.LAZY)
     private List<ChoreGroupUser> choreGroupUsers;
 
-    @OneToMany(mappedBy="invitedBy")
+    @OneToMany(mappedBy="invitedBy", fetch = FetchType.LAZY)
     private List<ChoreGroupUser> choreGroupUserInvites;
 
     @Transient
@@ -96,6 +97,7 @@ public class ChoreUser implements Serializable {
         this.screenName = screenName;
     }
 
+    @JsonIgnore
     public List<ChoreGroupUser> getChoreGroupUsers() {
         return choreGroupUsers;
     }
@@ -104,6 +106,7 @@ public class ChoreUser implements Serializable {
         this.choreGroupUsers = choreGroupUsers;
     }
 
+    @JsonIgnore
     public List<ChoreGroupUser> getChoreGroupUserInvites() {
         return choreGroupUserInvites;
     }

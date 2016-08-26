@@ -11,6 +11,9 @@ import com.njin.mychores.model.ChoreGroup;
 import com.njin.mychores.model.ChoreGroupUser;
 import com.njin.mychores.model.ChoreGroupUserRole;
 import com.njin.mychores.model.ChoreGroupUserStatus;
+import com.njin.mychores.model.ChoreUser;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,4 +55,15 @@ public class ChoreGroupServiceImpl implements ChoreGroupService {
     public void updateChoreGroup(ChoreGroup choreGroup) {
         choreGroupDao.updateChoreGroup(choreGroup);
     }
+    
+    @Override
+    public List<ChoreGroup> findAllForCurrentUser() {
+        List<ChoreGroup> choreGroups = new ArrayList<>();
+        ChoreUser currentUser = sessionService.getCurrentUser();
+        List<ChoreGroupUser> users = currentUser.getChoreGroupUsers();
+        for(ChoreGroupUser choreGroupUser : sessionService.getCurrentUser().getChoreGroupUsers()) {
+            choreGroups.add(choreGroupUser.getChoreGroup());
+        }
+        return choreGroups;            
+    }        
 }

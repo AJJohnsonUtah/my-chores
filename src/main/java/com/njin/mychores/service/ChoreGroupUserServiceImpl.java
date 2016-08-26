@@ -9,12 +9,14 @@ import com.njin.mychores.dao.ChoreGroupUserDao;
 import com.njin.mychores.model.ChoreGroupUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author AJ
  */
 @Service
+@Transactional
 public class ChoreGroupUserServiceImpl implements ChoreGroupUserService {
 
     @Autowired

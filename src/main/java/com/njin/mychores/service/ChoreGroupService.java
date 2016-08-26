@@ -6,6 +6,7 @@
 package com.njin.mychores.service;
 
 import com.njin.mychores.model.ChoreGroup;
+import java.util.List;
 
 /**
  *
@@ -15,4 +16,5 @@ public interface ChoreGroupService {
     public ChoreGroup findChoreGroup(Long choreGroupId);
     public void createChoreGroup(ChoreGroup choreGroup);
     public void updateChoreGroup(ChoreGroup choreGroup);
+    public List<ChoreGroup> findAllForCurrentUser();
 }

@@ -7,9 +7,9 @@ angular.module('myChoresApp').factory('choreGroupService', ['$http', '$location'
         return {
             create: function (choreGroupName) {
                 var url, postData, promise;
-                url = 'http://' + $location.host() + '/api/chore-group/create.php';
+                url = 'http://' + $location.host() + '/api/chore-group/create';
                 postData = {
-                    chore_group_name: choreGroupName
+                    choreGroupName: choreGroupName                    
                 };
                 
                 promise = $http.post(url, postData);
@@ -17,7 +17,7 @@ angular.module('myChoresApp').factory('choreGroupService', ['$http', '$location'
             },
             readAll: function () {
                 var url, promise;
-                url = 'http://' + $location.host() + '/api/chore-group/read-all.php';
+                url = 'http://' + $location.host() + '/api/chore-group/read-all';
                 promise = $http.get(url);
                 return promise;
             }

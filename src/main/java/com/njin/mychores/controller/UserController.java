@@ -8,6 +8,7 @@ package com.njin.mychores.controller;
 import com.njin.mychores.model.ChoreUser;
 import com.njin.mychores.service.SessionService;
 import com.njin.mychores.service.UserService;
+import org.eclipse.persistence.internal.jpa.parsing.jpql.InvalidIdentifierException;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -24,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @author aj
  */
 @RestController
-@RequestMapping(value = "/api/user")
 @ControllerAdvice
+@RequestMapping(value = "/api/user")
 public class UserController extends BaseController {
 
     @Autowired
@@ -38,33 +39,33 @@ public class UserController extends BaseController {
     SessionService sessionService;
     
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<ChoreUser> createUser(@RequestBody ChoreUser user) {        
+    public ChoreUser createUser(@RequestBody ChoreUser user) {        
         user.setPasswordHash(BCrypt.hashpw(user.getPasswordHash(), BCrypt.gensalt()));
         userService.createUser(user);    
-        return ResponseEntity.ok(user);
+        return user;
     }
     
     @RequestMapping(value = "/find/{userId}", method= RequestMethod.GET)
-    public ResponseEntity<ChoreUser> findUser(Long userId) {
+    public ChoreUser findUser(Long userId) {
         ChoreUser user = userService.findUser(userId);      
         if(user == null) {
-            return ResponseEntity.ok(user);
+            return user;
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            throw new IllegalArgumentException("User not found.");
         }
     }
     
     @RequestMapping(value="/login", method=RequestMethod.POST)
-    public ResponseEntity<ChoreUser> login(@RequestBody ChoreUser user) {
+    public ChoreUser login(@RequestBody ChoreUser user) {
         if(userService.authenticateUser(user)) {
-            return ResponseEntity.ok((ChoreUser) sessionService.getCurrentUser());
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
+            return sessionService.getCurrentUser();
+        }        
+        throw new SecurityException("Invalid username/password.");        
     }
     
     @RequestMapping(value="/current", method=RequestMethod.GET)
-    public ResponseEntity<ChoreUser> getCurrentUser() {
-        return ResponseEntity.ok(sessionService.getCurrentUser());
+    public ChoreUser getCurrentUser() {
+        return sessionService.getCurrentUser();
     }
 }
+

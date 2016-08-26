@@ -63,7 +63,7 @@ public class UserControllerTest {
         user.setEmail(email);
         user.setPassword(password);
         
-        ChoreUser createdUser = userController.createUser(user).getBody();
+        ChoreUser createdUser = userController.createUser(user);
         
         assertEquals(createdUser.getEmail(), email);
         assertNotNull(createdUser.getId());
@@ -71,10 +71,10 @@ public class UserControllerTest {
         user = new ChoreUser();
         user.setEmail(email);
         user.setPassword(password);
-        ChoreUser loggedInUser = userController.login(user).getBody();
+        ChoreUser loggedInUser = userController.login(user);
         assertEquals(createdUser.getEmail(), email);
         assertNotNull(createdUser.getId());
         
-        assertEquals(loggedInUser, userController.getCurrentUser().getBody());
+        assertEquals(loggedInUser, userController.getCurrentUser());
     }
 }

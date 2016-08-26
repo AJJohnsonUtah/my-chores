@@ -7,7 +7,7 @@ package com.njin.mychores.controller;
 
 import com.njin.mychores.config.JpaConfiguration;
 import com.njin.mychores.model.ChoreUser;
-import com.njin.mychores.service.SessionServiceImpl;
+import com.njin.mychores.service.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,6 +26,9 @@ public class BaseTest {
     @Autowired
     UserController userController;
     
+    @Autowired
+    SessionService sessionService;
+    
     public void createTestUserAndLogin() {
         ChoreUser user = new ChoreUser();
         user.setEmail("test@test.com");
@@ -38,5 +41,9 @@ public class BaseTest {
         user.setPassword("fakearoni??22");
         
         userController.login(user);
+    }
+    
+    public void resetCurrentUser() {
+        sessionService.setCurrentUser(null);
     }
 }

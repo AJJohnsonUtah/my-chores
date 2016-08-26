@@ -7,6 +7,8 @@ package service;
 
 import com.njin.mychores.model.ChoreUser;
 import com.njin.mychores.service.SessionService;
+import com.njin.mychores.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -14,16 +16,21 @@ import com.njin.mychores.service.SessionService;
  */
 public class TestSessionServiceImpl implements SessionService {
 
-    private static ChoreUser currentUser;
+    private static Long currentUserId;
+    
+    @Autowired
+    UserService userService;
     
     @Override
     public void setCurrentUser(ChoreUser user) {
-        currentUser = user;
+        currentUserId = user == null ? null : user.getId();
     }
 
     @Override
     public ChoreUser getCurrentUser() {
-        return currentUser;
-    }
-    
+        if(currentUserId == null) {
+            return null;
+        }
+        return userService.findUser(currentUserId);
+    }                
 }

@@ -21,7 +21,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Configuration
 @ComponentScan("com.njin.mychores")
 @EnableWebMvc
-public class Config extends WebMvcConfigurerAdapter {    
+public class Config extends WebMvcConfigurerAdapter { 
+    
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/resources/**").addResourceLocations("/WEB-INF/resources/");

@@ -7,7 +7,8 @@ package com.njin.mychores.controller;
 
 import com.njin.mychores.config.JpaConfiguration;
 import com.njin.mychores.model.ChoreGroup;
-import com.njin.mychores.model.ChoreUser;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -22,6 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
+import sun.security.krb5.internal.Krb5;
 
 /**
  *
@@ -54,6 +56,7 @@ public class ChoreGroupControllerTest extends BaseTest {
     @Rollback
     @After
     public void tearDown() {
+        resetCurrentUser();
     }
     
     @Test
@@ -66,7 +69,12 @@ public class ChoreGroupControllerTest extends BaseTest {
         choreGroup.setChoreGroupName(choreGroupName);
         
         assertNull(choreGroup.getId());
-        ChoreGroup createdChoreGroup = choreGroupController.createChoreGroup(choreGroup).getBody();
+        ChoreGroup createdChoreGroup = new ChoreGroup();
+        try {
+            createdChoreGroup = choreGroupController.createChoreGroup(choreGroup);
+        } catch (IllegalAccessException ex) {
+            fail("User is logged in and should have been able to create a chore group.");
+        }
         
         assertEquals(createdChoreGroup.getChoreGroupName(), choreGroupName);
         assertNotNull(createdChoreGroup.getId());                
@@ -75,6 +83,57 @@ public class ChoreGroupControllerTest extends BaseTest {
         assertEquals("A chore group user should have been created.", createdChoreGroup.getChoreGroupUsers().size(), 1);
         assertEquals("The creator of the chore group should be a chore group user.", 
                 createdChoreGroup.getChoreGroupUsers().get(0).getChoreUser(),
-                userController.getCurrentUser().getBody());
+                userController.getCurrentUser());
     }
+    
+    @Test
+    public void testFindAllChoreGroups() {
+        createTestUserAndLogin();
+
+        ChoreGroup choreGroup1 = new ChoreGroup();        
+        String choreGroupName1 = "Test Chore Group";        
+        choreGroup1.setChoreGroupName(choreGroupName1);
+        ChoreGroup choreGroup2 = new ChoreGroup();
+        String choreGroupName2 = "Test 2 Chore Group";
+        choreGroup2.setChoreGroupName(choreGroupName2);
+        
+        ChoreGroup createdChoreGroup1 = new ChoreGroup();
+        ChoreGroup createdChoreGroup2 = new ChoreGroup();
+        
+        try {
+            createdChoreGroup1 = choreGroupController.createChoreGroup(choreGroup1);
+            createdChoreGroup2 = choreGroupController.createChoreGroup(choreGroup2);
+        } catch (IllegalAccessException ex) {
+            fail("User is logged in and should be create a chore group.");
+        }
+        
+        assertEquals(createdChoreGroup1.getChoreGroupName(), choreGroup1.getChoreGroupName());
+        assertEquals(createdChoreGroup2.getChoreGroupName(), choreGroup2.getChoreGroupName());
+        
+        assertEquals(createdChoreGroup1.getChoreGroupUsers().get(0).getChoreUser(), userController.getCurrentUser());
+        assertEquals(createdChoreGroup2.getChoreGroupUsers().get(0).getChoreUser(), userController.getCurrentUser());
+        
+        try {
+            assertEquals(choreGroupController.readAllChoreGroups().size(), 2);
+        } catch (IllegalAccessException ex) {
+            fail("User is logged in and should be able to read all chore groups.");
+        }
+    }        
+    
+    @Test(expected = IllegalAccessException.class)
+    public void createChoreGroupWithoutLogin() throws IllegalAccessException {
+        ChoreGroup choreGroup = new ChoreGroup();        
+        String choreGroupName = "Test Chore Group";        
+        choreGroup.setChoreGroupName(choreGroupName);
+        choreGroupController.createChoreGroup(choreGroup);
+        fail("Failed to block access to unauthenticated user.");
+    }
+    
+    @Test(expected = IllegalAccessException.class)
+    public void findAllChoreGroupsWithoutLogin() throws IllegalAccessException {
+        choreGroupController.readAllChoreGroups();
+        fail("Failed to block access to unauthenticated user.");
+    }
+        
+    
 }

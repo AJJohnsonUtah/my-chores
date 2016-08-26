@@ -5,6 +5,7 @@
  */
 package com.njin.mychores.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
@@ -31,7 +32,7 @@ public class ChoreGroup implements Serializable {
     @Column(name="chore_group_name")
     private String choreGroupName;
 
-    @OneToMany(mappedBy="choreGroup", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="choreGroup", fetch = FetchType.LAZY)
     private List<ChoreGroupUser> choreGroupUsers;
     
     public ChoreGroup() {        
@@ -41,6 +42,7 @@ public class ChoreGroup implements Serializable {
         this.choreGroupName = choreGroupName;
     }
 
+    @JsonIgnore
     public List<ChoreGroupUser> getChoreGroupUsers() {
         return choreGroupUsers;
     }
