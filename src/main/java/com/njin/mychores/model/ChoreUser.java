@@ -27,7 +27,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "chore_user")
 @NamedQueries({
-    @NamedQuery(name = "findUserToAuthenticate", query = "SELECT u FROM ChoreUser u WHERE u.email LIKE :email")
+    @NamedQuery(name = "findUserWithEmail", query = "SELECT u FROM ChoreUser u WHERE u.email LIKE :email")
 })
 public class ChoreUser implements Serializable {
 
@@ -82,7 +82,7 @@ public class ChoreUser implements Serializable {
 
     @JsonIgnore
     public String getPassword() {
-        return passwordHash;
+        return password;
     }
 
     public void setPassword(String password) {

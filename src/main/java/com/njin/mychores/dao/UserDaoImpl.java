@@ -7,6 +7,7 @@ package com.njin.mychores.dao;
 
 import com.njin.mychores.model.ChoreUser;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
@@ -16,22 +17,31 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class UserDaoImpl implements UserDao {
-    
+
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Override
     public ChoreUser findUser(Long id) {
-        return entityManager.find(ChoreUser.class, id);
-    }
-    
-    @Override
-    public void createUser(ChoreUser user) {
-        entityManager.persist(user);
+        try {
+            return entityManager.find(ChoreUser.class, id);
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     @Override
-    public ChoreUser findUserForAuthentication(String email) {
-        return entityManager.createNamedQuery("findUserToAuthenticate", ChoreUser.class).setParameter("email", email).getSingleResult();        
+    public ChoreUser findUser(String email) {
+        try {
+            return entityManager.createNamedQuery("findUserWithEmail", ChoreUser.class).setParameter("email", email).getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        }
+
+    }
+
+    @Override
+    public void createUser(ChoreUser user) {
+        entityManager.persist(user);
     }
 }

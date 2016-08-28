@@ -26,8 +26,12 @@ public class SessionServiceImpl implements SessionService {
     private UserDao choreUserDao;
     
     @Override
-    public void setCurrentUser(ChoreUser user) {
-        httpSession.setAttribute("userId", user.getId());
+    public void setCurrentUser(ChoreUser user) {        
+        if(user == null) {
+            httpSession.setAttribute("userId", null);
+        } else {
+            httpSession.setAttribute("userId", user.getId());
+        }        
     }
     
     @Override

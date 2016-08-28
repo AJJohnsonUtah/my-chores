@@ -6,8 +6,11 @@
 package com.njin.mychores.controller;
 
 import com.njin.mychores.config.JpaConfiguration;
+import com.njin.mychores.model.ChoreGroup;
 import com.njin.mychores.model.ChoreUser;
 import com.njin.mychores.service.SessionService;
+import java.util.List;
+import static org.junit.Assert.fail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,20 +30,40 @@ public class BaseTest {
     UserController userController;
     
     @Autowired
+    ChoreGroupController choreGroupController;
+    
+    @Autowired
     SessionService sessionService;
     
-    public void createTestUserAndLogin() {
+    public ChoreUser createTestUserAndLogin() {
         ChoreUser user = new ChoreUser();
         user.setEmail("test@test.com");
         user.setPassword("fakearoni??22");
         
-        userController.createUser(user);
-        
-        user = new ChoreUser();
-        user.setEmail("test@test.com");
+        userController.createUser(user);               
+        userController.login(user);
+        return userController.getCurrentUser();
+    }
+    
+    public ChoreUser createUserWithEmail(String email) {
+        ChoreUser user = new ChoreUser();
+        user.setEmail(email);
         user.setPassword("fakearoni??22");
         
-        userController.login(user);
+        return userController.createUser(user);        
+    }
+           
+    public ChoreGroup createTestChoreGroup() {
+        ChoreGroup choreGroup = new ChoreGroup();
+        choreGroup.setChoreGroupName("Test Chore Group");
+        try {
+            choreGroupController.createChoreGroup(choreGroup);
+            List<ChoreGroup> currentChoreGroups = choreGroupController.readAllChoreGroups();
+            return currentChoreGroups.get(0);
+        } catch (IllegalAccessException ex) {
+            fail("Chore group creation should not fail if logged in.");
+            return null;
+        }
     }
     
     public void resetCurrentUser() {

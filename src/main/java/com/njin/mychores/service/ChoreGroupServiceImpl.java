@@ -6,13 +6,13 @@
 package com.njin.mychores.service;
 
 import com.njin.mychores.dao.ChoreGroupDao;
-import com.njin.mychores.dao.ChoreGroupUserDao;
 import com.njin.mychores.model.ChoreGroup;
 import com.njin.mychores.model.ChoreGroupUser;
 import com.njin.mychores.model.ChoreGroupUserRole;
 import com.njin.mychores.model.ChoreGroupUserStatus;
 import com.njin.mychores.model.ChoreUser;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class ChoreGroupServiceImpl implements ChoreGroupService {
     ChoreGroupDao choreGroupDao;
     
     @Autowired
-    ChoreGroupUserDao choreGroupUserService;
+    ChoreGroupUserService choreGroupUserService;    
     
     @Autowired
     SessionService sessionService;
@@ -57,13 +57,15 @@ public class ChoreGroupServiceImpl implements ChoreGroupService {
     }
     
     @Override
-    public List<ChoreGroup> findAllForCurrentUser() {
+    public List<ChoreGroup> findAllActiveForCurrentUser() {
         List<ChoreGroup> choreGroups = new ArrayList<>();
         ChoreUser currentUser = sessionService.getCurrentUser();
-        List<ChoreGroupUser> users = currentUser.getChoreGroupUsers();
-        for(ChoreGroupUser choreGroupUser : sessionService.getCurrentUser().getChoreGroupUsers()) {
-            choreGroups.add(choreGroupUser.getChoreGroup());
+        List<ChoreGroupUser> users = choreGroupUserService.findAllForUser(currentUser);
+        for(ChoreGroupUser choreGroupUser : users) {
+            if(EnumSet.of(ChoreGroupUserStatus.ACCEPTED).contains(choreGroupUser.getStatus())) {
+                choreGroups.add(choreGroupUser.getChoreGroup());
+            }
         }
-        return choreGroups;            
+        return choreGroups;
     }        
 }

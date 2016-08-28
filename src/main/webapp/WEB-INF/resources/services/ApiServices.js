@@ -30,10 +30,14 @@ angular.module('myChoresApp').factory('choreGroupInvitationService', ['$http', '
         return {
             sendInvite: function (choreGroupName, recipientEmail) {
                 var url, postData, promise;
-                url = 'http://' + $location.host() + '/api/chore-group-invitation/send-invite.php';
+                url = 'http://' + $location.host() + '/api/chore-group-user/invite';
                 postData = {
-                    chore_group_name: choreGroupName,
-                    recipient_email: recipientEmail
+                    choreGroup: {
+                        choreGroupName: choreGroupName
+                    },
+                    choreUser: {
+                        email: recipientEmail
+                    }                    
                 };
 
                 promise = $http.post(url, postData);
@@ -41,13 +45,13 @@ angular.module('myChoresApp').factory('choreGroupInvitationService', ['$http', '
             },
             getSentInvitations: function () {
                 var url, promise;
-                url = 'http://' + $location.host() + '/api/chore-group-invitation/read-all-sent.php';
+                url = 'http://' + $location.host() + '/api/chore-group-user/find-all-sent';
                 promise = $http.get(url);
                 return promise;
             },
             getReceivedInvitations: function () {
                 var url, promise;
-                url = 'http://' + $location.host() + '/api/chore-group-invitation/read-all-received.php';
+                url = 'http://' + $location.host() + '/api/chore-group-user/find-all-received';
                 promise = $http.get(url);
                 return promise;
             },

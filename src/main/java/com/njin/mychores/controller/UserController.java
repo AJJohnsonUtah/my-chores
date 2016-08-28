@@ -8,12 +8,9 @@ package com.njin.mychores.controller;
 import com.njin.mychores.model.ChoreUser;
 import com.njin.mychores.service.SessionService;
 import com.njin.mychores.service.UserService;
-import org.eclipse.persistence.internal.jpa.parsing.jpql.InvalidIdentifierException;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,9 +37,13 @@ public class UserController extends BaseController {
     
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ChoreUser createUser(@RequestBody ChoreUser user) {        
-        user.setPasswordHash(BCrypt.hashpw(user.getPasswordHash(), BCrypt.gensalt()));
-        userService.createUser(user);    
-        return user;
+        if(userService.findUser(user.getEmail()) == null) {
+            user.setPasswordHash(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(10)));
+            userService.createUser(user);    
+            return user;
+        } else {
+            throw new IllegalArgumentException("This email already has an account associated with it.");
+        }
     }
     
     @RequestMapping(value = "/find/{userId}", method= RequestMethod.GET)
@@ -57,7 +58,7 @@ public class UserController extends BaseController {
     
     @RequestMapping(value="/login", method=RequestMethod.POST)
     public ChoreUser login(@RequestBody ChoreUser user) {
-        if(userService.authenticateUser(user)) {
+        if(userService.findUser(user.getEmail()) != null && userService.authenticateUser(user)) {
             return sessionService.getCurrentUser();
         }        
         throw new SecurityException("Invalid username/password.");        
@@ -66,6 +67,11 @@ public class UserController extends BaseController {
     @RequestMapping(value="/current", method=RequestMethod.GET)
     public ChoreUser getCurrentUser() {
         return sessionService.getCurrentUser();
+    }
+    
+    @RequestMapping(value="/logout", method=RequestMethod.GET)
+    public void logout() {
+        sessionService.setCurrentUser(null);
     }
 }
 

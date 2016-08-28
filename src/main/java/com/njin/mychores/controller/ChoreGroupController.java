@@ -38,7 +38,7 @@ public class ChoreGroupController extends BaseController {
     @RequestMapping(value = "/read-all", method = RequestMethod.GET)
     public List<ChoreGroup> readAllChoreGroups() throws IllegalAccessException {        
         checkRequiredAuthentication();
-        return choreGroupService.findAllForCurrentUser();
+        return choreGroupService.findAllActiveForCurrentUser();
     }
     
 }

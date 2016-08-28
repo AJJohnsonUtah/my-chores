@@ -13,6 +13,7 @@ import com.njin.mychores.model.ChoreUser;
  */
 public interface UserService {
     public ChoreUser findUser(Long id);
+    public ChoreUser findUser(String email);
     public boolean authenticateUser(ChoreUser user);
     public void createUser(ChoreUser user);
 }

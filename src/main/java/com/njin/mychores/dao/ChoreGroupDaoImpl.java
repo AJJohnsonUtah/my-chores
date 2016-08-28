@@ -6,7 +6,9 @@
 package com.njin.mychores.dao;
 
 import com.njin.mychores.model.ChoreGroup;
+import java.util.Collections;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
@@ -19,10 +21,14 @@ public class ChoreGroupDaoImpl implements ChoreGroupDao {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Override
     public ChoreGroup findChoreGroup(Long choreGroupId) {
-        return entityManager.find(ChoreGroup.class, choreGroupId);
+        try {
+            return entityManager.find(ChoreGroup.class, choreGroupId);
+        } catch (NoResultException ex) {
+            return null;
+        }
     }
 
     @Override
@@ -34,5 +40,5 @@ public class ChoreGroupDaoImpl implements ChoreGroupDao {
     public void updateChoreGroup(ChoreGroup choreGroup) {
         entityManager.merge(choreGroup);
     }
-    
+
 }

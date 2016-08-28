@@ -16,5 +16,5 @@ public interface ChoreGroupService {
     public ChoreGroup findChoreGroup(Long choreGroupId);
     public void createChoreGroup(ChoreGroup choreGroup);
     public void updateChoreGroup(ChoreGroup choreGroup);
-    public List<ChoreGroup> findAllForCurrentUser();
+    public List<ChoreGroup> findAllActiveForCurrentUser();
 }

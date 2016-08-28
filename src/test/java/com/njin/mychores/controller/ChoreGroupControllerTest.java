@@ -7,8 +7,7 @@ package com.njin.mychores.controller;
 
 import com.njin.mychores.config.JpaConfiguration;
 import com.njin.mychores.model.ChoreGroup;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -23,7 +22,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
-import sun.security.krb5.internal.Krb5;
 
 /**
  *
@@ -114,7 +112,9 @@ public class ChoreGroupControllerTest extends BaseTest {
         assertEquals(createdChoreGroup2.getChoreGroupUsers().get(0).getChoreUser(), userController.getCurrentUser());
         
         try {
-            assertEquals(choreGroupController.readAllChoreGroups().size(), 2);
+            List<ChoreGroup> choreGroups = choreGroupController.readAllChoreGroups();
+            assertNotNull("Created chore groups list should not be null.", choreGroups);
+            assertEquals(choreGroups.size(), 2);
         } catch (IllegalAccessException ex) {
             fail("User is logged in and should be able to read all chore groups.");
         }
@@ -133,7 +133,5 @@ public class ChoreGroupControllerTest extends BaseTest {
     public void findAllChoreGroupsWithoutLogin() throws IllegalAccessException {
         choreGroupController.readAllChoreGroups();
         fail("Failed to block access to unauthenticated user.");
-    }
-        
-    
+    }        
 }

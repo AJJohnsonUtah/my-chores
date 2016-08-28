@@ -5,6 +5,7 @@
  */
 package com.njin.mychores.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -21,7 +24,14 @@ import org.hibernate.annotations.UpdateTimestamp;
  */
 @Entity
 @Table(name = "chore_group_user")
-public class ChoreGroupUser {
+@NamedQueries({
+    @NamedQuery(name = "findAllForUser", query="SELECT u FROM ChoreGroupUser u WHERE u.choreUser = :choreUser"),
+    @NamedQuery(name = "findAllForChoreGroup", query="SELECT u FROM ChoreGroupUser u WHERE u.choreGroup = :choreGroup"),
+    @NamedQuery(name = "findChoreGroupUser", query="SELECT u FROM ChoreGroupUser u WHERE u.choreGroup = :choreGroup AND u.choreUser = :choreUser"),
+    @NamedQuery(name = "findAllForUserWithStatus", query="SELECT u FROM ChoreGroupUser u WHERE u.choreUser = :choreUser AND u.status = :status"),
+    @NamedQuery(name = "findAllForInviterWithStatus", query="SELECT u FROM ChoreGroupUser u WHERE u.invitedBy = :invitedBy AND u.status = :status")
+})
+public class ChoreGroupUser implements Serializable {
 
     @Id
     @GeneratedValue

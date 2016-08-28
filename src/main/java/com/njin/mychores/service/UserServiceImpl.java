@@ -7,8 +7,8 @@ package com.njin.mychores.service;
 
 import com.njin.mychores.dao.UserDao;
 import com.njin.mychores.model.ChoreUser;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +32,13 @@ public class UserServiceImpl implements UserService {
     }
     
     @Override
+    public ChoreUser findUser(String email) {
+        return userDao.findUser(email);
+    }
+    
+    @Override
     public boolean authenticateUser(ChoreUser userToAuthenticate) {        
-        ChoreUser user = userDao.findUserForAuthentication(userToAuthenticate.getEmail());
+        ChoreUser user = userDao.findUser(userToAuthenticate.getEmail());
         if(user != null && BCrypt.checkpw(userToAuthenticate.getPassword(), user.getPasswordHash())) {
             sessionService.setCurrentUser(userDao.findUser(user.getId()));
             return true;
