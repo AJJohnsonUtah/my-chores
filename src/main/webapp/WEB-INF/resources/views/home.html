@@ -1,19 +1,44 @@
-<div data-ng-show="receivedInvitations && receivedInvitations.length">
-    <h2>Invitations</h2>
-    <div class="row">
-        <h3>Received Invitations</h3>
-        <div data-ng-repeat="receivedInvitation in receivedInvitations">
-            Inviter: {{receivedInvitation.inviter}}
-            <br>
-            Chore Group Name: {{receivedInvitation.choreGroupName}}
-            <br>
-            Sent: {{receivedInvitation.lastUpdated}}
-            <hr>
-            <div class="btn btn-primary" data-ng-click="acceptInvitation(receivedInvitation.inviteId)">Accept Invite</div>
-            <div class="btn btn-danger" data-ng-click="rejectInvitation(receivedInvitation.inviteId)">Decline Invite</div>
+<div data-ng-show="hasNotifications()" class="panel  panel-primary">    
+    <div class="panel-heading"><h3>Notifications</h3></div>
+    <div class="panel-body">
+        <div class="row notification-wrapper animate-show" data-ng-repeat="receivedInvitation in receivedInvitations">
+            <div class="col-md-8 col-xs-12">
+                You have been invited to join {{receivedInvitation.invitedBy.screenName ? receivedInvitation.invitedBy.screenName : receivedInvitation.invitedBy.email}}'s group: <strong>{{receivedInvitation.choreGroup.choreGroupName}}</strong>
+            </div>            
+            <div class="col-md-2 col-xs-6 btn btn-primary" data-ng-click="acceptInvitation(receivedInvitation)">Accept Invite</div>
+            <div class="col-md-2 col-xs-6 btn btn-danger" data-ng-click="declineInvitation(receivedInvitation)">Decline Invite</div>
         </div>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3>To-Do List</h3></div>
+            <div class="panel-body">
+                <div id="task-list" data-ng-if="taskList && taskList.length > 0">
+                    <div data-ng-repeat="task in taskList">            
+                        task!
+                    </div>
+                </div>
+                <div id="no-task-list" data-ng-if="!taskList || taskList.length <= 0">
+                    No outstanding tasks!
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3>Summary</h3></div>
+            <div class="panel-body">
+                Here's a summary of whatever you want.
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <h2>My Chore Groups</h2>
 
 <div id="chore-group-accordions">
@@ -27,9 +52,9 @@
         </div>
         <hr data-ng-if="choreGroup.open">
         <div data-ng-show="choreGroup.open" class="animate-show chore-group-body">
-            <form data-ng-submit="sendInvitation(choreGroup)">
+            <form data-ng-submit="sendInvitation(choreGroup, recipientEmail)">
                 <span>Invite user to group: </span>
-                <input type="email" data-ng-model="choreGroup.recipientEmail" placeholder="Recipient email..." required>
+                <input type="email" data-ng-model="recipientEmail" placeholder="Recipient email..." required>
             </form>
         </div>
     </div>

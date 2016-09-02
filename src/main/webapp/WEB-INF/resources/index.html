@@ -14,23 +14,41 @@
         <script type="text/javascript" src="/resources/vendor/angular/routes.min.js"></script> 
         <script type="text/javascript" src="/resources/vendor/ui-bootstrap-tpls-2.0.0.min.js"></script>
         <script type="text/javascript" src="/resources/vendor/angular/angular-animate.min.js"></script>
+        <script type="text/javascript" src="/resources/MyChoresApp.js"></script>                      
 
         <link rel="stylesheet" href="/resources/vendor/bootstrap-3.3.6-dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="/resources/styles/mychores.css">
     </head>
     <body>
-        <nav data-ng-controller="authController" class="navbar" role="navigation" id="navbar">
-            <div id="navbar-logo"><a href="/">My Chores</a></div>
-            <div data-ng-if="authData.isLoggedIn" id="user-info">
-                <a href="#" data-ng-click="logout()">Logout</a>
+                    
+
+        <nav data-ng-controller="userController as userCtrl" class="navbar" role="navigation" id="navbar">
+            <div id="navbar-logo"><a href="/" target="_self">My Chores</a></div>
+            <div data-ng-if="authData.isLoggedIn" class="collapse navbar-collapse" data-ng-class="!navCollapsed && 'in'">
+                <ul class="nav navbar-nav navbar-right">
+                    <li data-uib-dropdown>
+                        <a href="#" id="groups-dropdown" data-uib-dropdown-toggle>Groups <span class="caret"></span></a>
+                        <ul data-uib-dropdown-menu class="inverse" aria-labelledby="groups-dropdown">
+                            <li><a href="/group-manager">Manage Groups</a></li>
+                        </ul>
+                    </li>
+                    <li data-uib-dropdown>
+                        <a href="#" id="profile-dropdown" data-uib-dropdown-toggle>{{userCtrl.authData.user.email}} <span class="caret"></span></a>
+                        <ul data-uib-dropdown-menu class="inverse" aria-labelledby="profile-dropdown">
+                            <li><a href="/profile">Edit Profile</a></li>
+                            <li><a href="#" data-ng-click="logout()">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                    
             </div>
         </nav>
         
         <div id="main-content" class="container" data-ng-view></div>
-        <script type="text/javascript" src="/resources/MyChoresApp.js"></script>                      
         <script type="text/javascript" src="/resources/controllers/HomeController.js"></script>
         <script type="text/javascript" src="/resources/controllers/RegisterLoginController.js"></script>
         <script type="text/javascript" src="/resources/services/ApiServices.js"></script>              
         <script type="text/javascript" src="/resources/services/AuthService.js"></script>
+        <script type="text/javascript" src="/resources/controllers/UserController.js"></script>
     </body>
 </html>

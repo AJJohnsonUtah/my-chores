@@ -60,15 +60,3 @@ angular.module('myChoresApp').run(['authService', '$location', function (authSer
         }
     });
 }]);
-
-angular.module('myChoresApp').controller('authController', ['authService', '$scope', '$location', function (authService, $scope, $location) {
-    'use strict';
-    angular.extend($scope, {
-        authData: authService.getAuthServiceData(),
-        logout: function () {
-            authService.logout().then(function (response) {
-                $location.path('/register-login');
-            });
-        }
-    });
-}]);

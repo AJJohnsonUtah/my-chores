@@ -28,13 +28,11 @@ angular.module('myChoresApp').factory('choreGroupInvitationService', ['$http', '
     function ($http, $location) {
         'use strict';
         return {
-            sendInvite: function (choreGroupName, recipientEmail) {
+            sendInvite: function (choreGroup, recipientEmail) {
                 var url, postData, promise;
                 url = 'http://' + $location.host() + '/api/chore-group-user/invite';
                 postData = {
-                    choreGroup: {
-                        choreGroupName: choreGroupName
-                    },
+                    choreGroup: choreGroup,
                     choreUser: {
                         email: recipientEmail
                     }                    
@@ -55,21 +53,17 @@ angular.module('myChoresApp').factory('choreGroupInvitationService', ['$http', '
                 promise = $http.get(url);
                 return promise;
             },
-            acceptInvitation: function (invitationId) {
+            acceptInvitation: function (invitation) {
                 var url, postData, promise;
-                url = 'http://' + $location.host() + '/api/chore-group-invitation/accept-invite.php';
-                postData = {
-                    invitation_id: invitationId
-                };
+                url = 'http://' + $location.host() + '/api/chore-group-user/accept';
+                postData = invitation;
                 promise = $http.post(url, postData);
                 return promise;
             },
-            rejectInvitation: function (invitationId) {
+            declineInvitation: function (invitation) {
                 var url, postData, promise;
-                url = 'http://' + $location.host() + '/api/chore-group-invitation/reject-invite.php';
-                postData = {
-                    invitation_id: invitationId
-                };
+                url = 'http://' + $location.host() + '/api/chore-group-user/decline';
+                postData = invitation;
                 promise = $http.post(url, postData);
                 return promise;
             }

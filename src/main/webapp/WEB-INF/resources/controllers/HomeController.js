@@ -1,6 +1,7 @@
 /*global angular, alert */
 function registerHomeController($http, $scope, choreGroupService, choreGroupInvitationService, $interval) {
     "use strict";
+    var startedPolling;
     angular.extend($scope, {
         creatingChoreGroup: false,
         sentInvitations: [],
@@ -46,27 +47,46 @@ function registerHomeController($http, $scope, choreGroupService, choreGroupInvi
             }
             choreGroupService.create($scope.newChoreGroupName).then($scope.loadMyChoreGroups);
         },
-        sendInvitation: function (choreGroup) {
-            choreGroupInvitationService.sendInvite(choreGroup.choreGroupName, choreGroup.recipientEmail);
+        sendInvitation: function (choreGroup, recipientEmail) {
+            choreGroupInvitationService.sendInvite(choreGroup, recipientEmail);
             $scope.loadSentInvitations();
         },
         loadDefaultInfo: function () {
             $scope.loadReceivedInvitations();
             $scope.loadSentInvitations();
         },
-        acceptInvitation: function (inviteId) {
-            choreGroupInvitationService.acceptInvitation(inviteId).then(function () {
+        acceptInvitation: function (invitation) {
+            choreGroupInvitationService.acceptInvitation(invitation).then(function () {
                 $scope.loadDefaultInfo();
                 $scope.loadMyChoreGroups();
             });
         },
-        rejectInvitation: function (inviteId) {
-            choreGroupInvitationService.rejectInvitation(inviteId).then($scope.loadDefaultInfo);
+        declineInvitation: function (invitation) {
+            choreGroupInvitationService.declineInvitation(invitation).then($scope.loadDefaultInfo);
             $scope.loadReceivedInvitations();
+        },
+        startPolling: function() {
+            if(angular.isDefined(startedPolling)) {
+                return;
+            }            
+            startedPolling = $interval($scope.loadDefaultInfo, 30000);
+        },
+        stopPolling: function() {
+            if(angular.isDefined(startedPolling)) {
+                $interval.cancel(startedPolling);
+                startedPolling = undefined;
+            }
+        },
+        hasNotifications: function() {
+            return $scope.receivedInvitations && $scope.receivedInvitations.length > 0;
         }
     });
 
-    $interval($scope.loadDefaultInfo, 30000);
+    $scope.$on('$destroy', function() {
+        $scope.stopPolling();
+    });    
+
+    $scope.startPolling();
     $scope.loadMyChoreGroups();
     $scope.loadDefaultInfo();
 }
