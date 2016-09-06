@@ -1,7 +1,7 @@
-angular.module('myChoresApp').controller('userController', ['authService', '$scope', '$location', function (authService, $scope, $location) {
+angular.module('myChoresApp').controller('navController', ['authService', 'userService', '$scope', '$location', function (authService, userService, $scope, $location) {
     'use strict';
     angular.extend($scope, {
-        authData: authService.getAuthServiceData(),
+        userServiceData: userService.getUserServiceData(),
         logout: function () {
             authService.logout().then(function (response) {
                 $location.path('/register-login');

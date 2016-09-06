@@ -11,6 +11,10 @@ angular.module("myChoresApp", ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimat
             templateUrl : '/resources/views/register-login.html',
             controller: 'registerLoginController',
             controllerAs: 'loginCtrl'
+        }).when('/groups', {
+            templateUrl : '/resources/views/groups.html',
+            controller: 'groupController',
+            controllerAs: 'groupCtrl'
         }).otherwise({
             redirectTo : '/'
         });

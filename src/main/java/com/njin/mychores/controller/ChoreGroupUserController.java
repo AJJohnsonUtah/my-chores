@@ -9,6 +9,7 @@ import com.njin.mychores.model.ChoreGroupUser;
 import com.njin.mychores.model.ChoreGroupUserStatus;
 import com.njin.mychores.service.ChoreGroupUserService;
 import java.util.List;
+import javax.activity.InvalidActivityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -30,7 +31,7 @@ public class ChoreGroupUserController extends BaseController {
     
     @RequestMapping(value = "/invite", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void inviteChoreUserToChoreGroup(@RequestBody ChoreGroupUser choreGroupUser) throws IllegalAccessException {
-        checkRequiredAuthentication();        
+        checkRequiredAuthentication();                
         choreGroupUserService.inviteUserToChoreGroup(choreGroupUser);
     }
     
@@ -56,5 +57,17 @@ public class ChoreGroupUserController extends BaseController {
     public List<ChoreGroupUser> findAllPendingReceivedInvitations() throws IllegalAccessException {
         checkRequiredAuthentication();
         return choreGroupUserService.findAllForUserWithStatus(sessionService.getCurrentUser(), ChoreGroupUserStatus.PENDING);
+    }
+    
+    @RequestMapping(value = "/remove", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void removeChoreGroupUser(@RequestBody ChoreGroupUser choreGroupUser) throws IllegalAccessException, InvalidActivityException {
+        checkRequiredAuthentication();
+        choreGroupUserService.removeChoreGroupUser(choreGroupUser);
+    }
+    
+    @RequestMapping(value = "/update-role", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void updateChoreGroupUserRole(@RequestBody ChoreGroupUser choreGroupUser) throws IllegalAccessException, InvalidActivityException {
+        checkRequiredAuthentication();
+        choreGroupUserService.updateChoreGroupUserRole(choreGroupUser);
     }
 }

@@ -7,7 +7,10 @@ package com.njin.mychores.controller;
 
 import com.njin.mychores.config.JpaConfiguration;
 import com.njin.mychores.model.ChoreGroup;
+import com.njin.mychores.model.ChoreGroupUser;
+import com.njin.mychores.model.ChoreUser;
 import java.util.List;
+import java.util.Locale;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -15,7 +18,6 @@ import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -32,9 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 @ActiveProfiles("test")
 @Transactional
 public class ChoreGroupControllerTest extends BaseTest {
-    
-    @Autowired
-    ChoreGroupController choreGroupController;
     
     public ChoreGroupControllerTest() {
     }
@@ -120,18 +119,71 @@ public class ChoreGroupControllerTest extends BaseTest {
         }
     }        
     
-    @Test(expected = IllegalAccessException.class)
+    @Test
     public void createChoreGroupWithoutLogin() throws IllegalAccessException {
         ChoreGroup choreGroup = new ChoreGroup();        
         String choreGroupName = "Test Chore Group";        
         choreGroup.setChoreGroupName(choreGroupName);
-        choreGroupController.createChoreGroup(choreGroup);
-        fail("Failed to block access to unauthenticated user.");
+        try {
+            choreGroupController.createChoreGroup(choreGroup);
+            fail("Should not be able to create a chore group when not logged in.");
+        } catch (IllegalAccessException ex) {
+            assertEquals("Exception message should be 'login required' message", ex.getMessage(), messageSource.getMessage("login.required", null, Locale.getDefault()));
+        }
     }
     
-    @Test(expected = IllegalAccessException.class)
+    @Test
     public void findAllChoreGroupsWithoutLogin() throws IllegalAccessException {
+        try {
         choreGroupController.readAllChoreGroups();
-        fail("Failed to block access to unauthenticated user.");
-    }        
+            fail("Should not be able to read all chore groups when not logged in.");
+        } catch (IllegalAccessException ex) {
+            assertEquals("Exception message should be 'login required' message", ex.getMessage(), messageSource.getMessage("login.required", null, Locale.getDefault()));
+        }
+    }    
+
+    @Test
+    public void findAllUsersOfChoreGroup() throws IllegalAccessException {
+        ChoreUser userToInvite = createUserWithEmail("user@toInvite.com");
+        ChoreUser userWhoInvited = createTestUserAndLogin();
+        ChoreGroup choreGroup = createTestChoreGroup();
+        
+        List<ChoreGroupUser> activeMembers = choreGroupController.activeMembersOfChoreGroup(choreGroup);
+        assertEquals("There should only be 1 active member upon creation of chore group.", 1, activeMembers.size());
+        
+        inviteUserToChoreGroup(userToInvite, choreGroup);
+        
+        userController.logout();
+        userController.login(userToInvite);
+        
+        try {
+            choreGroupController.activeMembersOfChoreGroup(choreGroup);
+            fail("User should be unable to access this data before accepting invitation.");
+        } catch (IllegalAccessException ex) {
+            assertEquals("Error message should be 'not own data'", ex.getMessage(), messageSource.getMessage("not.own.data", null, Locale.getDefault()));
+        }
+        
+        acceptAllInvitations();
+        
+        activeMembers = choreGroupController.activeMembersOfChoreGroup(choreGroup);
+        assertEquals("There should be 2 active members of chore group upon accepting invitation.", 2, activeMembers.size());
+        
+        userController.logout();
+        userController.login(userWhoInvited);        
+        
+        activeMembers = choreGroupController.activeMembersOfChoreGroup(choreGroup);
+        assertEquals("There should be 2 active members of chore group upon accepting invitation.", 2, activeMembers.size());        
+    }
+    
+    @Test
+    public void updateChoreGroupName() throws IllegalAccessException {
+        ChoreUser currentUser = createTestUserAndLogin();
+        ChoreGroup testGroup = createTestChoreGroup();
+        String originalName = testGroup.getChoreGroupName();
+        testGroup.setChoreGroupName(originalName + " Updated");
+        ChoreGroup updatedChoreGroup = choreGroupController.updateChoreGroup(testGroup);
+        
+        assertEquals("Chore group name should change on update.", originalName + " Updated", updatedChoreGroup.getChoreGroupName());        
+    }
+        
 }

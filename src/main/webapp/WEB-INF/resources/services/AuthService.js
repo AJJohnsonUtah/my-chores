@@ -1,16 +1,15 @@
 /*global angular*/
 
-angular.module('myChoresApp').factory('authService', ['$http', '$location',
-    function ($http, $location) {
+angular.module('myChoresApp').factory('authService', ['$http', 'userService', '$location',
+    function ($http, userService, $location) {
         'use strict';
-        var authServiceData = {'isLoggedIn' : false, 'user': null};
-
         return {
             login: function (username, password) {
                 var url, postData, promise;
                 url = 'http://' + $location.host() + '/api/user/login';
                 postData = {
-                    username: username
+                    username: username,
+                    password: password
                 };
 
                 promise = $http.post(url, postData);
@@ -20,42 +19,25 @@ angular.module('myChoresApp').factory('authService', ['$http', '$location',
                 var url, promise;
                 url = 'http://' + $location.host() + '/api/user/logout';
                 promise = $http.get(url);
-                authServiceData.isLoggedIn = false;
+                userService.setUser(null);
                 return promise;
             },
-            checkLoginStatus: function () {
+            getCurrentSessionUser: function () {
                 var url, promise;
                 url = 'http://' + $location.host() + '/api/user/current';
                 promise = $http.get(url);
                 return promise;
-            },
-            isLoggedIn: function () {
-                return authServiceData.isLoggedIn;
-            },
-            setIsLoggedIn: function (loggedInStatus) {
-                authServiceData.isLoggedIn = loggedInStatus;
-            },
-            getUser: function () {
-                return authServiceData.user;
-            },
-            setUser: function (user) {
-                authServiceData.user = user;
-            },
-            getAuthServiceData: function () {
-                return authServiceData;
             }
         };
     }]);
 
-angular.module('myChoresApp').run(['authService', '$location', function (authService, $location) {
+angular.module('myChoresApp').run(['authService', 'userService', '$location', function (authService, userService, $location) {
     'use strict';
-    authService.checkLoginStatus().then(function (response) {
+    authService.getCurrentSessionUser().then(function (response) {
         if(response.data) {
-            authService.setIsLoggedIn(true);  
-            authService.setUser(response.data);
+            userService.setUser(response.data);
         } else {
-            authService.setIsLoggedIn(false);
-            authService.setUser(null);
+            userService.setUser(null);
             $location.path('/register-login');
         }
     });

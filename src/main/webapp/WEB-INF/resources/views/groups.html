@@ -1,0 +1,81 @@
+<h2>Group Manager</h2>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="btn-group-vertical" >
+            <div class="btn btn-default" data-ng-model="selected.choreGroup" data-uib-btn-radio="choreGroup" data-ng-repeat="choreGroup in choreGroups" data-ng-click="getAllMembers(choreGroup)">{{choreGroup.choreGroupName}}</div>            
+            <div class="btn btn-success" data-ng-click="beginCreatingChoreGroup()">Create Group <span class="glyphicon glyphicon-plus glyphicon-inline"></span></div>
+        </div>
+    </div>
+    <div class="col-md-9" id="chore-group-manager">
+        <div data-ng-show="!selected.choreGroup">Select a chore group!</div>
+        <div data-ng-show="selected.choreGroup" class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 data-ng-show="!editingName" >{{selected.choreGroup.choreGroupName}} <button class="btn btn-default pull-right" data-ng-click="beginEditingChoreGroup()"><span class="glyphicon glyphicon-edit"></span></button></h3>
+                <form data-ng-show="editingName" data-ng-submit="editOrCreateChoreGroup(selected.choreGroup)">
+                    <input id="chore-group-name-textbox" class="form-control input-lg" data-ng-model="selected.updatedName" maxlength="35" required data-ng-blur="editOrCreateChoreGroup(selected.choreGroup)" placeholder="Name of group...">
+                    <div class="alert alert-danger" data-ng-show="errorMessages.editGroupName">{{errorMessages.editGroupName}}</div>
+                </form>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-5">                        
+                    </div>
+                    <div class="col-md-7">
+                        <h4>Group Members</h4>
+                        <form data-ng-submit="sendInvitation(selected.choreGroup, recipientEmail)">
+                            <div class="input-group">
+                                <span class="input-group-addon" id="recipient-email-label">Invite user:</span>
+                                <input type="email" class="form-control" data-ng-model="recipientEmail" required placeholder="Email..." aria-describedby="recipient-email-label">
+                                <span class="input-group-btn"><button type="submit" class="btn btn-success"><span class=" glyphicon glyphicon-envelope"></span></button></span>
+                            </div>
+                            <div class="alert alert-danger" data-ng-if="errorMessages.inviteUser">{{errorMessages.inviteUser}}</div>
+                        </form>
+                        <br>
+                        <div id="member-list-wrapper">
+                            <div data-ng-if="!selected.choreGroup.choreGroupUsers">
+                                Loading users...
+                            </div>
+                            <div data-ng-if="selected.choreGroup.choreGroupUsers">
+                                
+                                <h4>Invited Members</h4>
+                                <div id="invited-member-list">
+                                    <div data-ng-repeat="choreGroupUser in selected.choreGroup.choreGroupUsers | filter : isPendingMember">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">{{choreGroupUser.choreUser.email}}</span>
+                                            <select class="form-control" data-ng-change="updateChoreGroupUserRole(selected.choreGroup, choreGroupUser)" data-ng-model="choreGroupUser.choreGroupUserRole">
+                                                <option value="ADMIN">Admin</option>
+                                                <option value="OWNER">Owner</option>
+                                                <option value="MEMBER">Member</option>
+                                            </select>
+                                            <div class="input-group-btn">
+                                                <button class="btn btn-danger" data-ng-click="removeChoreGroupUser(selected.choreGroup, choreGroupUser)"><span class="glyphicon glyphicon-remove"></span></button>
+                                            </div>                                       
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <h4>Active Members</h4>
+                                <div id="active-member-list">
+                                    <div data-ng-repeat="choreGroupUser in selected.choreGroup.choreGroupUsers | filter : isActiveMember">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">{{choreGroupUser.choreUser.email}}</span>
+                                            <select class="form-control" data-ng-change="updateChoreGroupUserRole(selected.choreGroup, choreGroupUser)" data-ng-model="choreGroupUser.choreGroupUserRole" data-ng-disabled="choreGroupUser.choreGroupUserRole === 'OWNER'">
+                                                <option value="OWNER">Owner</option>
+                                                <option value="ADMIN">Admin</option>
+                                                <option value="MEMBER">Member</option>
+                                            </select>
+                                            <div class="input-group-btn">
+                                                <button class="btn btn-danger" data-ng-disabled="choreGroupUser.choreGroupUserRole === 'OWNER'" data-ng-click="removeChoreGroupUser(selected.choreGroup, choreGroupUser)"><span class="glyphicon glyphicon-remove"></span></button>
+                                            </div>                                       
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        </div>        
+    </div>
+</div>

@@ -8,6 +8,7 @@ package com.njin.mychores.controller;
 import com.njin.mychores.model.ChoreUser;
 import com.njin.mychores.service.SessionService;
 import com.njin.mychores.service.UserService;
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -28,12 +29,6 @@ public class UserController extends BaseController {
 
     @Autowired
     UserService userService;
-
-    @Autowired
-    MessageSource messageSource;
-    
-    @Autowired
-    SessionService sessionService;
     
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public ChoreUser createUser(@RequestBody ChoreUser user) {        
@@ -42,7 +37,7 @@ public class UserController extends BaseController {
             userService.createUser(user);    
             return user;
         } else {
-            throw new IllegalArgumentException("This email already has an account associated with it.");
+            throw new IllegalArgumentException(messageSource.getMessage("non.unique.email", new String[] {user.getEmail()}, Locale.getDefault()));
         }
     }
     
@@ -52,16 +47,19 @@ public class UserController extends BaseController {
         if(user == null) {
             return user;
         } else {
-            throw new IllegalArgumentException("User not found.");
+            throw new IllegalArgumentException(messageSource.getMessage("non.known.email", null, Locale.getDefault()));
         }
     }
     
     @RequestMapping(value="/login", method=RequestMethod.POST)
     public ChoreUser login(@RequestBody ChoreUser user) {
-        if(userService.findUser(user.getEmail()) != null && userService.authenticateUser(user)) {
+        if(userService.findUser(user.getEmail()) == null) {
+            throw new IllegalArgumentException(messageSource.getMessage("non.known.email", null, Locale.getDefault()));        
+        }
+        if(userService.authenticateUser(user)) {
             return sessionService.getCurrentUser();
-        }        
-        throw new SecurityException("Invalid username/password.");        
+        }
+        throw new IllegalArgumentException(messageSource.getMessage("non.correct.password", null, Locale.getDefault()));        
     }
     
     @RequestMapping(value="/current", method=RequestMethod.GET)

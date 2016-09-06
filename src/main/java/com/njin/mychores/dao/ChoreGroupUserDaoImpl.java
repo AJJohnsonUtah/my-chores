@@ -82,4 +82,13 @@ public class ChoreGroupUserDaoImpl implements ChoreGroupUserDao {
             return Collections.emptyList();
         }
     }
+    
+    @Override
+    public ChoreGroupUser find(Long id) {
+        try {
+            return entityManager.find(ChoreGroupUser.class, id);
+        } catch (NoResultException ex) {
+            return null;
+        }
+    }
 }

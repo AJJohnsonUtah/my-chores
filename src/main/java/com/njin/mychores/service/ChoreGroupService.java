@@ -6,6 +6,7 @@
 package com.njin.mychores.service;
 
 import com.njin.mychores.model.ChoreGroup;
+import com.njin.mychores.model.ChoreGroupUser;
 import java.util.List;
 
 /**
@@ -15,6 +16,8 @@ import java.util.List;
 public interface ChoreGroupService {
     public ChoreGroup findChoreGroup(Long choreGroupId);
     public void createChoreGroup(ChoreGroup choreGroup);
-    public void updateChoreGroup(ChoreGroup choreGroup);
+    public ChoreGroup updateChoreGroup(ChoreGroup choreGroup);
     public List<ChoreGroup> findAllActiveForCurrentUser();
+    public List<ChoreGroupUser> findAllActiveMembersForChoreGroup(ChoreGroup choreGroup) throws IllegalAccessException ;
+    public List<ChoreGroupUser> findAllMembersForChoreGroup(ChoreGroup choreGroup) throws IllegalAccessException ;
 }

@@ -1,5 +1,5 @@
 /*global angular, alert */
-function registerLoginController($http, $scope, $location, authService) {
+function registerLoginController($http, $scope, $location, authService, userService) {
     "use strict";
     angular.extend($scope, {
         newEmailText: '',
@@ -10,23 +10,27 @@ function registerLoginController($http, $scope, $location, authService) {
         errorMessage: '',
         newErrorMessage: '',
         newUserDataIsValid: function () {
-            if ($scope.newPasswordText.length < 8 || $scope.newPasswordText !== $scope.newPasswordVerifyText) {
+            if ($scope.newPasswordText.length < 8) {
+                $scope.newErrorMessage = 'Passwords must be at least 8 characters long.';
+                return false;
+            } else if ($scope.newPasswordText !== $scope.newPasswordVerifyText) {
+                $scope.newErrorMessage = 'Passwords do not match.';
                 return false;
             }
             return true;
         },
-        handleSuccessfulCreation: function (data) {
+        handleSuccessfulCreation: function (response) {
             $scope.submitLogin($scope.newEmailText, $scope.newPasswordText);            
         },
-        handleSuccessfulLogin: function (data) {            
+        handleSuccessfulLogin: function (response) {            
             $location.path('/');
-            authService.setIsLoggedIn(true);            
+            userService.setUser(response);            
         },
         handleUnsuccessfulLogin: function (response) {
-            $scope.errorMessage = response.data.message;
+            $scope.errorMessage = response.message;
         },
         handleUnsuccessfulCreation: function (response) {
-            $scope.newErrorMessage = response.data.message;
+            $scope.newErrorMessage = response.message;
         },
         submitNewUser: function () {
             var url, postData;
@@ -39,7 +43,9 @@ function registerLoginController($http, $scope, $location, authService) {
                 return;
             }
             
-            $http.post(url, postData).then($scope.handleSuccessfulCreation, $scope.handleUnsuccessfulCreation);
+            $http.post(url, postData)
+                    .success($scope.handleSuccessfulCreation)
+                    .error($scope.handleUnsuccessfulCreation);
         },
         submitLogin: function (em, pass) {
             var url, postData;
@@ -56,15 +62,17 @@ function registerLoginController($http, $scope, $location, authService) {
                 };
             }
             
-            $http.post(url, postData).then($scope.handleSuccessfulLogin, $scope.handleUnsuccessfulLogin);
+            $http.post(url, postData)
+                    .success($scope.handleSuccessfulLogin)
+                    .error($scope.handleUnsuccessfulLogin);
         }
     });
 
-    authService.checkLoginStatus().then(function (response) {
+    authService.getCurrentSessionUser().then(function (response) {
         if (response.data.status === 'Okay') {
             $location.path('/');
         }
     });
 }
 
-angular.module('myChoresApp').controller('registerLoginController', ['$http', '$scope', '$location', 'authService', registerLoginController]);
+angular.module('myChoresApp').controller('registerLoginController', ['$http', '$scope', '$location', 'authService', 'userService', registerLoginController]);

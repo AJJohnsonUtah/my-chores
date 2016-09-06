@@ -7,11 +7,13 @@ package com.njin.mychores.controller;
 
 import com.njin.mychores.config.JpaConfiguration;
 import com.njin.mychores.model.ChoreGroup;
+import com.njin.mychores.model.ChoreGroupUser;
 import com.njin.mychores.model.ChoreUser;
 import com.njin.mychores.service.SessionService;
 import java.util.List;
 import static org.junit.Assert.fail;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -33,7 +35,13 @@ public class BaseTest {
     ChoreGroupController choreGroupController;
     
     @Autowired
+    ChoreGroupUserController choreGroupUserController;
+    
+    @Autowired
     SessionService sessionService;
+    
+    @Autowired
+    MessageSource messageSource;
     
     public ChoreUser createTestUserAndLogin() {
         ChoreUser user = new ChoreUser();
@@ -66,6 +74,27 @@ public class BaseTest {
         }
     }
     
+    public void inviteUserToChoreGroup(ChoreUser choreUser, ChoreGroup choreGroup) {
+        ChoreGroupUser choreGroupUser = new ChoreGroupUser();
+        choreGroupUser.setChoreGroup(choreGroup);
+        choreGroupUser.setChoreUser(choreUser);
+        try {
+            choreGroupUserController.inviteChoreUserToChoreGroup(choreGroupUser);        
+        } catch (IllegalAccessException ex) {
+            fail("Chore group invitation should not fail if logged in.");
+        }
+    }
+    
+    public void acceptAllInvitations() {
+        try {
+            for(ChoreGroupUser invitation : choreGroupUserController.findAllPendingReceivedInvitations()) {
+                choreGroupUserController.acceptChoreGroupInvitation(invitation);
+            }            
+        } catch (IllegalAccessException ex) {
+            fail("Chore group creation should not fail if logged in.");            
+        }
+    }
+        
     public void resetCurrentUser() {
         sessionService.setCurrentUser(null);
     }

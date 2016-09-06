@@ -1,12 +1,12 @@
 <div data-ng-show="hasNotifications()" class="panel  panel-primary">    
     <div class="panel-heading"><h3>Notifications</h3></div>
     <div class="panel-body">
-        <div class="row notification-wrapper animate-show" data-ng-repeat="receivedInvitation in receivedInvitations">
+        <div class="row notification-wrapper animate-show" data-ng-repeat="receivedInvitation in userServiceData.receivedInvitations">
             <div class="col-md-8 col-xs-12">
                 You have been invited to join {{receivedInvitation.invitedBy.screenName ? receivedInvitation.invitedBy.screenName : receivedInvitation.invitedBy.email}}'s group: <strong>{{receivedInvitation.choreGroup.choreGroupName}}</strong>
             </div>            
-            <div class="col-md-2 col-xs-6 btn btn-primary" data-ng-click="acceptInvitation(receivedInvitation)">Accept Invite</div>
-            <div class="col-md-2 col-xs-6 btn btn-danger" data-ng-click="declineInvitation(receivedInvitation)">Decline Invite</div>
+            <div class="col-md-2 col-xs-6"><div class="btn btn-primary" data-ng-click="acceptInvitation(receivedInvitation)">Accept Invite</div></div>
+            <div class="col-md-2 col-xs-6"><div class="btn btn-danger" data-ng-click="declineInvitation(receivedInvitation)">Decline Invite</div></div>
         </div>
     </div>
 </div>
@@ -32,47 +32,6 @@
             <div class="panel-heading"><h3>Summary</h3></div>
             <div class="panel-body">
                 Here's a summary of whatever you want.
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<h2>My Chore Groups</h2>
-
-<div id="chore-group-accordions">
-    <div data-ng-repeat="choreGroup in choreGroups" class="chore-group-accordion-wrapper">
-        <div class="chore-group-heading-wrapper" data-ng-click="choreGroup.open = !choreGroup.open">
-            <div class="chore-group-heading">
-                {{choreGroup.choreGroupName}}
-            </div>
-            <span data-ng-if="choreGroup.open" class="glyphicon glyphicon-chevron-up chore-group-heading-icon"></span>
-            <span data-ng-if="!choreGroup.open" class="glyphicon glyphicon-chevron-down chore-group-heading-icon"></span>
-        </div>
-        <hr data-ng-if="choreGroup.open">
-        <div data-ng-show="choreGroup.open" class="animate-show chore-group-body">
-            <form data-ng-submit="sendInvitation(choreGroup, recipientEmail)">
-                <span>Invite user to group: </span>
-                <input type="email" data-ng-model="recipientEmail" placeholder="Recipient email..." required>
-            </form>
-        </div>
-    </div>
-    <div class="chore-group-accordion-wrapper">
-        <div class="chore-group-heading-wrapper" data-ng-click="creatingChoreGroup = !creatingChoreGroup">
-            <div class="chore-group-heading">
-                Create New Chore Group
-            </div>
-            <span data-ng-if="!creatingChoreGroup" class="glyphicon glyphicon-plus-sign chore-group-heading-icon"></span>
-            <span data-ng-if="creatingChoreGroup" class="glyphicon glyphicon-minus-sign chore-group-heading-icon"></span>
-        </div>
-        <hr data-ng-if="creatingChoreGroup">
-        <div data-ng-show="creatingChoreGroup" class="animate-show chore-group-body">
-            <div id="creating-chore-group-wrapper">
-                <form data-ng-submit="createNewChoreGroup()">
-                    <span>Chore Group Name: </span>
-                    <input type="text" data-ng-model="newChoreGroupName" required>
-                </form>
             </div>
         </div>
     </div>

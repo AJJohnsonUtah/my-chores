@@ -3,65 +3,8 @@ html {
     color: #445878; 
 }
 
-body {
-    text-align: center;
-}
-
-input {
-    padding: 8px;
-    border-radius: 5px;
-    margin: 8px;
-}
-
-button {
-    padding: 8px;
-    border-radius: 5px;
-    margin: 2px;
-    background-color: #445878;
-    color: #EEEFF7;
-}
-
-::-webkit-input-placeholder {
-   color: #92CDCF;
-}
-
-:-moz-placeholder { /* Firefox 18- */
-   color: #92CDCF;  
-}
-
-::-moz-placeholder {  /* Firefox 19+ */
-   color: #92CDCF;  
-}
-
-:-ms-input-placeholder {  
-   color: #92CDCF;  
-}
-
-#account-forms form {
-    width: 375px;
-    margin-left: 75px;
-    margin-right: 75px;
-    display: inline-block;
-    vertical-align: top;
-}
-
-#main-content {
-    width: 1100px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
 #account-forms {
     margin-top: 200px;
-}
-
-#account-forms form input {
-    width: 20em;
-    font-size: 13pt;
-}
-
-#account-forms form button {
-    font-size: 13pt;
 }
 
 .row-bg {
@@ -73,41 +16,18 @@ button {
     color: #EEEFF7;
 }
 
-#logout-button-wrapper {
-    position: fixed;
-    bottom: 0px;
-    right: 0px;
-    z-index: 1000;
-}
+
 
 #navbar {
-    background-color: #445878;
-    color: #E0E5A1;
     padding-left: 10%;
     padding-right: 10%;
+    background-color: cornsilk;
 }
 
 #navbar-logo {
     float: left;
     font-size: 23pt;
     font-weight: 200;
-}
-
-#user-info {
-    float: right;
-    font-size: 20pt;
-}
-
-#navbar a {
-    color: #E0E5A1
-}
-
-#navbar a:hover {
-    color: #C0C094;
-}
-
-#navbar a:visited {
-    color: #E0E5A1;
 }
 
 .animate-show {
@@ -129,7 +49,7 @@ button {
 }
 
 .chore-group-accordion-wrapper {
-    border: 6px solid #445878;
+    border: 1px solid #445878;
     border-radius: 28px;
     margin: 15px;
 }
@@ -155,4 +75,20 @@ hr {
     border-top: 1px solid #445878;
     margin-top: 4px;
     margin-bottom: 4px
+}
+
+.editable:hover {
+   cursor: url(http://cur.cursors-4u.net/others/oth-7/oth697.cur), progress !important;
+}
+
+.glyphicon-inline {
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+.alert {
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+    text-align: center;
 }

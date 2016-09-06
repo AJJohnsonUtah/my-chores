@@ -7,6 +7,8 @@ package com.njin.mychores.controller;
 
 import com.njin.mychores.config.JpaConfiguration;
 import com.njin.mychores.model.ChoreUser;
+import java.util.Locale;
+import static org.hamcrest.CoreMatchers.is;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,7 +16,6 @@ import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,10 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = {JpaConfiguration.class}, loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("test")
 @Transactional
-public class UserControllerTest {
-
-    @Autowired
-    UserController userController;
+public class UserControllerTest extends BaseTest {
 
     public UserControllerTest() {
     }
@@ -78,7 +76,7 @@ public class UserControllerTest {
         assertEquals(loggedInUser, userController.getCurrentUser());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createDuplicateUserAttempt() {
         ChoreUser user1 = new ChoreUser();
         String email1 = "test@test.com";
@@ -96,10 +94,15 @@ public class UserControllerTest {
         user2.setEmail(email2);
         user2.setPassword(password2);
 
-        userController.createUser(user2);
+        try {
+            userController.createUser(user2);
+            fail("Should not be able to create a user with the same email.");
+        } catch (IllegalArgumentException ex) {
+            assertThat(ex.getMessage(), is(messageSource.getMessage("non.unique.email", new String[] {email1}, Locale.getDefault())));
+        }
     }
 
-    @Test(expected = SecurityException.class)
+    @Test
     public void loginWithIncorrectPassword() {
         ChoreUser user = new ChoreUser();
         String email = "test@test.com";
@@ -113,10 +116,15 @@ public class UserControllerTest {
         user = new ChoreUser();
         user.setEmail(email);
         user.setPassword(password + "wrongStuff");
-        ChoreUser loggedInUser = userController.login(user);        
+        try {
+            userController.login(user);        
+            fail("Should not be able to login with the incorrect password.");
+        } catch (IllegalArgumentException ex) {
+            assertThat(ex.getMessage(), is(messageSource.getMessage("non.correct.password", null, Locale.getDefault())));
+        }
     }
     
-    @Test(expected = SecurityException.class)
+    @Test
     public void loginWithInvalidEmail() {
                 ChoreUser user = new ChoreUser();
         String email = "test@test.com";
@@ -124,8 +132,12 @@ public class UserControllerTest {
 
         user.setEmail(email);
         user.setPassword(password);
-
-        userController.login(user);
+        try {
+            userController.login(user);  
+            fail("Should not be able to login with an invalid email.");
+        } catch (IllegalArgumentException ex) {
+            assertThat(ex.getMessage(), is(messageSource.getMessage("non.known.email", null, Locale.getDefault())));
+        }
     }
     
     @Test

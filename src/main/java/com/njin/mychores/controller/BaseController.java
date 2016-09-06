@@ -8,7 +8,9 @@ package com.njin.mychores.controller;
 import com.njin.mychores.model.ChoreUser;
 import com.njin.mychores.model.HttpErrorBody;
 import com.njin.mychores.service.SessionService;
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,10 +19,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  *
  * @author AJ
  */
-public abstract class BaseController {
+public abstract class BaseController {   
+    @Autowired
+    MessageSource messageSource;
     
     @Autowired
-    SessionService sessionService;
+    SessionService sessionService;    
     
     @ExceptionHandler    
     ResponseEntity<HttpErrorBody> handleException(Exception e) {        
@@ -37,8 +41,7 @@ public abstract class BaseController {
     protected void checkRequiredAuthentication() throws IllegalAccessException {
         ChoreUser currentUser = sessionService.getCurrentUser();
         if(currentUser == null) {
-            throw new IllegalAccessException("User must be logged in to perform this action.");
+            throw new IllegalAccessException(messageSource.getMessage("login.required", null, Locale.getDefault()));
         } 
     }
-
 }

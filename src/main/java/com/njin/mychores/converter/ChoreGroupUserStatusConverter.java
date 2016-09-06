@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package converter;
+package com.njin.mychores.converter;
 
 import com.njin.mychores.model.ChoreGroupUserStatus;
 import javax.persistence.AttributeConverter;
