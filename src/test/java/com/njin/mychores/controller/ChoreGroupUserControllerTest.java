@@ -65,7 +65,8 @@ public class ChoreGroupUserControllerTest extends BaseTest {
     public void inviteToChoreGroupAndAccept() throws IllegalAccessException {
         ChoreUser userToInvite = createUserWithEmail("User@ToInvite.com");        
         ChoreUser userWhoInvited = createTestUserAndLogin();
-        ChoreGroup choreGroup = createTestChoreGroup();
+        ChoreGroupUser owner = createTestChoreGroup();
+        ChoreGroup choreGroup = owner.getChoreGroup();
         
         assertEquals("No invitations should exist yet.", choreGroupUserController.findAllPendingSentInvitations().size(), 0);
         
@@ -129,7 +130,8 @@ public class ChoreGroupUserControllerTest extends BaseTest {
     public void declineInviteToChoreGroup() throws IllegalAccessException {
         ChoreUser userToInvite = createUserWithEmail("User@ToInvite.com");        
         ChoreUser userWhoInvited = createTestUserAndLogin();
-        ChoreGroup choreGroup = createTestChoreGroup();
+        ChoreGroupUser owner = createTestChoreGroup();
+        ChoreGroup choreGroup = owner.getChoreGroup();
         
         assertEquals("No invitations should exist yet.", choreGroupUserController.findAllPendingSentInvitations().size(), 0);
         
@@ -186,8 +188,9 @@ public class ChoreGroupUserControllerTest extends BaseTest {
     public void reinviteToChoreGroupAfterDecline() throws IllegalAccessException  {        
         ChoreUser userToInvite = createUserWithEmail("User@ToInvite.com");        
         ChoreUser userWhoInvited = createTestUserAndLogin();
-        ChoreGroup choreGroup = createTestChoreGroup();
-               
+        ChoreGroupUser owner = createTestChoreGroup();
+        ChoreGroup choreGroup = owner.getChoreGroup();
+        
         ChoreGroupUser invitation = new ChoreGroupUser();
         invitation.setChoreGroup(choreGroup);
         invitation.setChoreUser(userToInvite);
@@ -228,7 +231,8 @@ public class ChoreGroupUserControllerTest extends BaseTest {
     public void invitingSelfToGroupShouldFail() throws IllegalAccessException {        
         ChoreUser userWhoInvited = createTestUserAndLogin();
         ChoreUser userToInvite = userWhoInvited;        
-        ChoreGroup choreGroup = createTestChoreGroup();
+        ChoreGroupUser owner = createTestChoreGroup();
+        ChoreGroup choreGroup = owner.getChoreGroup();
         
         ChoreGroupUser invitation = new ChoreGroupUser();
         invitation.setChoreGroup(choreGroup);
@@ -245,8 +249,9 @@ public class ChoreGroupUserControllerTest extends BaseTest {
     public void reinviteToChoreGroupShouldFailAfterAccept() throws IllegalAccessException  {        
         ChoreUser userToInvite = createUserWithEmail("User@ToInvite.com");        
         ChoreUser userWhoInvited = createTestUserAndLogin();
-        ChoreGroup choreGroup = createTestChoreGroup();
-               
+        ChoreGroupUser owner = createTestChoreGroup();
+        ChoreGroup choreGroup = owner.getChoreGroup();
+        
         ChoreGroupUser invitation = new ChoreGroupUser();
         invitation.setChoreGroup(choreGroup);
         invitation.setChoreUser(userToInvite);
@@ -278,7 +283,8 @@ public class ChoreGroupUserControllerTest extends BaseTest {
     @Test
     public void inviteNonExistentUser() throws IllegalAccessException {
         ChoreUser userWhoInvited = createTestUserAndLogin();
-        ChoreGroup choreGroup = createTestChoreGroup();
+        ChoreGroupUser owner = createTestChoreGroup();
+        ChoreGroup choreGroup = owner.getChoreGroup();
         
         ChoreUser userToInvite = new ChoreUser();
         userToInvite.setEmail("Totally@Fake.com");
@@ -299,7 +305,8 @@ public class ChoreGroupUserControllerTest extends BaseTest {
     public void removeUserFromGroup() throws IllegalAccessException, InvalidActivityException {
         ChoreUser userToInvite = createUserWithEmail("User@ToInvite.com");        
         ChoreUser userWhoInvited = createTestUserAndLogin();
-        ChoreGroup choreGroup = createTestChoreGroup();
+        ChoreGroupUser owner = createTestChoreGroup();
+        ChoreGroup choreGroup = owner.getChoreGroup();
         
         inviteUserToChoreGroup(userToInvite, choreGroup);
         
@@ -336,7 +343,8 @@ public class ChoreGroupUserControllerTest extends BaseTest {
     public void updateChoreGroupUserRole() throws IllegalAccessException {
         ChoreUser userToInvite = createUserWithEmail("User@ToInvite.com");        
         ChoreUser userWhoInvited = createTestUserAndLogin();
-        ChoreGroup choreGroup = createTestChoreGroup();
+        ChoreGroupUser owner = createTestChoreGroup();
+        ChoreGroup choreGroup = owner.getChoreGroup();
         
         inviteUserToChoreGroup(userToInvite, choreGroup);
         
@@ -372,12 +380,8 @@ public class ChoreGroupUserControllerTest extends BaseTest {
     @Test
     public void removingOwnerFromGroupShouldFail() throws IllegalAccessException {
         ChoreUser ownerOfGroup = createTestUserAndLogin();
-        ChoreGroup choreGroup = createTestChoreGroup();
-        
-        ChoreGroupUser owner = new ChoreGroupUser();
-        owner.setChoreGroup(choreGroup);
-        owner.setChoreUser(ownerOfGroup);
-        
+        ChoreGroupUser owner = createTestChoreGroup();
+
         try {
             choreGroupUserController.removeChoreGroupUser(owner);
             fail("The owner of the group should not be able to be removed.");
@@ -389,16 +393,11 @@ public class ChoreGroupUserControllerTest extends BaseTest {
     @Test
     public void demotingOwnerInGroupShouldFail() throws IllegalAccessException {
         ChoreUser ownerOfGroup = createTestUserAndLogin();
-        ChoreGroup choreGroup = createTestChoreGroup();
-        
-        ChoreGroupUser owner = new ChoreGroupUser();
-        owner.setChoreGroup(choreGroup);
-        owner.setChoreUser(ownerOfGroup);
-        owner.setChoreGroupUserRole(ChoreGroupUserRole.ADMIN);
+        ChoreGroupUser owner = createTestChoreGroup();
         
         try {
             choreGroupUserController.updateChoreGroupUserRole(owner);
-            fail("The owner of the group should not be able to be removed.");
+            fail("The owner of the group should not be able to be have their rold updated.");
         } catch (InvalidActivityException ex) {
             assertEquals("Removing the owner of a group should be an invalid activity", ex.getMessage(), messageSource.getMessage("non.valid.action", null, Locale.getDefault()));
         }

@@ -15,8 +15,9 @@ import java.util.List;
  */
 public interface ChoreGroupService {
     public ChoreGroup findChoreGroup(Long choreGroupId);
-    public void createChoreGroup(ChoreGroup choreGroup);
+    public ChoreGroupUser createChoreGroup(ChoreGroup choreGroup);
     public ChoreGroup updateChoreGroup(ChoreGroup choreGroup);
+    public void deleteChoreGroup(ChoreGroup choreGroup);
     public List<ChoreGroup> findAllActiveForCurrentUser();
     public List<ChoreGroupUser> findAllActiveMembersForChoreGroup(ChoreGroup choreGroup) throws IllegalAccessException ;
     public List<ChoreGroupUser> findAllMembersForChoreGroup(ChoreGroup choreGroup) throws IllegalAccessException ;

@@ -40,5 +40,10 @@ public class ChoreGroupDaoImpl implements ChoreGroupDao {
     public void updateChoreGroup(ChoreGroup choreGroup) {
         entityManager.merge(choreGroup);
     }
+    
+    @Override
+    public void deleteChoreGroup(ChoreGroup choreGroup) {
+        entityManager.remove(entityManager.merge(choreGroup));
+    }
 
 }

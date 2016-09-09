@@ -6,10 +6,10 @@
             <div class="btn btn-success btn-lg" data-ng-click="beginCreatingChoreGroup()">Create Group <span class="glyphicon glyphicon-plus glyphicon-inline"></span></div>
         </div>        
         <br>
-        <div class="well">
+        <div class="well" data-ng-if="currentUserChoreGroupUsers.length > 0">
             <h4>Groups</h4>
             <div class="btn-group-vertical" >
-                <div class="btn btn-default" data-ng-class="selected.choreGroupUser === currentUserChoreGroupUser ? 'active' : ''" data-ng-repeat="currentUserChoreGroupUser in currentUserChoreGroupUsers" data-ng-click="selected.choreGroupUser = currentUserChoreGroupUser; getAllMembers(currentUserChoreGroupUser.choreGroup)">{{currentUserChoreGroupUser.choreGroup.choreGroupName}}</div>            
+                <div class="btn btn-default" data-ng-class="selected.choreGroupUser === currentUserChoreGroupUser ? 'active' : ''" data-ng-repeat="currentUserChoreGroupUser in currentUserChoreGroupUsers" data-ng-click="selectChoreGroupUser(currentUserChoreGroupUser);">{{currentUserChoreGroupUser.choreGroup.choreGroupName}}</div>            
             </div>
         </div>
         
@@ -79,6 +79,14 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" data-ng-if="selected.choreGroupUser.choreGroupUserRole === 'OWNER'">
+                    <hr>
+                    <div class="col-md-12">
+                        <div id="delete-chore-group-btn-wrapper">
+                            <div class="btn btn-danger btn-lg" data-ng-click="deleteChoreGroup(selected.choreGroupUser.choreGroup)">Delete Group</div>
                         </div>
                     </div>
                 </div>

@@ -15,4 +15,5 @@ public interface ChoreGroupDao {
     public ChoreGroup findChoreGroup(Long choreGroupId);
     public void createChoreGroup(ChoreGroup choreGroup);
     public void updateChoreGroup(ChoreGroup choreGroup);
+    public void deleteChoreGroup(ChoreGroup choreGroup);
 }

@@ -92,3 +92,7 @@ hr {
 .btn-group-vertical {
     width: 100%;    
 }
+
+#delete-chore-group-btn-wrapper {
+    text-align: center;
+}

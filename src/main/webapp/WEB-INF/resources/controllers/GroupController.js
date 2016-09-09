@@ -25,22 +25,22 @@ function registerGroupController($scope, choreGroupService, choreGroupInvitation
         isCurrentUser: function (choreGroupUser) {
             return $scope.userServiceData.user.email === choreGroupUser.choreUser.email;
         },
-        loadMyChoreGroups: function (updatedChoreGroup) {
-            choreGroupInvitationService.findAll().success(function (currentChoreGroupUsers) {                
+        loadMyChoreGroups: function () {
+            choreGroupInvitationService.findAll().success(function (currentChoreGroupUsers) { 
                 $scope.currentUserChoreGroupUsers = currentChoreGroupUsers;
-                if(!updatedChoreGroup) {
+                if($scope.currentUserChoreGroupUsers.length > 0) {
                     $scope.selected.choreGroupUser = ($scope.currentUserChoreGroupUsers.length > 0 ? $scope.currentUserChoreGroupUsers[0] : null);
-                    updatedChoreGroup = $scope.selected.choreGroupUser.choreGroup;
+                    $scope.getAllMembers($scope.selected.choreGroupUser.choreGroup);
                 }
-                $scope.getAllMembers(updatedChoreGroup);                
             });            
         },        
         createNewChoreGroup: function () {
             if (!$scope.newChoreGroupName.length) {
                 return;
             }
-            choreGroupService.create($scope.newChoreGroupName).success(function(choreGroup) {
-                $scope.loadMyChoreGroups(choreGroup);
+            choreGroupService.create($scope.newChoreGroupName).success(function(createdChoreGroupOwner) {
+                $scope.currentUserChoreGroupUsers.push(createdChoreGroupOwner);
+                $scope.selected.choreGroupUser = createdChoreGroupOwner;
                 $scope.creatingChoreGroup = false;
             });
         },
@@ -53,6 +53,10 @@ function registerGroupController($scope, choreGroupService, choreGroupInvitation
             }).error(function(response) {
                 $scope.errorMessages.inviteUser = response.message;
             });
+        },
+        selectChoreGroupUser: function (choreGroupUser) {
+            $scope.selected.choreGroupUser = choreGroupUser;
+            $scope.getAllMembers(choreGroupUser.choreGroup);
         },
         getAllMembers: function (choreGroup) {
             var promise;
@@ -119,18 +123,32 @@ function registerGroupController($scope, choreGroupService, choreGroupInvitation
                     });                    
                 } else {
                     $scope.tryingToCreate = true;
-                    choreGroupService.create(choreGroup).success(function (createdChoreGroup) {
-                        $scope.getAllMembers(createdChoreGroup);
+                    choreGroupService.create(choreGroup).success(function (createdChoreGroupUser) {
+                        $scope.getAllMembers(createdChoreGroupUser.choreGroup);
                         $scope.editError = '';
                         $scope.editingName = false;                        
-                        $scope.choreGroups.push(createdChoreGroup);
-                        $scope.selected.choreGroup = $scope.choreGroups[$scope.choreGroups.length - 1];
-
+                        $scope.currentUserChoreGroupUsers.push(createdChoreGroupUser);
+                        $scope.selected.choreGroupUser = createdChoreGroupUser;
                     }).error(function (response) {
                         $scope.editError = response.message;
                     });     
                 }
             }
+        },
+        deleteChoreGroup: function(choreGroup) {
+            choreGroupService.delete(choreGroup).success(function() {
+                for(var i = 0; i < $scope.currentUserChoreGroupUsers.length; i++) {
+                    if($scope.currentUserChoreGroupUsers[i].choreGroup.id === choreGroup.id) {
+                        $scope.currentUserChoreGroupUsers.splice(i, 1);
+                        break;
+                    }
+                }
+                if($scope.currentUserChoreGroupUsers.length > 0) {
+                    $scope.selected.choreGroupUser = $scope.currentUserChoreGroupUsers[0];
+                } else {
+                    $scope.selected.choreGroupUser = null;
+                }
+            });
         }
     });
 

@@ -21,6 +21,12 @@ angular.module('myChoresApp').factory('choreGroupService', ['$http', '$location'
                 promise = $http.post(url, choreGroup);
                 return promise;
             },
+            delete: function (choreGroup) {
+                var url, promise;
+                url = 'http://' + $location.host() + '/api/chore-group/delete/' + choreGroup.id;                
+                promise = $http.delete(url);
+                return promise;
+            },
             getActiveMembers: function (choreGroup) {
                 var url, promise;
                 url = 'http://' + $location.host() + '/api/chore-group/active-members';

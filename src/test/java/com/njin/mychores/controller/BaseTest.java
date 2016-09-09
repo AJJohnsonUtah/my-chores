@@ -61,13 +61,13 @@ public class BaseTest {
         return userController.createUser(user);        
     }
            
-    public ChoreGroup createTestChoreGroup() {
+    public ChoreGroupUser createTestChoreGroup() {
         ChoreGroup choreGroup = new ChoreGroup();
         choreGroup.setChoreGroupName("Test Chore Group");
         try {
             choreGroupController.createChoreGroup(choreGroup);
             List<ChoreGroupUser> currentChoreGroups = choreGroupUserController.findChoreGroupUsersForCurrentUser();
-            return currentChoreGroups.get(0).getChoreGroup();
+            return currentChoreGroups.get(0);
         } catch (IllegalAccessException ex) {
             fail("Chore group creation should not fail if logged in.");
             return null;

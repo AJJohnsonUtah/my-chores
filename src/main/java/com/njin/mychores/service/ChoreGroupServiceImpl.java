@@ -46,14 +46,15 @@ public class ChoreGroupServiceImpl implements ChoreGroupService {
     }
     
     @Override
-    public void createChoreGroup(ChoreGroup choreGroup) {             
+    public ChoreGroupUser createChoreGroup(ChoreGroup choreGroup) {        
         choreGroupDao.createChoreGroup(choreGroup);
         ChoreGroupUser choreGroupUser = new ChoreGroupUser(choreGroup,
                 sessionService.getCurrentUser(),
                 null,
                 ChoreGroupUserRole.OWNER,
                 ChoreGroupUserStatus.ACCEPTED);        
-        choreGroupUserService.createChoreGroupUser(choreGroupUser);        
+        choreGroupUserService.createChoreGroupUser(choreGroupUser);
+        return choreGroupUser;
     }
     
     @Override
@@ -63,28 +64,33 @@ public class ChoreGroupServiceImpl implements ChoreGroupService {
     }
     
     @Override
+    public void deleteChoreGroup(ChoreGroup choreGroup) {
+        choreGroupDao.deleteChoreGroup(choreGroup);
+    }
+    
+    @Override
     public List<ChoreGroup> findAllActiveForCurrentUser() {
         List<ChoreGroup> choreGroups = new ArrayList<>();
         ChoreUser currentUser = sessionService.getCurrentUser();
         List<ChoreGroupUser> users = choreGroupUserService.findAllForUser(currentUser);
-        for(ChoreGroupUser choreGroupUser : users) {
-            if(EnumSet.of(ChoreGroupUserStatus.ACCEPTED).contains(choreGroupUser.getStatus())) {
+        for (ChoreGroupUser choreGroupUser : users) {
+            if (EnumSet.of(ChoreGroupUserStatus.ACCEPTED).contains(choreGroupUser.getStatus())) {
                 choreGroups.add(choreGroupUser.getChoreGroup());
             }
         }
         return choreGroups;
-    }               
+    }    
     
     @Override
     public List<ChoreGroupUser> findAllActiveMembersForChoreGroup(ChoreGroup choreGroup) throws IllegalAccessException {
         ChoreGroup foundChoreGroup = findChoreGroup(choreGroup.getId());
         List<ChoreGroupUser> choreGroupUsersOfGroup = foundChoreGroup.getChoreGroupUsers();
         List<ChoreGroupUser> listOfUsers = new ArrayList<>();
-        if(!choreGroupUserService.isActiveMemberOfChoreGroup(sessionService.getCurrentUser(), foundChoreGroup)) {
+        if (!choreGroupUserService.isActiveMemberOfChoreGroup(sessionService.getCurrentUser(), foundChoreGroup)) {
             throw new IllegalAccessException(messageSource.getMessage("not.own.data", null, Locale.getDefault()));
         }
-        for(ChoreGroupUser choreGroupUser : choreGroupUsersOfGroup) {
-            if(choreGroupUser.getStatus() == ChoreGroupUserStatus.ACCEPTED) {
+        for (ChoreGroupUser choreGroupUser : choreGroupUsersOfGroup) {
+            if (choreGroupUser.getStatus() == ChoreGroupUserStatus.ACCEPTED) {
                 listOfUsers.add(choreGroupUser);
             }
         }
@@ -95,10 +101,10 @@ public class ChoreGroupServiceImpl implements ChoreGroupService {
     public List<ChoreGroupUser> findAllMembersForChoreGroup(ChoreGroup choreGroup) throws IllegalAccessException {
         List<ChoreGroupUser> choreGroupUsersOfGroup = findChoreGroup(choreGroup.getId()).getChoreGroupUsers();
         List<ChoreGroupUser> listOfUsers = new ArrayList<>();
-        if(!choreGroupUserService.isOwnerOfChoreGroup(sessionService.getCurrentUser(), choreGroup)) {
+        if (!choreGroupUserService.isOwnerOfChoreGroup(sessionService.getCurrentUser(), choreGroup) && !choreGroupUserService.isAdminOfChoreGroup(sessionService.getCurrentUser(), choreGroup)) {
             throw new IllegalAccessException(messageSource.getMessage("not.own.data", null, Locale.getDefault()));
         }
-        for(ChoreGroupUser choreGroupUser : choreGroupUsersOfGroup) {
+        for (ChoreGroupUser choreGroupUser : choreGroupUsersOfGroup) {
             listOfUsers.add(choreGroupUser);
         }
         return listOfUsers;

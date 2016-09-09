@@ -66,12 +66,13 @@ public class ChoreGroupControllerTest extends BaseTest {
         choreGroup.setChoreGroupName(choreGroupName);
         
         assertNull(choreGroup.getId());
-        ChoreGroup createdChoreGroup = new ChoreGroup();
+        ChoreGroupUser createdOwner = new ChoreGroupUser();
         try {
-            createdChoreGroup = choreGroupController.createChoreGroup(choreGroup);
+            createdOwner = choreGroupController.createChoreGroup(choreGroup);
         } catch (IllegalAccessException ex) {
             fail("User is logged in and should have been able to create a chore group.");
         }
+        ChoreGroup createdChoreGroup = createdOwner.getChoreGroup();
         
         assertEquals(createdChoreGroup.getChoreGroupName(), choreGroupName);
         assertNotNull(createdChoreGroup.getId());                
@@ -94,15 +95,18 @@ public class ChoreGroupControllerTest extends BaseTest {
         String choreGroupName2 = "Test 2 Chore Group";
         choreGroup2.setChoreGroupName(choreGroupName2);
         
-        ChoreGroup createdChoreGroup1 = new ChoreGroup();
-        ChoreGroup createdChoreGroup2 = new ChoreGroup();
+        ChoreGroupUser createdOwner1 = new ChoreGroupUser();
+        ChoreGroupUser createdOwner2 = new ChoreGroupUser();
         
         try {
-            createdChoreGroup1 = choreGroupController.createChoreGroup(choreGroup1);
-            createdChoreGroup2 = choreGroupController.createChoreGroup(choreGroup2);
+            createdOwner1 = choreGroupController.createChoreGroup(choreGroup1);
+            createdOwner2 = choreGroupController.createChoreGroup(choreGroup2);
         } catch (IllegalAccessException ex) {
             fail("User is logged in and should be create a chore group.");
         }
+        
+        ChoreGroup createdChoreGroup1 = createdOwner1.getChoreGroup();
+        ChoreGroup createdChoreGroup2 = createdOwner2.getChoreGroup();
         
         assertEquals(createdChoreGroup1.getChoreGroupName(), choreGroup1.getChoreGroupName());
         assertEquals(createdChoreGroup2.getChoreGroupName(), choreGroup2.getChoreGroupName());
@@ -140,18 +144,18 @@ public class ChoreGroupControllerTest extends BaseTest {
     public void findAllUsersOfChoreGroup() throws IllegalAccessException {
         ChoreUser userToInvite = createUserWithEmail("user@toInvite.com");
         ChoreUser userWhoInvited = createTestUserAndLogin();
-        ChoreGroup choreGroup = createTestChoreGroup();
+        ChoreGroupUser choreGroupUser = createTestChoreGroup();
         
-        List<ChoreGroupUser> activeMembers = choreGroupController.activeMembersOfChoreGroup(choreGroup);
+        List<ChoreGroupUser> activeMembers = choreGroupController.activeMembersOfChoreGroup(choreGroupUser.getChoreGroup());
         assertEquals("There should only be 1 active member upon creation of chore group.", 1, activeMembers.size());
         
-        inviteUserToChoreGroup(userToInvite, choreGroup);
+        inviteUserToChoreGroup(userToInvite, choreGroupUser.getChoreGroup());
         
         userController.logout();
         userController.login(userToInvite);
         
         try {
-            choreGroupController.activeMembersOfChoreGroup(choreGroup);
+            choreGroupController.activeMembersOfChoreGroup(choreGroupUser.getChoreGroup());
             fail("User should be unable to access this data before accepting invitation.");
         } catch (IllegalAccessException ex) {
             assertEquals("Error message should be 'not own data'", ex.getMessage(), messageSource.getMessage("not.own.data", null, Locale.getDefault()));
@@ -159,23 +163,23 @@ public class ChoreGroupControllerTest extends BaseTest {
         
         acceptAllInvitations();
         
-        activeMembers = choreGroupController.activeMembersOfChoreGroup(choreGroup);
+        activeMembers = choreGroupController.activeMembersOfChoreGroup(choreGroupUser.getChoreGroup());
         assertEquals("There should be 2 active members of chore group upon accepting invitation.", 2, activeMembers.size());
         
         userController.logout();
         userController.login(userWhoInvited);        
         
-        activeMembers = choreGroupController.activeMembersOfChoreGroup(choreGroup);
+        activeMembers = choreGroupController.activeMembersOfChoreGroup(choreGroupUser.getChoreGroup());
         assertEquals("There should be 2 active members of chore group upon accepting invitation.", 2, activeMembers.size());        
     }
     
     @Test
     public void updateChoreGroupName() throws IllegalAccessException {
         ChoreUser currentUser = createTestUserAndLogin();
-        ChoreGroup testGroup = createTestChoreGroup();
-        String originalName = testGroup.getChoreGroupName();
-        testGroup.setChoreGroupName(originalName + " Updated");
-        ChoreGroup updatedChoreGroup = choreGroupController.updateChoreGroup(testGroup);
+        ChoreGroupUser testChoreGroupUser = createTestChoreGroup();
+        String originalName = testChoreGroupUser.getChoreGroup().getChoreGroupName();
+        testChoreGroupUser.getChoreGroup().setChoreGroupName(originalName + " Updated");
+        ChoreGroup updatedChoreGroup = choreGroupController.updateChoreGroup(testChoreGroupUser.getChoreGroup());
         
         assertEquals("Chore group name should change on update.", originalName + " Updated", updatedChoreGroup.getChoreGroupName());        
     }

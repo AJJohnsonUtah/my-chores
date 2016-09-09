@@ -12,6 +12,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,10 +31,9 @@ public class ChoreGroupController extends BaseController {
     ChoreGroupService choreGroupService;
         
     @RequestMapping(value = "/create", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ChoreGroup createChoreGroup(@RequestBody ChoreGroup choreGroup) throws IllegalAccessException {
+    public ChoreGroupUser createChoreGroup(@RequestBody ChoreGroup choreGroup) throws IllegalAccessException {
         checkRequiredAuthentication();
-        choreGroupService.createChoreGroup(choreGroup);
-        return choreGroupService.findChoreGroup(choreGroup.getId());
+        return choreGroupService.createChoreGroup(choreGroup);        
     }
         
     @RequestMapping(value = "/update", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -41,6 +41,11 @@ public class ChoreGroupController extends BaseController {
         checkRequiredAuthentication();
         return choreGroupService.updateChoreGroup(choreGroup);
     }        
+    
+    @RequestMapping(value = "/delete/{choreGroupId}", method = RequestMethod.DELETE)
+    public void deleteChoreGroup(@PathVariable Long choreGroupId) throws IllegalAccessException {
+        choreGroupService.deleteChoreGroup(choreGroupService.findChoreGroup(choreGroupId));
+    }
     
     @RequestMapping(value = "/active-members", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<ChoreGroupUser> activeMembersOfChoreGroup(@RequestBody ChoreGroup choreGroup) throws IllegalAccessException {

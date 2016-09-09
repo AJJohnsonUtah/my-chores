@@ -33,7 +33,7 @@ public class ChoreGroup implements Serializable {
     @Column(name="chore_group_name")
     private String choreGroupName;
 
-    @OneToMany(mappedBy="choreGroup", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="choreGroup", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ChoreGroupUser> choreGroupUsers;
     
     public ChoreGroup() {        
