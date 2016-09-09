@@ -40,13 +40,7 @@ public class ChoreGroupController extends BaseController {
     public ChoreGroup updateChoreGroup(@RequestBody ChoreGroup choreGroup) throws IllegalAccessException {
         checkRequiredAuthentication();
         return choreGroupService.updateChoreGroup(choreGroup);
-    }
-    
-    @RequestMapping(value = "/read-all", method = RequestMethod.GET)
-    public List<ChoreGroup> readAllChoreGroups() throws IllegalAccessException {        
-        checkRequiredAuthentication();
-        return choreGroupService.findAllActiveForCurrentUser();
-    }
+    }        
     
     @RequestMapping(value = "/active-members", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<ChoreGroupUser> activeMembersOfChoreGroup(@RequestBody ChoreGroup choreGroup) throws IllegalAccessException {

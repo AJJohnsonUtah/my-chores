@@ -1,8 +1,3 @@
-html {
-    background-color: #EEEFF7;
-    color: #445878; 
-}
-
 #account-forms {
     margin-top: 200px;
 }
@@ -89,6 +84,11 @@ hr {
 .alert {
     margin-left: 5px;
     margin-right: 5px;
-    margin-top: 5px;
+    margin-top: 8px;
+    margin-bottom: 8px;
     text-align: center;
+}
+
+.btn-group-vertical {
+    width: 100%;    
 }

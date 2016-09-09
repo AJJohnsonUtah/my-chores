@@ -64,6 +64,17 @@ public class ChoreGroupUserServiceImpl implements ChoreGroupUserService {
     }
 
     @Override
+    public ChoreGroupUser findChoreGroupUser(ChoreGroupUser choreGroupUser) {
+        if(choreGroupUser.getId() != null) {
+            return choreGroupUserDao.find(choreGroupUser.getId());
+        } else if (choreGroupUser.getChoreGroup() != null && choreGroupUser.getChoreUser() != null) {
+            return choreGroupUserDao.findChoreGroupUser(choreGroupUser.getChoreGroup(), choreGroupUser.getChoreUser());
+        } else {
+            throw new IllegalArgumentException(messageSource.getMessage("not.enough.data", null, Locale.getDefault()));
+        }
+    }    
+    
+    @Override
     public void acceptChoreGroupInvitation(ChoreGroupUser invitation) {                
         ChoreUser userToInvite = sessionService.getCurrentUser();
         ChoreGroup choreGroup = choreGroupService.findChoreGroup(invitation.getChoreGroup().getId());
@@ -158,7 +169,7 @@ public class ChoreGroupUserServiceImpl implements ChoreGroupUserService {
     @Override
     public void removeChoreGroupUser(ChoreGroupUser choreGroupUser) throws IllegalAccessException, InvalidActivityException {
         ChoreUser currentUser = sessionService.getCurrentUser();
-        ChoreGroupUser userToRemove = choreGroupUserDao.find(choreGroupUser.getId());
+        ChoreGroupUser userToRemove = findChoreGroupUser(choreGroupUser);
         if(userToRemove.getChoreGroupUserRole() == ChoreGroupUserRole.OWNER) {
             throw new InvalidActivityException(messageSource.getMessage("non.valid.action", null, Locale.getDefault()));
         }
@@ -177,8 +188,8 @@ public class ChoreGroupUserServiceImpl implements ChoreGroupUserService {
     @Override
     public void updateChoreGroupUserRole(ChoreGroupUser choreGroupUser) throws IllegalAccessException, InvalidActivityException {
         ChoreUser currentUser = sessionService.getCurrentUser();
-        ChoreGroupUser choreGroupUserToUpdate = choreGroupUserDao.find(choreGroupUser.getId());
-        if(choreGroupUserToUpdate.getChoreGroupUserRole() == ChoreGroupUserRole.OWNER || currentUser.equals(choreGroupUserToUpdate.getChoreUser())) {
+        ChoreGroupUser choreGroupUserToUpdate = findChoreGroupUser(choreGroupUser);
+        if(choreGroupUserToUpdate.getChoreGroupUserRole() == ChoreGroupUserRole.OWNER || currentUser.equals(choreGroupUserToUpdate.getChoreUser()) || choreGroupUser.getChoreGroupUserRole() == ChoreGroupUserRole.OWNER) {
             throw new InvalidActivityException(messageSource.getMessage("non.valid.action", null, Locale.getDefault()));
         }
         if(isOwnerOfChoreGroup(currentUser, choreGroupUserToUpdate.getChoreGroup())) {

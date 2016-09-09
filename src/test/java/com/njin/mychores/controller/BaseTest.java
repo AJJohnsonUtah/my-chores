@@ -66,8 +66,8 @@ public class BaseTest {
         choreGroup.setChoreGroupName("Test Chore Group");
         try {
             choreGroupController.createChoreGroup(choreGroup);
-            List<ChoreGroup> currentChoreGroups = choreGroupController.readAllChoreGroups();
-            return currentChoreGroups.get(0);
+            List<ChoreGroupUser> currentChoreGroups = choreGroupUserController.findChoreGroupUsersForCurrentUser();
+            return currentChoreGroups.get(0).getChoreGroup();
         } catch (IllegalAccessException ex) {
             fail("Chore group creation should not fail if logged in.");
             return null;
@@ -85,8 +85,8 @@ public class BaseTest {
         }
     }
     
-    public void acceptAllInvitations() {
-        try {
+    public void acceptAllInvitations() {    
+       try {
             for(ChoreGroupUser invitation : choreGroupUserController.findAllPendingReceivedInvitations()) {
                 choreGroupUserController.acceptChoreGroupInvitation(invitation);
             }            

@@ -47,6 +47,12 @@ public class ChoreGroupUserController extends BaseController {
         choreGroupUserService.declineChoreGroupInvitation(choreGroupUser);
     }
     
+    @RequestMapping(value = "/find-all ", method = RequestMethod.GET)
+    public List<ChoreGroupUser> findChoreGroupUsersForCurrentUser() throws IllegalAccessException {        
+        checkRequiredAuthentication();
+        return choreGroupUserService.findAllForUser(sessionService.getCurrentUser());
+    }
+    
     @RequestMapping(value = "/find-all-sent", method = RequestMethod.GET)
     public List<ChoreGroupUser> findAllPendingSentInvitations() throws IllegalAccessException {
         checkRequiredAuthentication();

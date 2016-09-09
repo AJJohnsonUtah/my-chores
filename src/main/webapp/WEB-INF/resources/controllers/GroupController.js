@@ -25,42 +25,57 @@ function registerGroupController($scope, choreGroupService, choreGroupInvitation
         isCurrentUser: function (choreGroupUser) {
             return $scope.userServiceData.user.email === choreGroupUser.choreUser.email;
         },
-        loadMyChoreGroups: function () {
-            choreGroupService.readAll().then(function (response) {
-                if (response.data) {
-                    $scope.choreGroups = response.data;
-                    $scope.selected.choreGroup = ($scope.choreGroups.length > 0 ? $scope.choreGroups[0] : null);
-                    $scope.getAllMembers($scope.selected.choreGroup);
+        loadMyChoreGroups: function (updatedChoreGroup) {
+            choreGroupInvitationService.findAll().success(function (currentChoreGroupUsers) {                
+                $scope.currentUserChoreGroupUsers = currentChoreGroupUsers;
+                if(!updatedChoreGroup) {
+                    $scope.selected.choreGroupUser = ($scope.currentUserChoreGroupUsers.length > 0 ? $scope.currentUserChoreGroupUsers[0] : null);
+                    updatedChoreGroup = $scope.selected.choreGroupUser.choreGroup;
                 }
-            });
-            $scope.creatingChoreGroup = false;
+                $scope.getAllMembers(updatedChoreGroup);                
+            });            
         },        
         createNewChoreGroup: function () {
             if (!$scope.newChoreGroupName.length) {
                 return;
             }
-            choreGroupService.create($scope.newChoreGroupName).then(function() {
-                choreGroupService.readAll()
+            choreGroupService.create($scope.newChoreGroupName).success(function(choreGroup) {
+                $scope.loadMyChoreGroups(choreGroup);
+                $scope.creatingChoreGroup = false;
             });
         },
         sendInvitation: function (choreGroup, recipientEmail) {
             choreGroupInvitationService.sendInvite(choreGroup, recipientEmail).success(function() {
                 $scope.inviteErrorMessage = '';
+                $scope.successfulInvite = recipientEmail;
                 userService.reloadSentInvitations();
                 $scope.getAllMembers(choreGroup);
             }).error(function(response) {
-                $scope.inviteErrorMessage = response.message;
+                $scope.errorMessages.inviteUser = response.message;
             });
         },
         getAllMembers: function (choreGroup) {
-            choreGroupService.getAllMembers(choreGroup).success(function(allMembers) {
-                choreGroup.choreGroupUsers = allMembers;
-                $scope.selected.choreGroup = choreGroup;
+            var promise;
+            if($scope.selected.choreGroupUser.choreGroupUserRole === 'MEMBER') {
+                promise = choreGroupService.getActiveMembers(choreGroup);
+            } else {
+                promise = choreGroupService.getAllMembers(choreGroup);
+            }
+            
+            promise.success(function(allMembers) {
+                for(var i = 0; i < $scope.currentUserChoreGroupUsers.length; i++) {
+                    if($scope.currentUserChoreGroupUsers[i].choreGroup.id === choreGroup.id) {
+                        $scope.currentUserChoreGroupUsers[i].choreGroup.choreGroupUsers = allMembers;
+                        return;
+                    }
+                }
+                
             });
         },
         removeChoreGroupUser: function (choreGroup, choreGroupUser) {
             choreGroupInvitationService.removeChoreGroupUser(choreGroupUser).success(function() {
                 choreGroupService.getAllMembers(choreGroup);
+                choreGroupUser.status = 'REMOVED';
             });
         },
         updateChoreGroupUserRole: function (choreGroup, choreGroupUser) {
@@ -69,7 +84,7 @@ function registerGroupController($scope, choreGroupService, choreGroupInvitation
             });
         },
         beginCreatingChoreGroup: function () {
-            $scope.selected.choreGroup = {};
+            $scope.selected.choreGroupUser = {choreGroup: {}};
             $scope.editingName=true;
             $scope.selected.updatedName = '';
             $timeout(function() {
@@ -119,7 +134,7 @@ function registerGroupController($scope, choreGroupService, choreGroupInvitation
         }
     });
 
-    $scope.loadMyChoreGroups();
+    $scope.loadMyChoreGroups(null);
 }
 
 angular.module('myChoresApp').controller('groupController', ['$scope', 'choreGroupService', 'choreGroupInvitationService', 'userService', '$timeout', registerGroupController]);

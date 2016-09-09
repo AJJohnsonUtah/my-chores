@@ -111,9 +111,13 @@ public class ChoreGroupControllerTest extends BaseTest {
         assertEquals(createdChoreGroup2.getChoreGroupUsers().get(0).getChoreUser(), userController.getCurrentUser());
         
         try {
-            List<ChoreGroup> choreGroups = choreGroupController.readAllChoreGroups();
-            assertNotNull("Created chore groups list should not be null.", choreGroups);
-            assertEquals(choreGroups.size(), 2);
+            List<ChoreGroupUser> activeMembers = choreGroupController.activeMembersOfChoreGroup(choreGroup1);
+            assertNotNull("Created chore groups list should not be null.", activeMembers);
+            assertEquals(activeMembers.size(), 1);
+            
+            activeMembers = choreGroupController.activeMembersOfChoreGroup(choreGroup2);
+            assertNotNull("Created chore groups list should not be null.", activeMembers);
+            assertEquals(activeMembers.size(), 1);
         } catch (IllegalAccessException ex) {
             fail("User is logged in and should be able to read all chore groups.");
         }
@@ -127,16 +131,6 @@ public class ChoreGroupControllerTest extends BaseTest {
         try {
             choreGroupController.createChoreGroup(choreGroup);
             fail("Should not be able to create a chore group when not logged in.");
-        } catch (IllegalAccessException ex) {
-            assertEquals("Exception message should be 'login required' message", ex.getMessage(), messageSource.getMessage("login.required", null, Locale.getDefault()));
-        }
-    }
-    
-    @Test
-    public void findAllChoreGroupsWithoutLogin() throws IllegalAccessException {
-        try {
-        choreGroupController.readAllChoreGroups();
-            fail("Should not be able to read all chore groups when not logged in.");
         } catch (IllegalAccessException ex) {
             assertEquals("Exception message should be 'login required' message", ex.getMessage(), messageSource.getMessage("login.required", null, Locale.getDefault()));
         }

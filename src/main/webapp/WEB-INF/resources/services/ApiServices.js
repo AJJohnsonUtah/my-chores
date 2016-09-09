@@ -21,12 +21,6 @@ angular.module('myChoresApp').factory('choreGroupService', ['$http', '$location'
                 promise = $http.post(url, choreGroup);
                 return promise;
             },
-            readAll: function () {
-                var url, promise;
-                url = 'http://' + $location.host() + '/api/chore-group/read-all';
-                promise = $http.get(url);
-                return promise;
-            },
             getActiveMembers: function (choreGroup) {
                 var url, promise;
                 url = 'http://' + $location.host() + '/api/chore-group/active-members';
@@ -100,6 +94,12 @@ angular.module('myChoresApp').factory('choreGroupInvitationService', ['$http', '
                     choreGroupUserRole: choreGroupUser.choreGroupUserRole
                 };
                 promise = $http.post(url, postData);
+                return promise;
+            },
+            findAll: function () {
+                var url, promise;
+                url = 'http://' + $location.host() + '/api/chore-group-user/find-all';
+                promise = $http.get(url);
                 return promise;
             }
         }; 

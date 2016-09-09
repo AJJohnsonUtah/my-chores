@@ -77,9 +77,10 @@ public class ChoreGroupServiceImpl implements ChoreGroupService {
     
     @Override
     public List<ChoreGroupUser> findAllActiveMembersForChoreGroup(ChoreGroup choreGroup) throws IllegalAccessException {
-        List<ChoreGroupUser> choreGroupUsersOfGroup = choreGroup.getChoreGroupUsers();
+        ChoreGroup foundChoreGroup = findChoreGroup(choreGroup.getId());
+        List<ChoreGroupUser> choreGroupUsersOfGroup = foundChoreGroup.getChoreGroupUsers();
         List<ChoreGroupUser> listOfUsers = new ArrayList<>();
-        if(!choreGroupUserService.isActiveMemberOfChoreGroup(sessionService.getCurrentUser(), choreGroup)) {
+        if(!choreGroupUserService.isActiveMemberOfChoreGroup(sessionService.getCurrentUser(), foundChoreGroup)) {
             throw new IllegalAccessException(messageSource.getMessage("not.own.data", null, Locale.getDefault()));
         }
         for(ChoreGroupUser choreGroupUser : choreGroupUsersOfGroup) {

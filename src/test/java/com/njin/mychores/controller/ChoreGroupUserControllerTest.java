@@ -13,6 +13,7 @@ import com.njin.mychores.model.ChoreGroupUserStatus;
 import com.njin.mychores.model.ChoreUser;
 import java.util.List;
 import java.util.Locale;
+import javax.activity.InvalidActivityException;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -93,23 +94,36 @@ public class ChoreGroupUserControllerTest extends BaseTest {
         assertEquals("The recipient should be the other user.", userToInvite.getEmail(), invitation.getChoreUser().getEmail());
         assertEquals("The status should be pending.", invitation.getStatus(), ChoreGroupUserStatus.PENDING);  
         
-        List<ChoreGroup> activeChoreGroups = choreGroupController.readAllChoreGroups();
-        assertEquals("The recipient should not have any active chore groups yet", 0, activeChoreGroups.size());
+        List<ChoreGroupUser> activeChoreGroups = choreGroupUserController.findChoreGroupUsersForCurrentUser();
+        assertEquals("The recipient should have 1 chore group.", 1, activeChoreGroups.size());
+        assertEquals("The recipient should not have any active chore groups yet", ChoreGroupUserStatus.PENDING, activeChoreGroups.get(0).getStatus());
+        
         
         choreGroupUserController.acceptChoreGroupInvitation(invitation);
         
         receivedInvitations = choreGroupUserController.findAllPendingReceivedInvitations();
         assertEquals("0 invitations should exist .", 0, receivedInvitations.size());
         
-        activeChoreGroups = choreGroupController.readAllChoreGroups();
-        assertEquals("The recipient should have an active chore group.", 1, activeChoreGroups.size());
+        activeChoreGroups = choreGroupUserController.findChoreGroupUsersForCurrentUser();
+        assertEquals("The recipient should have 1 chore group.", 1, activeChoreGroups.size());
+        assertEquals("The recipient should not have any active chore groups yet", ChoreGroupUserStatus.ACCEPTED, activeChoreGroups.get(0).getStatus());
         
-        ChoreGroup acceptedChoreGroup = activeChoreGroups.get(0);
-        assertEquals("The accepted chore group should be the same as the first created.", choreGroup.getChoreGroupName(), acceptedChoreGroup.getChoreGroupName());
+        ChoreGroupUser acceptedChoreGroup = activeChoreGroups.get(0);
+        assertEquals("The accepted chore group should be the same as the first created.", choreGroup.getChoreGroupName(), acceptedChoreGroup.getChoreGroup().getChoreGroupName());
         
-        List<ChoreGroupUser> membersOfGroup = acceptedChoreGroup.getChoreGroupUsers();
+        List<ChoreGroupUser> membersOfGroup = acceptedChoreGroup.getChoreGroup().getChoreGroupUsers();
         assertEquals("There should be 2 members in this group now.", 2, membersOfGroup.size());
     }
+    
+    @Test
+    public void findAllChoreGroupsWithoutLogin() throws IllegalAccessException {
+        try {
+        choreGroupUserController.findChoreGroupUsersForCurrentUser();
+            fail("Should not be able to read all chore groups when not logged in.");
+        } catch (IllegalAccessException ex) {
+            assertEquals("Exception message should be 'login required' message", ex.getMessage(), messageSource.getMessage("login.required", null, Locale.getDefault()));
+        }
+    }   
     
     @Test
     public void declineInviteToChoreGroup() throws IllegalAccessException {
@@ -143,17 +157,19 @@ public class ChoreGroupUserControllerTest extends BaseTest {
         assertEquals("The recipient should be the other user.", userToInvite.getEmail(), invitation.getChoreUser().getEmail());
         assertEquals("The status should be pending.", invitation.getStatus(), ChoreGroupUserStatus.PENDING);  
         
-        List<ChoreGroup> activeChoreGroups = choreGroupController.readAllChoreGroups();
-        assertEquals("The recipient should not have any active chore groups yet", 0, activeChoreGroups.size());
-        
+        List<ChoreGroupUser> activeChoreGroups = choreGroupUserController.findChoreGroupUsersForCurrentUser();
+        assertEquals("The recipient should have 1 chore group.", 1, activeChoreGroups.size());
+        assertEquals("The recipient should not have any active chore groups yet", ChoreGroupUserStatus.PENDING, activeChoreGroups.get(0).getStatus());
+
         choreGroupUserController.declineChoreGroupInvitation(invitation);
         
         receivedInvitations = choreGroupUserController.findAllPendingReceivedInvitations();
         assertEquals("0 invitations should exist .", 0, receivedInvitations.size());
         
-        activeChoreGroups = choreGroupController.readAllChoreGroups();
-        assertEquals("The recipient should not have any active chore groups yet", 0, activeChoreGroups.size());
-        
+        activeChoreGroups = choreGroupUserController.findChoreGroupUsersForCurrentUser();
+        assertEquals("The recipient should have 1 chore group.", 1, activeChoreGroups.size());
+        assertEquals("The recipient should not have any active chore groups yet", ChoreGroupUserStatus.DECLINED, activeChoreGroups.get(0).getStatus());
+
     }
     
     @Test
@@ -280,7 +296,7 @@ public class ChoreGroupUserControllerTest extends BaseTest {
     }
     
     @Test
-    public void removeUserFromGroup() throws IllegalAccessException {
+    public void removeUserFromGroup() throws IllegalAccessException, InvalidActivityException {
         ChoreUser userToInvite = createUserWithEmail("User@ToInvite.com");        
         ChoreUser userWhoInvited = createTestUserAndLogin();
         ChoreGroup choreGroup = createTestChoreGroup();
@@ -350,6 +366,41 @@ public class ChoreGroupUserControllerTest extends BaseTest {
         
         for(ChoreGroupUser activeMember : activeMembers) {
             assertEquals("After updating role, all users should be owners.", ChoreGroupUserRole.OWNER, activeMember.getChoreGroupUserRole());
+        }
+    }
+    
+    @Test
+    public void removingOwnerFromGroupShouldFail() throws IllegalAccessException {
+        ChoreUser ownerOfGroup = createTestUserAndLogin();
+        ChoreGroup choreGroup = createTestChoreGroup();
+        
+        ChoreGroupUser owner = new ChoreGroupUser();
+        owner.setChoreGroup(choreGroup);
+        owner.setChoreUser(ownerOfGroup);
+        
+        try {
+            choreGroupUserController.removeChoreGroupUser(owner);
+            fail("The owner of the group should not be able to be removed.");
+        } catch (InvalidActivityException ex) {
+            assertEquals("Removing the owner of a group should be an invalid activity", ex.getMessage(), messageSource.getMessage("non.valid.action", null, Locale.getDefault()));
+        }
+    }
+    
+    @Test
+    public void demotingOwnerInGroupShouldFail() throws IllegalAccessException {
+        ChoreUser ownerOfGroup = createTestUserAndLogin();
+        ChoreGroup choreGroup = createTestChoreGroup();
+        
+        ChoreGroupUser owner = new ChoreGroupUser();
+        owner.setChoreGroup(choreGroup);
+        owner.setChoreUser(ownerOfGroup);
+        owner.setChoreGroupUserRole(ChoreGroupUserRole.ADMIN);
+        
+        try {
+            choreGroupUserController.updateChoreGroupUserRole(owner);
+            fail("The owner of the group should not be able to be removed.");
+        } catch (InvalidActivityException ex) {
+            assertEquals("Removing the owner of a group should be an invalid activity", ex.getMessage(), messageSource.getMessage("non.valid.action", null, Locale.getDefault()));
         }
     }
 }
