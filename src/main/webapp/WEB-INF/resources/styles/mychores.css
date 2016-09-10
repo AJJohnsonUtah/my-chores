@@ -96,3 +96,7 @@ hr {
 #delete-chore-group-btn-wrapper {
     text-align: center;
 }
+
+#create-group-btn {
+    width: 100%;
+}

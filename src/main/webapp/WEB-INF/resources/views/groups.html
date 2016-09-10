@@ -3,7 +3,7 @@
 <div class="row">
     <div class="col-md-3">
         <div class="well">
-            <div class="btn btn-success btn-lg" data-ng-click="beginCreatingChoreGroup()">Create Group <span class="glyphicon glyphicon-plus glyphicon-inline"></span></div>
+            <div id="create-group-btn" class="btn btn-success btn-lg" data-ng-click="beginCreatingChoreGroup()">Create Group <span class="glyphicon glyphicon-plus glyphicon-inline"></span></div>
         </div>        
         <br>
         <div class="well" data-ng-if="currentUserChoreGroupUsers.length > 0">
@@ -11,8 +11,7 @@
             <div class="btn-group-vertical" >
                 <div class="btn btn-default" data-ng-class="selected.choreGroupUser === currentUserChoreGroupUser ? 'active' : ''" data-ng-repeat="currentUserChoreGroupUser in currentUserChoreGroupUsers" data-ng-click="selectChoreGroupUser(currentUserChoreGroupUser);">{{currentUserChoreGroupUser.choreGroup.choreGroupName}}</div>            
             </div>
-        </div>
-        
+        </div>        
     </div>
     <div class="col-md-9" id="chore-group-manager">
         <div data-ng-show="!selected.choreGroupUser">Select a chore group!</div>
@@ -67,7 +66,7 @@
                                     <div data-ng-repeat="choreGroupUser in selected.choreGroupUser.choreGroup.choreGroupUsers | filter : isActiveMember">
                                         <div class="input-group">
                                             <span class="input-group-addon">{{choreGroupUser.choreUser.email}}</span>
-                                            <select class="form-control" data-ng-change="updateChoreGroupUserRole(selected.choreGroupUser.choreGroup, choreGroupUser)" data-ng-model="choreGroupUser.choreGroupUserRole" data-ng-disabled="choreGroupUser.choreGroupUserRole === 'OWNER'">
+                                            <select class="form-control" data-ng-change="updateChoreGroupUserRole(selected.choreGroupUser.choreGroup, choreGroupUser)" data-ng-model="choreGroupUser.choreGroupUserRole" data-ng-disabled="choreGroupUser.choreGroupUserRole === 'OWNER' || selected.choreGroupUser.choreGroupUserRole === 'MEMBER'">
                                                 <option value="OWNER">Owner</option>
                                                 <option value="ADMIN">Admin</option>
                                                 <option value="MEMBER">Member</option>

@@ -44,8 +44,9 @@ public class ChoreGroupController extends BaseController {
     
     @RequestMapping(value = "/delete/{choreGroupId}", method = RequestMethod.DELETE)
     public void deleteChoreGroup(@PathVariable Long choreGroupId) throws IllegalAccessException {
+        checkRequiredAuthentication();
         choreGroupService.deleteChoreGroup(choreGroupService.findChoreGroup(choreGroupId));
-    }
+    }        
     
     @RequestMapping(value = "/active-members", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<ChoreGroupUser> activeMembersOfChoreGroup(@RequestBody ChoreGroup choreGroup) throws IllegalAccessException {

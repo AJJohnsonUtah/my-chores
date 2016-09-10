@@ -13,6 +13,10 @@ angular.module("myChoresApp", ['ngRoute', 'ngCookies', 'ui.bootstrap', 'ngAnimat
             controllerAs: 'loginCtrl'
         }).when('/groups', {
             templateUrl : '/resources/views/groups.html',
+            controller: 'groupsController',
+            controllerAs: 'groupsCtrl'
+        }).when('/group/:choreGroupUserId', {
+            templateUrl : '/resources/views/group.html',
             controller: 'groupController',
             controllerAs: 'groupCtrl'
         }).otherwise({
