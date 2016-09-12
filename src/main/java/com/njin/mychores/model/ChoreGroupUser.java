@@ -5,17 +5,20 @@
  */
 package com.njin.mychores.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import javax.persistence.CascadeType;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -60,7 +63,13 @@ public class ChoreGroupUser implements Serializable {
     @UpdateTimestamp
     @Column(name = "updated")
     private Timestamp updated;
+    
+    @OneToMany(mappedBy="preferredDoer", fetch = FetchType.LAZY)
+    private List<ChoreSpec> choresThatPreferUser;
 
+    @OneToMany(mappedBy="doer", fetch = FetchType.LAZY)
+    private List<Chore> chores;
+    
     public ChoreGroupUser() {
     }
     
@@ -128,4 +137,21 @@ public class ChoreGroupUser implements Serializable {
         this.updated = updated;
     }
 
+    @JsonIgnore
+    public List<ChoreSpec> getChoresThatPreferUser() {
+        return choresThatPreferUser;
+    }
+
+    public void setChoresThatPreferUser(List<ChoreSpec> choresThatPreferUser) {
+        this.choresThatPreferUser = choresThatPreferUser;
+    }        
+
+    @JsonIgnore
+    public List<Chore> getChores() {
+        return chores;
+    }
+
+    public void setChores(List<Chore> chores) {
+        this.chores = chores;
+    }   
 }

@@ -8,9 +8,12 @@ package com.njin.mychores.controller;
 import com.njin.mychores.config.JpaConfiguration;
 import com.njin.mychores.model.ChoreGroup;
 import com.njin.mychores.model.ChoreGroupUser;
+import com.njin.mychores.model.ChoreSpec;
 import com.njin.mychores.model.ChoreUser;
 import com.njin.mychores.service.SessionService;
+import java.util.Date;
 import java.util.List;
+import javax.activity.InvalidActivityException;
 import static org.junit.Assert.fail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -38,15 +41,21 @@ public class BaseTest {
     ChoreGroupUserController choreGroupUserController;
     
     @Autowired
+    ChoreSpecController choreSpecController;
+    
+    @Autowired
+    ChoreController choreController;
+    
+    @Autowired
     SessionService sessionService;
     
     @Autowired
-    MessageSource messageSource;
+    MessageSource messageSource;        
     
     public ChoreUser createTestUserAndLogin() {
         ChoreUser user = new ChoreUser();
-        user.setEmail("test@test.com");
-        user.setPassword("fakearoni??22");
+        user.setEmail(TestConstants.testEmail1);
+        user.setPassword(TestConstants.testPassword1);
         
         userController.createUser(user);               
         userController.login(user);
@@ -56,14 +65,14 @@ public class BaseTest {
     public ChoreUser createUserWithEmail(String email) {
         ChoreUser user = new ChoreUser();
         user.setEmail(email);
-        user.setPassword("fakearoni??22");
+        user.setPassword(TestConstants.testPassword1);
         
         return userController.createUser(user);        
     }
            
     public ChoreGroupUser createTestChoreGroup() {
         ChoreGroup choreGroup = new ChoreGroup();
-        choreGroup.setChoreGroupName("Test Chore Group");
+        choreGroup.setChoreGroupName(TestConstants.testChoreGroupName);
         try {
             choreGroupController.createChoreGroup(choreGroup);
             List<ChoreGroupUser> currentChoreGroups = choreGroupUserController.findChoreGroupUsersForCurrentUser();
@@ -72,6 +81,35 @@ public class BaseTest {
             fail("Chore group creation should not fail if logged in.");
             return null;
         }
+    }
+    
+    public ChoreSpec createTestChoreSpecWithPreferredUser(ChoreGroupUser choreGroupUser) throws InvalidActivityException {
+        ChoreSpec choreSpecToCreate = new ChoreSpec();
+        choreSpecToCreate.setChoreGroup(choreGroupUser.getChoreGroup());
+        choreSpecToCreate.setName(TestConstants.testChoreSpecName);
+        choreSpecToCreate.setFrequency(TestConstants.frequencyMondays);
+        choreSpecToCreate.setNextInstanceDate(TestConstants.currentTime);         
+        choreSpecToCreate.setPreferredDoer(choreGroupUser);
+        return choreSpecController.createChoreSpec(choreSpecToCreate);
+    }
+    
+    public ChoreSpec createTestChoreSpecWithPreferredUserAndDate(ChoreGroupUser choreGroupUser, Date nextInstance) throws InvalidActivityException {
+        ChoreSpec choreSpecToCreate = new ChoreSpec();
+        choreSpecToCreate.setChoreGroup(choreGroupUser.getChoreGroup());
+        choreSpecToCreate.setName(TestConstants.testChoreSpecName);
+        choreSpecToCreate.setFrequency(TestConstants.frequencyMondays);
+        choreSpecToCreate.setNextInstanceDate(nextInstance);         
+        choreSpecToCreate.setPreferredDoer(choreGroupUser);
+        return choreSpecController.createChoreSpec(choreSpecToCreate);
+    }
+    
+    public ChoreSpec createTestChoreSpec(ChoreGroup choreGroup) throws InvalidActivityException {
+        ChoreSpec choreSpecToCreate = new ChoreSpec();
+        choreSpecToCreate.setChoreGroup(choreGroup);
+        choreSpecToCreate.setName(TestConstants.testChoreSpecName);
+        choreSpecToCreate.setFrequency(TestConstants.frequencyMondays);
+        choreSpecToCreate.setNextInstanceDate(TestConstants.currentTime);         
+        return choreSpecController.createChoreSpec(choreSpecToCreate);
     }
     
     public void inviteUserToChoreGroup(ChoreUser choreUser, ChoreGroup choreGroup) {

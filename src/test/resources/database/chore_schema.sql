@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 28, 2016 at 07:24 AM
+-- Generation Time: Sep 12, 2016 at 12:12 AM
 -- Server version: 10.1.13-MariaDB
 -- PHP Version: 5.6.23
 
@@ -75,7 +75,8 @@ CREATE TABLE `chore_spec` (
   `name` varchar(50) NOT NULL,
   `chore_group_id` bigint(20) NOT NULL,
   `preferred_doer` bigint(20) DEFAULT NULL,
-  `frequency` varchar(255) DEFAULT NULL
+  `frequency` bigint(20) DEFAULT NULL,
+  `next_instance_date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -141,12 +142,12 @@ ALTER TABLE `chore`
 -- AUTO_INCREMENT for table `chore_group`
 --
 ALTER TABLE `chore_group`
-  MODIFY `chore_group_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=186;
+  MODIFY `chore_group_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1004;
 --
 -- AUTO_INCREMENT for table `chore_group_user`
 --
 ALTER TABLE `chore_group_user`
-  MODIFY `chore_group_user_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=186;
+  MODIFY `chore_group_user_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1410;
 --
 -- AUTO_INCREMENT for table `chore_spec`
 --
@@ -156,7 +157,7 @@ ALTER TABLE `chore_spec`
 -- AUTO_INCREMENT for table `chore_user`
 --
 ALTER TABLE `chore_user`
-  MODIFY `user_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=369;
+  MODIFY `user_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1820;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

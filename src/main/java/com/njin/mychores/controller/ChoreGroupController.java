@@ -7,6 +7,7 @@ package com.njin.mychores.controller;
 
 import com.njin.mychores.model.ChoreGroup;
 import com.njin.mychores.model.ChoreGroupUser;
+import com.njin.mychores.model.ChoreSpec;
 import com.njin.mychores.service.ChoreGroupService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,11 @@ public class ChoreGroupController extends BaseController {
     public List<ChoreGroupUser> membersOfChoreGroup(@RequestBody ChoreGroup choreGroup) throws IllegalAccessException {
         checkRequiredAuthentication();
         return choreGroupService.findAllMembersForChoreGroup(choreGroup);
+    }
+    
+    @RequestMapping(value = "/chore-specs/{choreGroupId}", method = RequestMethod.GET)
+    public List<ChoreSpec> getChoreGroupChoreSpecs(@PathVariable Long choreGroupId) {
+        return null;
     }
     
 }

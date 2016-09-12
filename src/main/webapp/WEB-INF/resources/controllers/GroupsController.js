@@ -57,6 +57,7 @@ function registerGroupsController($scope, choreGroupService, choreGroupInvitatio
         selectChoreGroupUser: function (choreGroupUser) {
             $scope.selected.choreGroupUser = choreGroupUser;
             $scope.getAllMembers(choreGroupUser.choreGroup);
+            $scope.editingName = false;
         },
         getAllMembers: function (choreGroup) {
             var promise;

@@ -14,6 +14,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -30,7 +32,7 @@ import javax.validation.constraints.NotNull;
 @NamedQueries({
     @NamedQuery(name = "Chore.findAll", query = "SELECT c FROM Chore c"),
     @NamedQuery(name = "Chore.findByChoreId", query = "SELECT c FROM Chore c WHERE c.choreId = :choreId"),
-    @NamedQuery(name = "Chore.findByChoreSpecId", query = "SELECT c FROM Chore c WHERE c.choreSpecId = :choreSpecId"),
+    @NamedQuery(name = "Chore.findByChoreSpecId", query = "SELECT c FROM Chore c WHERE c.choreSpec = :choreSpec"),
     @NamedQuery(name = "Chore.findByDoer", query = "SELECT c FROM Chore c WHERE c.doer = :doer"),
     @NamedQuery(name = "Chore.findByStatus", query = "SELECT c FROM Chore c WHERE c.status = :status"),
     @NamedQuery(name = "Chore.findByDuration", query = "SELECT c FROM Chore c WHERE c.duration = :duration"),
@@ -45,32 +47,41 @@ public class Chore implements Serializable {
     @Basic(optional = false)
     @Column(name = "chore_id")
     private Long choreId;
+    
     @Basic(optional = false)
     @NotNull
-    @Column(name = "chore_spec_id")
-    private long choreSpecId;
+    @ManyToOne    
+    @JoinColumn(name = "chore_spec_id")
+    private ChoreSpec choreSpec;
+    
     @Basic(optional = false)
     @NotNull
-    @Column(name = "doer")
-    private long doer;
+    @ManyToOne
+    @JoinColumn(name = "doer")
+    private ChoreGroupUser doer;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "status")
-    private int status;
+    private ChoreStatus status;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "duration")
-    private int duration;
+    private long duration;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
+    
     @Basic(optional = false)
     @NotNull
     @Column(name = "updated")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
+    
     @Column(name = "location")
     private BigInteger location;
 
@@ -81,9 +92,9 @@ public class Chore implements Serializable {
         this.choreId = choreId;
     }
 
-    public Chore(Long choreId, long choreSpecId, long doer, int status, int duration, Date created, Date updated) {
+    public Chore(Long choreId, ChoreSpec choreSpec, ChoreGroupUser doer, ChoreStatus status, int duration, Date created, Date updated) {
         this.choreId = choreId;
-        this.choreSpecId = choreSpecId;
+        this.choreSpec = choreSpec;
         this.doer = doer;
         this.status = status;
         this.duration = duration;
@@ -99,35 +110,35 @@ public class Chore implements Serializable {
         this.choreId = choreId;
     }
 
-    public long getChoreSpecId() {
-        return choreSpecId;
+    public ChoreSpec getChoreSpec() {
+        return choreSpec;
     }
 
-    public void setChoreSpecId(long choreSpecId) {
-        this.choreSpecId = choreSpecId;
+    public void setChoreSpec(ChoreSpec choreSpec) {
+        this.choreSpec = choreSpec;
     }
 
-    public long getDoer() {
+    public ChoreGroupUser getDoer() {
         return doer;
     }
 
-    public void setDoer(long doer) {
+    public void setDoer(ChoreGroupUser doer) {
         this.doer = doer;
     }
 
-    public int getStatus() {
+    public ChoreStatus getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(ChoreStatus status) {
         this.status = status;
     }
 
-    public int getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 

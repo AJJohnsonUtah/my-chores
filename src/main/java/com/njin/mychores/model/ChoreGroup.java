@@ -36,6 +36,9 @@ public class ChoreGroup implements Serializable {
     @OneToMany(mappedBy="choreGroup", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ChoreGroupUser> choreGroupUsers;
     
+    @OneToMany(mappedBy="choreGroup", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<ChoreSpec> choreSpecs;
+    
     public ChoreGroup() {        
     }
     
@@ -67,5 +70,13 @@ public class ChoreGroup implements Serializable {
     public void setChoreGroupName(String choreGroupName) {
         this.choreGroupName = choreGroupName;
     }      
-    
+
+    @JsonIgnore
+    public List<ChoreSpec> getChoreSpecs() {
+        return choreSpecs;
+    }
+
+    public void setChoreSpecs(List<ChoreSpec> choreSpecs) {
+        this.choreSpecs = choreSpecs;
+    }            
 }

@@ -5,8 +5,10 @@
  */
 package com.njin.mychores.config;
 
+import com.njin.mychores.controller.ChoreController;
 import com.njin.mychores.controller.ChoreGroupController;
 import com.njin.mychores.controller.ChoreGroupUserController;
+import com.njin.mychores.controller.ChoreSpecController;
 import com.njin.mychores.controller.UserController;
 import com.njin.mychores.dao.ChoreGroupDao;
 import com.njin.mychores.dao.ChoreGroupDaoImpl;
@@ -154,5 +156,15 @@ public class JpaConfiguration {
     @Bean
     public ChoreGroupUserController choreGroupUserController() {
         return new ChoreGroupUserController();
+    }
+    
+    @Bean
+    public ChoreSpecController choreSpecController() {
+        return new ChoreSpecController();
+    }
+    
+    @Bean
+    public ChoreController choreController() {
+        return new ChoreController();
     }
 }

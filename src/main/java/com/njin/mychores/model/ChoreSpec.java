@@ -5,17 +5,22 @@
  */
 package com.njin.mychores.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
-import java.math.BigInteger;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,7 +36,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ChoreSpec.findAll", query = "SELECT c FROM ChoreSpec c"),
     @NamedQuery(name = "ChoreSpec.findByChoreSpecId", query = "SELECT c FROM ChoreSpec c WHERE c.choreSpecId = :choreSpecId"),
     @NamedQuery(name = "ChoreSpec.findByName", query = "SELECT c FROM ChoreSpec c WHERE c.name = :name"),
-    @NamedQuery(name = "ChoreSpec.findByChoreGroupId", query = "SELECT c FROM ChoreSpec c WHERE c.choreGroupId = :choreGroupId"),
+    @NamedQuery(name = "ChoreSpec.findByChoreGroupId", query = "SELECT c FROM ChoreSpec c WHERE c.choreGroup = :choreGroup"),
     @NamedQuery(name = "ChoreSpec.findByPreferredDoer", query = "SELECT c FROM ChoreSpec c WHERE c.preferredDoer = :preferredDoer"),
     @NamedQuery(name = "ChoreSpec.findByFrequency", query = "SELECT c FROM ChoreSpec c WHERE c.frequency = :frequency")})
 public class ChoreSpec implements Serializable {
@@ -42,21 +47,30 @@ public class ChoreSpec implements Serializable {
     @Basic(optional = false)
     @Column(name = "chore_spec_id")
     private Long choreSpecId;
+    
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "name")
     private String name;
+    
     @Basic(optional = false)
     @NotNull
-    @Column(name = "chore_group_id")
-    private long choreGroupId;
-    @Column(name = "preferred_doer")
-    private BigInteger preferredDoer;
-    @Size(max = 255)
+    @ManyToOne
+    @JoinColumn(name ="chore_group_id")
+    private ChoreGroup choreGroup;
+    
+    @ManyToOne
+    @JoinColumn(name = "preferred_doer")        
+    private ChoreGroupUser preferredDoer;
+    
     @Column(name = "frequency")
-    private String frequency;
+    private ChoreFrequency frequency;
 
+    @Column(name = "next_instance_date")    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date nextInstanceDate;
+    
     public ChoreSpec() {
     }
 
@@ -64,10 +78,10 @@ public class ChoreSpec implements Serializable {
         this.choreSpecId = choreSpecId;
     }
 
-    public ChoreSpec(Long choreSpecId, String name, long choreGroupId) {
+    public ChoreSpec(Long choreSpecId, String name, ChoreGroup choreGroup) {
         this.choreSpecId = choreSpecId;
         this.name = name;
-        this.choreGroupId = choreGroupId;
+        this.choreGroup = choreGroup;
     }
 
     public Long getChoreSpecId() {
@@ -86,29 +100,38 @@ public class ChoreSpec implements Serializable {
         this.name = name;
     }
 
-    public long getChoreGroupId() {
-        return choreGroupId;
+    public ChoreGroup getChoreGroup() {
+        return choreGroup;
     }
 
-    public void setChoreGroupId(long choreGroupId) {
-        this.choreGroupId = choreGroupId;
+    public void setChoreGroup(ChoreGroup choreGroup) {
+        this.choreGroup = choreGroup;
     }
 
-    public BigInteger getPreferredDoer() {
+    public ChoreGroupUser getPreferredDoer() {
         return preferredDoer;
     }
 
-    public void setPreferredDoer(BigInteger preferredDoer) {
+    public void setPreferredDoer(ChoreGroupUser preferredDoer) {
         this.preferredDoer = preferredDoer;
     }
 
-    public String getFrequency() {
+    public ChoreFrequency getFrequency() {
         return frequency;
     }
 
-    public void setFrequency(String frequency) {
+    public void setFrequency(ChoreFrequency frequency) {
         this.frequency = frequency;
     }
+
+    @JsonIgnore
+    public Date getNextInstanceDate() {
+        return nextInstanceDate;
+    }
+
+    public void setNextInstanceDate(Date nextInstanceDate) {
+        this.nextInstanceDate = nextInstanceDate;
+    }        
 
     @Override
     public int hashCode() {
