@@ -34,6 +34,11 @@ import javax.validation.constraints.NotNull;
     @NamedQuery(name = "Chore.findByChoreId", query = "SELECT c FROM Chore c WHERE c.choreId = :choreId"),
     @NamedQuery(name = "Chore.findByChoreSpecId", query = "SELECT c FROM Chore c WHERE c.choreSpec = :choreSpec"),
     @NamedQuery(name = "Chore.findByDoer", query = "SELECT c FROM Chore c WHERE c.doer = :doer"),
+    @NamedQuery(name = "Chore.findByDoerAndStatus", query = "SELECT c FROM Chore c WHERE c.doer = :doer AND c.status = :status"),
+    @NamedQuery(name = "Chore.findByChoreUser", query = "SELECT c FROM Chore c WHERE c.doer IN (SELECT u.id FROM ChoreGroupUser u WHERE u.choreUser = :choreUser)"),
+    @NamedQuery(name = "Chore.findByChoreUserAndStatus", query = "SELECT c FROM Chore c WHERE c.doer IN (SELECT u.id FROM ChoreGroupUser u WHERE u.choreUser = :choreUser) AND c.status = :status"),
+    @NamedQuery(name = "Chore.findByChoreGroup", query = "SELECT c FROM Chore c WHERE c.choreSpec IN (SELECT s.id FROM ChoreSpec s WHERE s.choreGroup = :choreGroup)"),
+    @NamedQuery(name = "Chore.findByChoreGroupAndStatus", query = "SELECT c FROM Chore c WHERE c.choreSpec IN (SELECT s.id FROM ChoreSpec s WHERE s.choreGroup = :choreGroup) AND c.status = :status"),
     @NamedQuery(name = "Chore.findByStatus", query = "SELECT c FROM Chore c WHERE c.status = :status"),
     @NamedQuery(name = "Chore.findByDuration", query = "SELECT c FROM Chore c WHERE c.duration = :duration"),
     @NamedQuery(name = "Chore.findByCreated", query = "SELECT c FROM Chore c WHERE c.created = :created"),
@@ -47,41 +52,41 @@ public class Chore implements Serializable {
     @Basic(optional = false)
     @Column(name = "chore_id")
     private Long choreId;
-    
+
     @Basic(optional = false)
     @NotNull
-    @ManyToOne    
+    @ManyToOne
     @JoinColumn(name = "chore_spec_id")
     private ChoreSpec choreSpec;
-    
+
     @Basic(optional = false)
     @NotNull
     @ManyToOne
     @JoinColumn(name = "doer")
     private ChoreGroupUser doer;
-    
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "status")
     private ChoreStatus status;
-    
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "duration")
     private long duration;
-    
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
-    
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "updated")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-    
+
     @Column(name = "location")
     private BigInteger location;
 
@@ -190,5 +195,5 @@ public class Chore implements Serializable {
     public String toString() {
         return "com.njin.mychores.model.Chore[ choreId=" + choreId + " ]";
     }
-    
+
 }

@@ -10,16 +10,24 @@ import com.njin.mychores.controller.ChoreGroupController;
 import com.njin.mychores.controller.ChoreGroupUserController;
 import com.njin.mychores.controller.ChoreSpecController;
 import com.njin.mychores.controller.UserController;
+import com.njin.mychores.dao.ChoreDao;
+import com.njin.mychores.dao.ChoreDaoImpl;
 import com.njin.mychores.dao.ChoreGroupDao;
 import com.njin.mychores.dao.ChoreGroupDaoImpl;
 import com.njin.mychores.dao.ChoreGroupUserDao;
 import com.njin.mychores.dao.ChoreGroupUserDaoImpl;
+import com.njin.mychores.dao.ChoreSpecDao;
+import com.njin.mychores.dao.ChoreSpecDaoImpl;
 import com.njin.mychores.dao.UserDao;
 import com.njin.mychores.dao.UserDaoImpl;
 import com.njin.mychores.service.ChoreGroupService;
 import com.njin.mychores.service.ChoreGroupServiceImpl;
 import com.njin.mychores.service.ChoreGroupUserService;
 import com.njin.mychores.service.ChoreGroupUserServiceImpl;
+import com.njin.mychores.service.ChoreService;
+import com.njin.mychores.service.ChoreServiceImpl;
+import com.njin.mychores.service.ChoreSpecService;
+import com.njin.mychores.service.ChoreSpecServiceImpl;
 import com.njin.mychores.service.SessionService;
 import com.njin.mychores.service.UserService;
 import com.njin.mychores.service.UserServiceImpl;
@@ -167,4 +175,25 @@ public class JpaConfiguration {
     public ChoreController choreController() {
         return new ChoreController();
     }
+    
+    @Bean
+    public ChoreSpecDao choreSpecDao() {
+        return new ChoreSpecDaoImpl();
+    }
+    
+    @Bean
+    public ChoreSpecService choreSpecService() {
+        return new ChoreSpecServiceImpl();
+    }    
+    
+    @Bean
+    public ChoreDao choreDao() {
+        return new ChoreDaoImpl();
+    }
+    
+    @Bean
+    public ChoreService choreService() {
+        return new ChoreServiceImpl();
+    }    
+    
 }

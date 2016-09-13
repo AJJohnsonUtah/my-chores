@@ -83,7 +83,7 @@ public class BaseTest {
         }
     }
     
-    public ChoreSpec createTestChoreSpecWithPreferredUser(ChoreGroupUser choreGroupUser) throws InvalidActivityException {
+    public ChoreSpec createTestChoreSpecWithPreferredUser(ChoreGroupUser choreGroupUser) throws InvalidActivityException, IllegalAccessException {
         ChoreSpec choreSpecToCreate = new ChoreSpec();
         choreSpecToCreate.setChoreGroup(choreGroupUser.getChoreGroup());
         choreSpecToCreate.setName(TestConstants.testChoreSpecName);
@@ -93,7 +93,7 @@ public class BaseTest {
         return choreSpecController.createChoreSpec(choreSpecToCreate);
     }
     
-    public ChoreSpec createTestChoreSpecWithPreferredUserAndDate(ChoreGroupUser choreGroupUser, Date nextInstance) throws InvalidActivityException {
+    public ChoreSpec createTestChoreSpecWithPreferredUserAndDate(ChoreGroupUser choreGroupUser, Date nextInstance) throws InvalidActivityException, IllegalAccessException {
         ChoreSpec choreSpecToCreate = new ChoreSpec();
         choreSpecToCreate.setChoreGroup(choreGroupUser.getChoreGroup());
         choreSpecToCreate.setName(TestConstants.testChoreSpecName);
@@ -103,7 +103,7 @@ public class BaseTest {
         return choreSpecController.createChoreSpec(choreSpecToCreate);
     }
     
-    public ChoreSpec createTestChoreSpec(ChoreGroup choreGroup) throws InvalidActivityException {
+    public ChoreSpec createTestChoreSpec(ChoreGroup choreGroup) throws InvalidActivityException, IllegalAccessException {
         ChoreSpec choreSpecToCreate = new ChoreSpec();
         choreSpecToCreate.setChoreGroup(choreGroup);
         choreSpecToCreate.setName(TestConstants.testChoreSpecName);

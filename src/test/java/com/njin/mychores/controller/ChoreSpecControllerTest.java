@@ -62,7 +62,7 @@ public class ChoreSpecControllerTest extends BaseTest {
     }
     
     @Test
-    public void createChoreSpecTest() throws InvalidActivityException {
+    public void createChoreSpecTest() throws InvalidActivityException, IllegalAccessException {
         ChoreUser currentUser = createTestUserAndLogin();
         ChoreGroupUser owner = createTestChoreGroup();
         
@@ -90,7 +90,7 @@ public class ChoreSpecControllerTest extends BaseTest {
     }
     
     @Test
-    public void createChoreSpecPopulatesLists() throws InvalidActivityException {
+    public void createChoreSpecPopulatesLists() throws InvalidActivityException, IllegalAccessException {
         ChoreUser currentUser = createTestUserAndLogin();
         ChoreGroupUser owner = createTestChoreGroup();        
         ChoreSpec choreSpec = createTestChoreSpecWithPreferredUser(owner);
@@ -98,7 +98,7 @@ public class ChoreSpecControllerTest extends BaseTest {
         List<Chore> choresFound = choreController.getActiveChoresForCurrentUser();
         assertEquals("Current user should have 1 chore.", 1, choresFound.size());
         
-        choresFound = choreController.getActiveChoresForChoreUser(owner.getChoreUser().getId());
+        choresFound = choreController.getActiveChoresForCurrentUser();
         assertEquals("Preferred doer user should have 1 chore.", 1, choresFound.size());
         
         choresFound = choreController.getActiveChoresForChoreGroupUser(owner.getId());
@@ -112,7 +112,7 @@ public class ChoreSpecControllerTest extends BaseTest {
     }
     
     @Test 
-    public void createChoreSpecInFuture() throws InvalidActivityException {        
+    public void createChoreSpecInFuture() throws InvalidActivityException, IllegalAccessException {        
         ChoreUser currentUser = createTestUserAndLogin();
         ChoreGroupUser owner = createTestChoreGroup();        
         Date futureDate = new Date();
@@ -124,7 +124,7 @@ public class ChoreSpecControllerTest extends BaseTest {
         List<Chore> choresFound = choreController.getActiveChoresForCurrentUser();
         assertEquals("Current user should have no chores.", 0, choresFound.size());
         
-        choresFound = choreController.getActiveChoresForChoreUser(owner.getChoreUser().getId());
+        choresFound = choreController.getActiveChoresForCurrentUser();
         assertEquals("Preferred doer user should have no chores.", 0, choresFound.size());
         
         choresFound = choreController.getActiveChoresForChoreGroupUser(owner.getId());
@@ -138,7 +138,7 @@ public class ChoreSpecControllerTest extends BaseTest {
     }        
     
     @Test
-    public void updateChoreSpecTest() throws InvalidActivityException {
+    public void updateChoreSpecTest() throws InvalidActivityException, IllegalAccessException {
         ChoreUser currentUser = createTestUserAndLogin();
         ChoreGroupUser owner = createTestChoreGroup();        
         ChoreSpec choreSpec = createTestChoreSpecWithPreferredUser(owner);

@@ -6,8 +6,11 @@
 package com.njin.mychores.controller;
 
 import com.njin.mychores.model.Chore;
+import com.njin.mychores.model.ChoreStatus;
+import com.njin.mychores.service.ChoreService;
 import java.util.List;
 import javax.activity.InvalidActivityException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,36 +26,37 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @ControllerAdvice
 @RequestMapping(value = "/api/chore")
-public class ChoreController {
+public class ChoreController extends BaseController {
+
+    @Autowired
+    ChoreService choreService;
     
     @RequestMapping(value = "/create", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Chore createChore(@RequestBody Chore chore) throws InvalidActivityException {
-        return null;
+    public Chore createChore(@RequestBody Chore chore) throws InvalidActivityException, IllegalAccessException {
+        checkRequiredAuthentication();
+        return choreService.createChore(chore);
     }
     
     @RequestMapping(value = "/update", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Chore updateChore(@RequestBody Chore chore) throws InvalidActivityException {
-        return null;
+    public Chore updateChore(@RequestBody Chore chore) throws InvalidActivityException, IllegalAccessException {
+        checkRequiredAuthentication();
+        return choreService.createChore(chore);
     }
     
     @RequestMapping(value = "/chore-group-user/{choreGroupUserId}", method = RequestMethod.GET)
-    public List<Chore> getActiveChoresForChoreGroupUser(@PathVariable Long choreGroupUserId) throws InvalidActivityException {
-        return null;
-    }
-    
-    @RequestMapping(value = "/chore-user/{choreUserId}", method = RequestMethod.GET)
-    public List<Chore> getActiveChoresForChoreUser(@PathVariable Long choreUserId) throws InvalidActivityException {
-        return null;
-    }
+    public List<Chore> getActiveChoresForChoreGroupUser(@PathVariable Long choreGroupUserId) throws InvalidActivityException, IllegalAccessException {
+        checkRequiredAuthentication();
+        return choreService.findChoresWithChoreGroupUserIdAndStatus(choreGroupUserId, ChoreStatus.TODO);
+    }   
     
     @RequestMapping(value = "/current-user", method = RequestMethod.GET)
     public List<Chore> getActiveChoresForCurrentUser() throws InvalidActivityException {
-        return null;
+        return choreService.findChoresWithChoreUserAndStatus(sessionService.getCurrentUser().getId(), ChoreStatus.TODO);
     }
     
     @RequestMapping(value = "/chore-group/{choreGroupId", method = RequestMethod.GET)
     public List<Chore> getActiveChoresForChoreGroup(@PathVariable Long choreGroupId) throws InvalidActivityException {
-        return null;
+        return choreService.findChoresWithChoreGroupIdAndStatus(choreGroupId, ChoreStatus.TODO);
     }
     
 }

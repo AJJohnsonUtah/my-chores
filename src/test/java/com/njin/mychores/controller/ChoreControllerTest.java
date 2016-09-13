@@ -70,17 +70,17 @@ public class ChoreControllerTest extends BaseTest {
     }
     
     @Test
-    public void createChoreWithoutLoginError() {
+    public void createChoreWithoutLoginError() throws IllegalAccessException, InvalidActivityException {
         try {
             choreController.createChore(new Chore());
             fail("Without being logged in, creating a chore should fail.");
-        } catch (InvalidActivityException ex) {
-            assertEquals("A user must be logged in to create a chore", ex.getMessage(), messageSource.getMessage("non.valid.activity", null, Locale.getDefault()));
+        } catch (IllegalAccessException ex) {
+            assertEquals("A user must be logged in to create a chore", ex.getMessage(), messageSource.getMessage("login.required", null, Locale.getDefault()));
         }
     }
     
     @Test
-    public void updateChoreTest() throws InvalidActivityException {
+    public void updateChoreTest() throws InvalidActivityException, IllegalAccessException {
         ChoreUser currentUser = createTestUserAndLogin();
         ChoreGroupUser owner = createTestChoreGroup();
         ChoreSpec choreSpec = createTestChoreSpecWithPreferredUser(owner);
