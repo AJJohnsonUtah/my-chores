@@ -6,7 +6,6 @@
 package com.njin.mychores.dao;
 
 import com.njin.mychores.model.ChoreGroup;
-import java.util.Collections;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;

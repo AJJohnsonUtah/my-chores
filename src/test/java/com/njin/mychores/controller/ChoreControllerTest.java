@@ -7,9 +7,14 @@ package com.njin.mychores.controller;
 
 import com.njin.mychores.config.JpaConfiguration;
 import com.njin.mychores.model.Chore;
+import com.njin.mychores.model.ChoreGroupUser;
+import com.njin.mychores.model.ChoreSpec;
+import com.njin.mychores.model.ChoreStatus;
 import com.njin.mychores.model.ChoreUser;
+import java.util.Date;
 import java.util.Locale;
 import javax.activity.InvalidActivityException;
+import static junit.framework.TestCase.assertTrue;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -71,6 +76,30 @@ public class ChoreControllerTest extends BaseTest {
             fail("Without being logged in, creating a chore should fail.");
         } catch (InvalidActivityException ex) {
             assertEquals("A user must be logged in to create a chore", ex.getMessage(), messageSource.getMessage("non.valid.activity", null, Locale.getDefault()));
-        }        
+        }
     }
+    
+    @Test
+    public void updateChoreTest() throws InvalidActivityException {
+        ChoreUser currentUser = createTestUserAndLogin();
+        ChoreGroupUser owner = createTestChoreGroup();
+        ChoreSpec choreSpec = createTestChoreSpecWithPreferredUser(owner);
+        
+        Chore createdChore = choreSpecController.findChoresOfChoreSpec(choreSpec.getChoreSpecId()).get(0);
+        Date created = createdChore.getCreated();
+        Date firstUpdated = createdChore.getUpdated();
+        
+        assertEquals("The created chore should begin with status TODO.", ChoreStatus.TODO, createdChore.getStatus());
+        assertEquals("The created chore should have the same created and updated date", created, firstUpdated);
+        
+        createdChore.setStatus(ChoreStatus.COMPLETED);
+        choreController.updateChore(createdChore);
+        
+        Chore updatedChore = choreSpecController.findChoresOfChoreSpec(choreSpec.getChoreSpecId()).get(0);
+        Date secondUpdated = updatedChore.getUpdated();
+        
+        assertEquals("The updated chore should have status COMPLETED.", ChoreStatus.COMPLETED, createdChore.getStatus());
+        assertTrue("The updated chore's updated time should be later than the first updated time.", secondUpdated.after(firstUpdated));
+    }
+            
 }

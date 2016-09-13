@@ -82,6 +82,11 @@ public class ChoreSpecControllerTest extends BaseTest {
         assertEquals("The properties of the created chore spec should be the same as specified.", choreSpecToCreate.getPreferredDoer(), createdChoreSpec.getPreferredDoer());
         assertEquals("The properties of the created chore spec should be the same as specified.", choreSpecToCreate.getFrequency(), createdChoreSpec.getFrequency());
         assertEquals("The properties of the created chore spec should be the same as specified.", choreSpecToCreate.getNextInstanceDate(), createdChoreSpec.getNextInstanceDate());       
+        
+        List<ChoreSpec> groupsChoreSpecs = choreGroupController.getChoreGroupChoreSpecs(owner.getChoreGroup().getId());
+        assertEquals("The chore group's list of chore specs should only have this created chore spec.", 1, groupsChoreSpecs.size());
+        
+        assertEquals("The only element in the chore specs list should be the newly created spec.", createdChoreSpec, groupsChoreSpecs.get(0));
     }
     
     @Test
