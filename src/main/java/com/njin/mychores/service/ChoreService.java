@@ -14,9 +14,9 @@ import java.util.List;
  * @author AJ
  */
 public interface ChoreService {    
-    public Chore createChore(Chore chore);
-    public Chore updateChore(Chore chore);
-    public Chore findChore(Long choreId);
+    public Chore createChore(Chore chore) throws IllegalAccessException;
+    public Chore updateChore(Chore chore) throws IllegalAccessException;
+    public Chore findChore(Long choreId) throws IllegalAccessException;
     public List<Chore> findChoresWithChoreSpecId(Long choreGroupUserId);
     public List<Chore> findChoresWithChoreGroupUserId(Long choreGroupUserId);
     public List<Chore> findChoresWithChoreGroupUserIdAndStatus(Long choreGroupUserId, ChoreStatus status);

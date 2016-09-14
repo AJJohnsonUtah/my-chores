@@ -13,8 +13,8 @@ import java.util.List;
  * @author AJ
  */
 public interface ChoreSpecService {    
-    public ChoreSpec createChoreSpec(ChoreSpec choreSpec);
-    public ChoreSpec updateChoreSpec(ChoreSpec choreSpec);
-    public ChoreSpec findChoreSpec(Long choreSpecId);
-    public List<ChoreSpec> findChoreSpecsWithPreferredDoer(Long choreGroupUserId);            
+    public ChoreSpec createChoreSpec(ChoreSpec choreSpec) throws IllegalAccessException;
+    public ChoreSpec updateChoreSpec(ChoreSpec choreSpec) throws IllegalAccessException;
+    public ChoreSpec findChoreSpec(Long choreSpecId) throws IllegalAccessException;
+    public List<ChoreSpec> findChoreSpecsWithPreferredDoer(Long choreGroupUserId) throws IllegalAccessException;
 }

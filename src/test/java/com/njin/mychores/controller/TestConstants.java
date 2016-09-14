@@ -9,7 +9,6 @@ import com.njin.mychores.model.ChoreFrequency;
 import com.njin.mychores.model.WeekDay;
 import java.util.Date;
 import java.util.EnumSet;
-import static org.eclipse.persistence.expressions.ExpressionOperator.currentTime;
 
 /**
  *
@@ -22,7 +21,7 @@ public class TestConstants {
     public static String testPassword2 = "TESTabc1234?";
     public static String testChoreGroupName = "Test Chore Group";
     public static String testChoreSpecName = "Test Chore Spec";
-    public static ChoreFrequency frequencyDaily = new ChoreFrequency(84000000L);
+    public static ChoreFrequency frequencyDaily = new ChoreFrequency(84000000);
     public static ChoreFrequency frequencyMondays = new ChoreFrequency(EnumSet.of(WeekDay.MONDAY));
     public static Date currentTime = new Date();
 }

@@ -47,30 +47,30 @@ public class ChoreSpec implements Serializable {
     @Basic(optional = false)
     @Column(name = "chore_spec_id")
     private Long choreSpecId;
-    
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "name")
     private String name;
-    
+
     @Basic(optional = false)
     @NotNull
     @ManyToOne
-    @JoinColumn(name ="chore_group_id")
+    @JoinColumn(name = "chore_group_id")
     private ChoreGroup choreGroup;
-    
+
     @ManyToOne
-    @JoinColumn(name = "preferred_doer")        
+    @JoinColumn(name = "preferred_doer")
     private ChoreGroupUser preferredDoer;
     
     @Column(name = "frequency")
     private ChoreFrequency frequency;
 
-    @Column(name = "next_instance_date")    
+    @Column(name = "next_instance_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date nextInstanceDate;
-    
+
     public ChoreSpec() {
     }
 
@@ -131,7 +131,7 @@ public class ChoreSpec implements Serializable {
 
     public void setNextInstanceDate(Date nextInstanceDate) {
         this.nextInstanceDate = nextInstanceDate;
-    }        
+    }
 
     @Override
     public int hashCode() {
@@ -157,5 +157,5 @@ public class ChoreSpec implements Serializable {
     public String toString() {
         return "com.njin.mychores.model.ChoreSpec[ choreSpecId=" + choreSpecId + " ]";
     }
-    
+
 }

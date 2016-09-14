@@ -26,50 +26,50 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author AJ
  */
-@ContextConfiguration(classes={JpaConfiguration.class}, loader=AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes = {JpaConfiguration.class}, loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("test")
 @Transactional
 public class BaseTest {
-    
+
     @Autowired
     UserController userController;
-    
+
     @Autowired
     ChoreGroupController choreGroupController;
-    
+
     @Autowired
     ChoreGroupUserController choreGroupUserController;
-    
+
     @Autowired
     ChoreSpecController choreSpecController;
-    
+
     @Autowired
     ChoreController choreController;
-    
+
     @Autowired
     SessionService sessionService;
-    
+
     @Autowired
-    MessageSource messageSource;        
-    
+    MessageSource messageSource;
+
     public ChoreUser createTestUserAndLogin() {
         ChoreUser user = new ChoreUser();
         user.setEmail(TestConstants.testEmail1);
         user.setPassword(TestConstants.testPassword1);
-        
-        userController.createUser(user);               
+
+        userController.createUser(user);
         userController.login(user);
         return userController.getCurrentUser();
     }
-    
+
     public ChoreUser createUserWithEmail(String email) {
         ChoreUser user = new ChoreUser();
         user.setEmail(email);
         user.setPassword(TestConstants.testPassword1);
-        
-        return userController.createUser(user);        
+
+        return userController.createUser(user);
     }
-           
+
     public ChoreGroupUser createTestChoreGroup() {
         ChoreGroup choreGroup = new ChoreGroup();
         choreGroup.setChoreGroupName(TestConstants.testChoreGroupName);
@@ -82,57 +82,57 @@ public class BaseTest {
             return null;
         }
     }
-    
+
     public ChoreSpec createTestChoreSpecWithPreferredUser(ChoreGroupUser choreGroupUser) throws InvalidActivityException, IllegalAccessException {
         ChoreSpec choreSpecToCreate = new ChoreSpec();
         choreSpecToCreate.setChoreGroup(choreGroupUser.getChoreGroup());
         choreSpecToCreate.setName(TestConstants.testChoreSpecName);
         choreSpecToCreate.setFrequency(TestConstants.frequencyMondays);
-        choreSpecToCreate.setNextInstanceDate(TestConstants.currentTime);         
+        choreSpecToCreate.setNextInstanceDate(TestConstants.currentTime);
         choreSpecToCreate.setPreferredDoer(choreGroupUser);
         return choreSpecController.createChoreSpec(choreSpecToCreate);
     }
-    
+
     public ChoreSpec createTestChoreSpecWithPreferredUserAndDate(ChoreGroupUser choreGroupUser, Date nextInstance) throws InvalidActivityException, IllegalAccessException {
         ChoreSpec choreSpecToCreate = new ChoreSpec();
         choreSpecToCreate.setChoreGroup(choreGroupUser.getChoreGroup());
         choreSpecToCreate.setName(TestConstants.testChoreSpecName);
         choreSpecToCreate.setFrequency(TestConstants.frequencyMondays);
-        choreSpecToCreate.setNextInstanceDate(nextInstance);         
+        choreSpecToCreate.setNextInstanceDate(nextInstance);
         choreSpecToCreate.setPreferredDoer(choreGroupUser);
         return choreSpecController.createChoreSpec(choreSpecToCreate);
     }
-    
+
     public ChoreSpec createTestChoreSpec(ChoreGroup choreGroup) throws InvalidActivityException, IllegalAccessException {
         ChoreSpec choreSpecToCreate = new ChoreSpec();
         choreSpecToCreate.setChoreGroup(choreGroup);
         choreSpecToCreate.setName(TestConstants.testChoreSpecName);
         choreSpecToCreate.setFrequency(TestConstants.frequencyMondays);
-        choreSpecToCreate.setNextInstanceDate(TestConstants.currentTime);         
+        choreSpecToCreate.setNextInstanceDate(TestConstants.currentTime);
         return choreSpecController.createChoreSpec(choreSpecToCreate);
     }
-    
+
     public void inviteUserToChoreGroup(ChoreUser choreUser, ChoreGroup choreGroup) {
         ChoreGroupUser choreGroupUser = new ChoreGroupUser();
         choreGroupUser.setChoreGroup(choreGroup);
         choreGroupUser.setChoreUser(choreUser);
         try {
-            choreGroupUserController.inviteChoreUserToChoreGroup(choreGroupUser);        
+            choreGroupUserController.inviteChoreUserToChoreGroup(choreGroupUser);
         } catch (IllegalAccessException ex) {
             fail("Chore group invitation should not fail if logged in.");
         }
     }
-    
-    public void acceptAllInvitations() {    
-       try {
-            for(ChoreGroupUser invitation : choreGroupUserController.findAllPendingReceivedInvitations()) {
+
+    public void acceptAllInvitations() {
+        try {
+            for (ChoreGroupUser invitation : choreGroupUserController.findAllPendingReceivedInvitations()) {
                 choreGroupUserController.acceptChoreGroupInvitation(invitation);
-            }            
+            }
         } catch (IllegalAccessException ex) {
-            fail("Chore group creation should not fail if logged in.");            
+            fail("Chore group creation should not fail if logged in.");
         }
     }
-        
+
     public void resetCurrentUser() {
         sessionService.setCurrentUser(null);
     }

@@ -14,10 +14,10 @@ import java.util.Set;
  * @author AJ
  */
 public class ChoreFrequency implements Serializable {
-    private Long timeBetweenRepeats;
+    private Integer timeBetweenRepeats;
     private Set<WeekDay> daysToRepeat;        
 
-    public ChoreFrequency(Long timeBetweenRepeats) {
+    public ChoreFrequency(Integer timeBetweenRepeats) {
         daysToRepeat = null;
         this.timeBetweenRepeats = timeBetweenRepeats;
     }
@@ -26,11 +26,11 @@ public class ChoreFrequency implements Serializable {
         this.daysToRepeat = daysToRepeat;
     }
     
-    public Long getTimeBetweenRepeats() {
+    public Integer getTimeBetweenRepeats() {
         return timeBetweenRepeats;
     }
 
-    public void setTimeBetweenRepeats(Long timeBetweenRepeats) {
+    public void setTimeBetweenRepeats(Integer timeBetweenRepeats) {
         this.timeBetweenRepeats = timeBetweenRepeats;
     }
 

@@ -7,11 +7,14 @@ package com.njin.mychores.service;
 
 import com.njin.mychores.dao.ChoreSpecDao;
 import com.njin.mychores.model.Chore;
+import com.njin.mychores.model.ChoreGroupUser;
 import com.njin.mychores.model.ChoreSpec;
 import com.njin.mychores.model.ChoreStatus;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +32,22 @@ public class ChoreSpecServiceImpl implements ChoreSpecService {
     @Autowired
     ChoreService choreService;
     
+    @Autowired
+    SessionService sessionService;
+    
+    @Autowired
+    ChoreGroupUserService choreGroupUserService;
+    
+    @Autowired
+    MessageSource messageSource;
+    
     @Override
-    public ChoreSpec createChoreSpec(ChoreSpec choreSpec) {
+    public ChoreSpec createChoreSpec(ChoreSpec choreSpec) throws IllegalAccessException {
+        if(!choreGroupUserService.isOwnerOfChoreGroup(sessionService.getCurrentUser(), choreSpec.getChoreGroup()) &&
+           !choreGroupUserService.isAdminOfChoreGroup(sessionService.getCurrentUser(), choreSpec.getChoreGroup())) {
+            throw new IllegalAccessException(messageSource.getMessage("not.own.data", null, Locale.getDefault()));
+        }
+        
         choreSpecDao.createChoreSpec(choreSpec);
         
         if(choreSpec.getNextInstanceDate().before(new Date())) {
@@ -45,18 +62,34 @@ public class ChoreSpecServiceImpl implements ChoreSpecService {
     }
 
     @Override
-    public ChoreSpec updateChoreSpec(ChoreSpec choreSpec) {
+    public ChoreSpec updateChoreSpec(ChoreSpec choreSpec) throws IllegalAccessException {
+        if(!choreGroupUserService.isOwnerOfChoreGroup(sessionService.getCurrentUser(), choreSpec.getChoreGroup()) &&
+           !choreGroupUserService.isAdminOfChoreGroup(sessionService.getCurrentUser(), choreSpec.getChoreGroup())) {
+            throw new IllegalAccessException(messageSource.getMessage("not.own.data", null, Locale.getDefault()));
+        }
         choreSpecDao.updateChoreSpec(choreSpec);
         return choreSpec;
     }
 
     @Override
-    public ChoreSpec findChoreSpec(Long choreSpecId) {
-        return choreSpecDao.findChoreSpec(choreSpecId);
+    public ChoreSpec findChoreSpec(Long choreSpecId) throws IllegalAccessException {
+        ChoreSpec choreSpec = choreSpecDao.findChoreSpec(choreSpecId);
+        if(!choreGroupUserService.isOwnerOfChoreGroup(sessionService.getCurrentUser(), choreSpec.getChoreGroup()) &&
+           !choreGroupUserService.isAdminOfChoreGroup(sessionService.getCurrentUser(), choreSpec.getChoreGroup())) {
+            throw new IllegalAccessException(messageSource.getMessage("not.own.data", null, Locale.getDefault()));
+        }
+        return choreSpec;
     }
 
     @Override
-    public List<ChoreSpec> findChoreSpecsWithPreferredDoer(Long choreGroupUserId) {
+    public List<ChoreSpec> findChoreSpecsWithPreferredDoer(Long choreGroupUserId) throws IllegalAccessException {
+        ChoreGroupUser userToFind = new ChoreGroupUser();
+        userToFind.setId(choreGroupUserId);
+        ChoreGroupUser choreGroupUser = choreGroupUserService.findChoreGroupUser(userToFind);
+        if(!choreGroupUserService.isOwnerOfChoreGroup(sessionService.getCurrentUser(), choreGroupUser.getChoreGroup()) ||
+           !choreGroupUserService.isAdminOfChoreGroup(sessionService.getCurrentUser(), choreGroupUser.getChoreGroup())) {
+            throw new IllegalAccessException(messageSource.getMessage("not.own.data", null, Locale.getDefault()));
+        }
         return choreSpecDao.findChoresWithPreferredDoer(choreGroupUserId);
     }    
     
