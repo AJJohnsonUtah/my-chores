@@ -6,10 +6,12 @@
 package com.njin.mychores.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.njin.mychores.converter.ChoreFrequencyConverter;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,6 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ChoreSpec.findByName", query = "SELECT c FROM ChoreSpec c WHERE c.name = :name"),
     @NamedQuery(name = "ChoreSpec.findByChoreGroupId", query = "SELECT c FROM ChoreSpec c WHERE c.choreGroup = :choreGroup"),
     @NamedQuery(name = "ChoreSpec.findByPreferredDoer", query = "SELECT c FROM ChoreSpec c WHERE c.preferredDoer = :preferredDoer"),
+    @NamedQuery(name = "ChoreSpec.findByPastDate", query = "SELECT c FROM ChoreSpec c WHERE c.nextInstanceDate <= :date"),
     @NamedQuery(name = "ChoreSpec.findByFrequency", query = "SELECT c FROM ChoreSpec c WHERE c.frequency = :frequency")})
 public class ChoreSpec implements Serializable {
 
@@ -54,10 +57,9 @@ public class ChoreSpec implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Basic(optional = false)
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "chore_group_id")
+    @JoinColumn(name = "chore_group")
     private ChoreGroup choreGroup;
 
     @ManyToOne
@@ -65,6 +67,7 @@ public class ChoreSpec implements Serializable {
     private ChoreGroupUser preferredDoer;
     
     @Column(name = "frequency")
+    @Convert(converter = ChoreFrequencyConverter.class)
     private ChoreFrequency frequency;
 
     @Column(name = "next_instance_date")

@@ -75,6 +75,11 @@ public class ChoreGroupUserServiceImpl implements ChoreGroupUserService {
     }    
     
     @Override
+    public ChoreGroupUser findChoreGroupUser(Long choreGroupUserId) {
+        return choreGroupUserDao.find(choreGroupUserId);
+    }
+    
+    @Override
     public void acceptChoreGroupInvitation(ChoreGroupUser invitation) {                
         ChoreUser userToInvite = sessionService.getCurrentUser();
         ChoreGroup choreGroup = choreGroupService.findChoreGroup(invitation.getChoreGroup().getId());

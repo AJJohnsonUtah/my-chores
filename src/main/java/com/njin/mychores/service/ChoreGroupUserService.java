@@ -21,6 +21,7 @@ public interface ChoreGroupUserService {
     public void updateChoreGroupUser(ChoreGroupUser choreGroupUser);
     public void updateChoreGroupUserRole(ChoreGroupUser choreGroupUser)  throws IllegalAccessException, InvalidActivityException;
     public ChoreGroupUser findChoreGroupUser(ChoreGroupUser choreGroupUser);
+    public ChoreGroupUser findChoreGroupUser(Long choreGroupUserId);
     public List<ChoreGroupUser> findAllForUser(ChoreUser user);    
     public List<ChoreGroupUser> findAllForChoreGroup(ChoreGroup choreGroup);
     public List<ChoreGroupUser> findAllForUserWithStatus(ChoreUser user, ChoreGroupUserStatus status);

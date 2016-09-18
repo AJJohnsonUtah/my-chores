@@ -10,6 +10,7 @@ import com.njin.mychores.model.ChoreGroup;
 import com.njin.mychores.model.ChoreGroupUser;
 import com.njin.mychores.model.ChoreGroupUserRole;
 import com.njin.mychores.model.ChoreGroupUserStatus;
+import com.njin.mychores.model.ChoreSpec;
 import com.njin.mychores.model.ChoreUser;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -108,5 +109,10 @@ public class ChoreGroupServiceImpl implements ChoreGroupService {
             listOfUsers.add(choreGroupUser);
         }
         return listOfUsers;
+    }
+
+    @Override
+    public List<ChoreSpec> findAllChoreSpecsForChoreGroup(Long choreGroupId) throws IllegalAccessException {
+        return findChoreGroup(choreGroupId).getChoreSpecs();
     }
 }

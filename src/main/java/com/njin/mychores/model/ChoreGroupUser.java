@@ -60,14 +60,13 @@ public class ChoreGroupUser implements Serializable {
     @Column(name = "status")
     private ChoreGroupUserStatus status;
 
-    @UpdateTimestamp
     @Column(name = "updated")
     private Timestamp updated;
     
     @OneToMany(mappedBy="preferredDoer", fetch = FetchType.LAZY)
     private List<ChoreSpec> choresThatPreferUser;
 
-    @OneToMany(mappedBy="doer", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="choreDoer", fetch = FetchType.LAZY)
     private List<Chore> chores;
     
     public ChoreGroupUser() {

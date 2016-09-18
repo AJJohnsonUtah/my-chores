@@ -62,8 +62,8 @@ public class ChoreGroupController extends BaseController {
     }
     
     @RequestMapping(value = "/chore-specs/{choreGroupId}", method = RequestMethod.GET)
-    public List<ChoreSpec> getChoreGroupChoreSpecs(@PathVariable Long choreGroupId) {
-        return null;
+    public List<ChoreSpec> getChoreGroupChoreSpecs(@PathVariable Long choreGroupId) throws IllegalAccessException {
+        return choreGroupService.findAllChoreSpecsForChoreGroup(choreGroupId);
     }
     
 }

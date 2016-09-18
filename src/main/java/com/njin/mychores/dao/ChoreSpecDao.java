@@ -5,6 +5,7 @@
  */
 package com.njin.mychores.dao;
 
+import com.njin.mychores.model.ChoreGroupUser;
 import com.njin.mychores.model.ChoreSpec;
 import java.util.List;
 
@@ -16,5 +17,6 @@ public interface ChoreSpecDao {
     public void createChoreSpec(ChoreSpec choreSpec);
     public void updateChoreSpec(ChoreSpec choreSpec);
     public ChoreSpec findChoreSpec(Long choreSpecId);
-    public List<ChoreSpec> findChoresWithPreferredDoer(Long choreGroupUserId);    
+    public List<ChoreSpec> findChoresWithPreferredDoer(ChoreGroupUser preferredDoer);    
+    public List<ChoreSpec> findChoreSpecsWithPastNextInstanceDates();
 }

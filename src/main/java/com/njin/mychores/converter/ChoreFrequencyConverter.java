@@ -7,7 +7,6 @@ package com.njin.mychores.converter;
 
 import com.njin.mychores.model.ChoreFrequency;
 import com.njin.mychores.model.WeekDay;
-import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.AttributeConverter;
@@ -18,11 +17,11 @@ import javax.persistence.Converter;
  * @author AJ
  */
 @Converter
-public class ChoreFrequencyConverter implements AttributeConverter<ChoreFrequency, BigInteger> {
+public class ChoreFrequencyConverter implements AttributeConverter<ChoreFrequency, Integer> {
 
     @Override
-    public BigInteger convertToDatabaseColumn(ChoreFrequency x) {
-        int result;
+    public Integer convertToDatabaseColumn(ChoreFrequency x) {
+        Integer result;
         if (x.getTimeBetweenRepeats() != null) {
             result = -1 * x.getTimeBetweenRepeats();
         } else if(!x.getDaysToRepeat().isEmpty()) {
@@ -52,13 +51,11 @@ public class ChoreFrequencyConverter implements AttributeConverter<ChoreFrequenc
         } else {
             result = 0;
         }
-        System.out.println("Converted value: " + result);
-        return new BigInteger(String.valueOf(result));
+        return result;
     }
 
     @Override
-    public ChoreFrequency convertToEntityAttribute(BigInteger y) {
-        int valToConvert = Integer.parseInt(y.toString());
+    public ChoreFrequency convertToEntityAttribute(Integer valToConvert) {        
         ChoreFrequency choreFrequency;
         if (valToConvert < 0) {
             choreFrequency = new ChoreFrequency(valToConvert * -1);

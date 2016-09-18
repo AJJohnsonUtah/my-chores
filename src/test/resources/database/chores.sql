@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 12, 2016 at 12:12 AM
+-- Generation Time: Sep 16, 2016 at 04:33 PM
 -- Server version: 10.1.13-MariaDB
 -- PHP Version: 5.6.23
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `chore_test`
+-- Database: `chores`
 --
 
 -- --------------------------------------------------------
@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `chore` (
   `chore_id` bigint(20) NOT NULL,
-  `chore_spec_id` bigint(20) NOT NULL,
+  `chore_spec` bigint(20) NOT NULL,
   `doer` bigint(20) NOT NULL,
   `status` int(11) NOT NULL,
   `duration` int(10) NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE `chore_group_user` (
 CREATE TABLE `chore_spec` (
   `chore_spec_id` bigint(20) NOT NULL,
   `name` varchar(50) NOT NULL,
-  `chore_group_id` bigint(20) NOT NULL,
+  `chore_group` bigint(20) NOT NULL,
   `preferred_doer` bigint(20) DEFAULT NULL,
   `frequency` bigint(20) DEFAULT NULL,
   `next_instance_date` date NOT NULL
@@ -142,12 +142,12 @@ ALTER TABLE `chore`
 -- AUTO_INCREMENT for table `chore_group`
 --
 ALTER TABLE `chore_group`
-  MODIFY `chore_group_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1004;
+  MODIFY `chore_group_id` bigint(20) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `chore_group_user`
 --
 ALTER TABLE `chore_group_user`
-  MODIFY `chore_group_user_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1410;
+  MODIFY `chore_group_user_id` bigint(20) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `chore_spec`
 --
@@ -157,7 +157,7 @@ ALTER TABLE `chore_spec`
 -- AUTO_INCREMENT for table `chore_user`
 --
 ALTER TABLE `chore_user`
-  MODIFY `user_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1820;
+  MODIFY `user_id` bigint(20) NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

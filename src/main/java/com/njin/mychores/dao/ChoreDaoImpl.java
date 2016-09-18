@@ -6,7 +6,11 @@
 package com.njin.mychores.dao;
 
 import com.njin.mychores.model.Chore;
+import com.njin.mychores.model.ChoreGroup;
+import com.njin.mychores.model.ChoreGroupUser;
+import com.njin.mychores.model.ChoreSpec;
 import com.njin.mychores.model.ChoreStatus;
+import com.njin.mychores.model.ChoreUser;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -43,63 +47,63 @@ public class ChoreDaoImpl implements ChoreDao {
     }
 
     @Override
-    public List<Chore> findChoresWithChoreSpecId(Long choreSpecId) {
+    public List<Chore> findChoresWithChoreSpec(ChoreSpec choreSpec) {
         try {
-            return em.createNamedQuery("Chore.findByChoreSpecId", Chore.class).setParameter("choreSpecId", choreSpecId).getResultList();
+            return em.createNamedQuery("Chore.findByChoreSpec", Chore.class).setParameter("choreSpec", choreSpec).getResultList();
         } catch (NoResultException ex) {
             return null;
         }
     }
 
     @Override
-    public List<Chore> findChoresWithChoreGroupUserId(Long choreGroupUserId) {
+    public List<Chore> findChoresWithChoreGroupUser(ChoreGroupUser choreGroupUser) {
         try {
-            return em.createNamedQuery("Chore.findByDoer", Chore.class).setParameter("doer", choreGroupUserId).getResultList();
+            return em.createNamedQuery("Chore.findByDoer", Chore.class).setParameter("doer", choreGroupUser).getResultList();
         } catch (NoResultException ex) {
             return null;
         }
     }
 
     @Override
-    public List<Chore> findChoresWithChoreGroupUserIdAndStatus(Long choreGroupUserId, ChoreStatus status) {
+    public List<Chore> findChoresWithChoreGroupUserAndStatus(ChoreGroupUser choreGroupUser, ChoreStatus status) {
         try {
-            return em.createNamedQuery("Chore.findByDoerAndStatus", Chore.class).setParameter("doer", choreGroupUserId).setParameter("status", status).getResultList();
+            return em.createNamedQuery("Chore.findByDoerAndStatus", Chore.class).setParameter("doer", choreGroupUser).setParameter("status", status).getResultList();
         } catch (NoResultException ex) {
             return null;
         }
     }
 
     @Override
-    public List<Chore> findChoresWithChoreUser(Long choreUserId) {
+    public List<Chore> findChoresWithChoreUser(ChoreUser choreUser) {
         try {
-            return em.createNamedQuery("Chore.findByChoreUser", Chore.class).setParameter("choreUser", choreUserId).getResultList();
+            return em.createNamedQuery("Chore.findByChoreUser", Chore.class).setParameter("choreUser", choreUser).getResultList();
         } catch (NoResultException ex) {
             return null;
         }
     }
 
     @Override
-    public List<Chore> findChoresWithChoreUserAndStatus(Long choreUserId, ChoreStatus status) {
+    public List<Chore> findChoresWithChoreUserAndStatus(ChoreUser choreUser, ChoreStatus status) {
         try {
-            return em.createNamedQuery("Chore.findByChoreUserAndStatus", Chore.class).setParameter("choreUser", choreUserId).setParameter("status", status).getResultList();
+            return em.createNamedQuery("Chore.findByChoreUserAndStatus", Chore.class).setParameter("choreUser", choreUser).setParameter("status", status).getResultList();
         } catch (NoResultException ex) {
             return null;
         }
     }
 
     @Override
-    public List<Chore> findChoresWithChoreGroupId(Long choreGroupId) {
+    public List<Chore> findChoresWithChoreGroup(ChoreGroup choreGroup) {
         try {
-            return em.createNamedQuery("Chore.findByChoreGroup", Chore.class).setParameter("choreGroup", choreGroupId).getResultList();
+            return em.createNamedQuery("Chore.findByChoreGroup", Chore.class).setParameter("choreGroup", choreGroup).getResultList();
         } catch (NoResultException ex) {
             return null;
         }
     }
 
     @Override
-    public List<Chore> findChoresWithChoreGroupIdAndStatus(Long choreGroupId, ChoreStatus status) {
+    public List<Chore> findChoresWithChoreGroupAndStatus(ChoreGroup choreGroup, ChoreStatus status) {
         try {
-            return em.createNamedQuery("Chore.findByChoreGroup", Chore.class).setParameter("choreGroup", choreGroupId).setParameter("status", status).getResultList();
+            return em.createNamedQuery("Chore.findByChoreGroupAndStatus", Chore.class).setParameter("choreGroup", choreGroup).setParameter("status", status).getResultList();
         } catch (NoResultException ex) {
             return null;
         }

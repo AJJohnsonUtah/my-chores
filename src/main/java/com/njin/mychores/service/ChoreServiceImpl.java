@@ -9,11 +9,12 @@ import com.njin.mychores.dao.ChoreDao;
 import com.njin.mychores.model.Chore;
 import com.njin.mychores.model.ChoreSpec;
 import com.njin.mychores.model.ChoreStatus;
-import static com.njin.mychores.model.Chore_.choreSpec;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,12 @@ public class ChoreServiceImpl implements ChoreService {
 
     @Autowired
     MessageSource messageSource;
+    
+    @Autowired
+    UserService userService;
+    
+    @Autowired
+    ChoreGroupService choreGroupService;
 
     @Override
     public Chore createChore(Chore chore) throws IllegalAccessException {
@@ -77,38 +84,58 @@ public class ChoreServiceImpl implements ChoreService {
     }
 
     @Override
-    public List<Chore> findChoresWithChoreSpecId(Long choreSpecId) {
-        return choreDao.findChoresWithChoreSpecId(choreSpecId);
+    public List<Chore> findChoresWithChoreSpecId(Long choreSpecId) throws IllegalAccessException {
+        return choreDao.findChoresWithChoreSpec(choreSpecService.findChoreSpec(choreSpecId));
     }
 
     @Override
-    public List<Chore> findChoresWithChoreGroupUserId(Long choreGroupUserId) {
-        return choreDao.findChoresWithChoreGroupUserId(choreGroupUserId);
+    public List<Chore> findChoresWithChoreGroupUserId(Long choreGroupUserId) throws IllegalAccessException {
+        return choreDao.findChoresWithChoreGroupUser(choreGroupUserService.findChoreGroupUser(choreGroupUserId));
     }
 
     @Override
-    public List<Chore> findChoresWithChoreGroupUserIdAndStatus(Long choreGroupUserId, ChoreStatus status) {
-        return choreDao.findChoresWithChoreGroupUserIdAndStatus(choreGroupUserId, status);
+    public List<Chore> findChoresWithChoreGroupUserIdAndStatus(Long choreGroupUserId, ChoreStatus status) throws IllegalAccessException {
+        return choreDao.findChoresWithChoreGroupUserAndStatus(choreGroupUserService.findChoreGroupUser(choreGroupUserId), status);
     }
 
     @Override
-    public List<Chore> findChoresWithChoreUser(Long choreUserId) {
-        return choreDao.findChoresWithChoreUser(choreUserId);
+    public List<Chore> findChoresWithChoreUser(Long choreUserId) throws IllegalAccessException {
+        return choreDao.findChoresWithChoreUser(userService.findUser(choreUserId));
     }
 
     @Override
-    public List<Chore> findChoresWithChoreUserAndStatus(Long choreUserId, ChoreStatus status) {
-        return choreDao.findChoresWithChoreGroupUserIdAndStatus(choreUserId, status);
+    public List<Chore> findChoresWithChoreUserAndStatus(Long choreUserId, ChoreStatus status) throws IllegalAccessException {
+        return choreDao.findChoresWithChoreUserAndStatus(userService.findUser(choreUserId), status);
     }
 
     @Override
-    public List<Chore> findChoresWithChoreGroupId(Long choreGroupId) {
-        return choreDao.findChoresWithChoreGroupId(choreGroupId);
+    public List<Chore> findChoresWithChoreGroupId(Long choreGroupId) throws IllegalAccessException {
+        return choreDao.findChoresWithChoreGroup(choreGroupService.findChoreGroup(choreGroupId));
     }
 
     @Override
-    public List<Chore> findChoresWithChoreGroupIdAndStatus(Long choreGroupId, ChoreStatus status) {
-        return choreDao.findChoresWithChoreGroupIdAndStatus(choreGroupId, status);
+    public List<Chore> findChoresWithChoreGroupIdAndStatus(Long choreGroupId, ChoreStatus status) throws IllegalAccessException {
+        return choreDao.findChoresWithChoreGroupAndStatus(choreGroupService.findChoreGroup(choreGroupId), status);
+    }
+
+    @Override
+    public Chore createChoreFromChoreSpec(ChoreSpec choreSpec) throws IllegalAccessException {
+        choreSpec.setNextInstanceDate(null);
+        Chore newChore = new Chore();
+        newChore.setChoreSpec(choreSpec);
+        newChore.setChoreDoer(choreSpec.getPreferredDoer());
+        newChore.setStatus(ChoreStatus.TODO);
+        return createChore(newChore);
+    }
+
+    @Scheduled(fixedRate = 100000L)
+    @Override
+    public void createAllScheduledChores() throws IllegalAccessException {
+        System.out.println("creating those chores!");
+        List<ChoreSpec> scheduledChoreSpecs = choreSpecService.findChoreSpecsWithPastNextInstanceDates();
+        for(ChoreSpec scheduledChoreSpec : scheduledChoreSpecs) {
+            createChoreFromChoreSpec(scheduledChoreSpec);
+        }
     }
 
 }

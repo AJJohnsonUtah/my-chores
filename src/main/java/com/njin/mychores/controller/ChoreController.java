@@ -50,12 +50,12 @@ public class ChoreController extends BaseController {
     }   
     
     @RequestMapping(value = "/current-user", method = RequestMethod.GET)
-    public List<Chore> getActiveChoresForCurrentUser() throws InvalidActivityException {
+    public List<Chore> getActiveChoresForCurrentUser() throws IllegalAccessException, InvalidActivityException {
         return choreService.findChoresWithChoreUserAndStatus(sessionService.getCurrentUser().getId(), ChoreStatus.TODO);
     }
     
     @RequestMapping(value = "/chore-group/{choreGroupId", method = RequestMethod.GET)
-    public List<Chore> getActiveChoresForChoreGroup(@PathVariable Long choreGroupId) throws InvalidActivityException {
+    public List<Chore> getActiveChoresForChoreGroup(@PathVariable Long choreGroupId) throws IllegalAccessException, InvalidActivityException {
         return choreService.findChoresWithChoreGroupIdAndStatus(choreGroupId, ChoreStatus.TODO);
     }
     

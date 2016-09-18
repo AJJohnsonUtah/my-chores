@@ -18,6 +18,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -32,13 +34,13 @@ import javax.validation.constraints.NotNull;
 @NamedQueries({
     @NamedQuery(name = "Chore.findAll", query = "SELECT c FROM Chore c"),
     @NamedQuery(name = "Chore.findByChoreId", query = "SELECT c FROM Chore c WHERE c.choreId = :choreId"),
-    @NamedQuery(name = "Chore.findByChoreSpecId", query = "SELECT c FROM Chore c WHERE c.choreSpec = :choreSpec"),
-    @NamedQuery(name = "Chore.findByDoer", query = "SELECT c FROM Chore c WHERE c.doer = :doer"),
-    @NamedQuery(name = "Chore.findByDoerAndStatus", query = "SELECT c FROM Chore c WHERE c.doer = :doer AND c.status = :status"),
-    @NamedQuery(name = "Chore.findByChoreUser", query = "SELECT c FROM Chore c WHERE c.doer IN (SELECT u.id FROM ChoreGroupUser u WHERE u.choreUser = :choreUser)"),
-    @NamedQuery(name = "Chore.findByChoreUserAndStatus", query = "SELECT c FROM Chore c WHERE c.doer IN (SELECT u.id FROM ChoreGroupUser u WHERE u.choreUser = :choreUser) AND c.status = :status"),
-    @NamedQuery(name = "Chore.findByChoreGroup", query = "SELECT c FROM Chore c WHERE c.choreSpec IN (SELECT s.id FROM ChoreSpec s WHERE s.choreGroup = :choreGroup)"),
-    @NamedQuery(name = "Chore.findByChoreGroupAndStatus", query = "SELECT c FROM Chore c WHERE c.choreSpec IN (SELECT s.id FROM ChoreSpec s WHERE s.choreGroup = :choreGroup) AND c.status = :status"),
+    @NamedQuery(name = "Chore.findByChoreSpec", query = "SELECT c FROM Chore c WHERE c.choreSpec = :choreSpec"),
+    @NamedQuery(name = "Chore.findByDoer", query = "SELECT c FROM Chore c WHERE c.choreDoer = :doer"),
+    @NamedQuery(name = "Chore.findByDoerAndStatus", query = "SELECT c FROM Chore c WHERE c.choreDoer = :doer AND c.status = :status"),
+    @NamedQuery(name = "Chore.findByChoreUser", query = "SELECT c FROM Chore c WHERE c.choreDoer IN (SELECT u.id FROM ChoreGroupUser u WHERE u.choreUser = :choreUser)"),
+    @NamedQuery(name = "Chore.findByChoreUserAndStatus", query = "SELECT c FROM Chore c WHERE c.choreDoer IN (SELECT u.id FROM ChoreGroupUser u WHERE u.choreUser = :choreUser) AND c.status = :status"),
+    @NamedQuery(name = "Chore.findByChoreGroup", query = "SELECT c FROM Chore c WHERE c.choreSpec IN (SELECT s.choreSpecId FROM ChoreSpec s WHERE s.choreGroup = :choreGroup)"),
+    @NamedQuery(name = "Chore.findByChoreGroupAndStatus", query = "SELECT c FROM Chore c WHERE c.choreSpec IN (SELECT s.choreSpecId FROM ChoreSpec s WHERE s.choreGroup = :choreGroup) AND c.status = :status"),
     @NamedQuery(name = "Chore.findByStatus", query = "SELECT c FROM Chore c WHERE c.status = :status"),
     @NamedQuery(name = "Chore.findByDuration", query = "SELECT c FROM Chore c WHERE c.duration = :duration"),
     @NamedQuery(name = "Chore.findByCreated", query = "SELECT c FROM Chore c WHERE c.created = :created"),
@@ -53,17 +55,14 @@ public class Chore implements Serializable {
     @Column(name = "chore_id")
     private Long choreId;
 
-    @Basic(optional = false)
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "chore_spec_id")
+    @JoinColumn(name = "chore_spec")
     private ChoreSpec choreSpec;
 
-    @Basic(optional = false)
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "doer")
-    private ChoreGroupUser doer;
+    private ChoreGroupUser choreDoer;
 
     @Basic(optional = false)
     @NotNull
@@ -76,17 +75,24 @@ public class Chore implements Serializable {
     private long duration;
 
     @Basic(optional = false)
-    @NotNull
     @Column(name = "created")
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
     @Basic(optional = false)
-    @NotNull
     @Column(name = "updated")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
+    @PrePersist
+    @PreUpdate
+    public void updateDates() {
+        this.updated = new Date();
+        if(this.created == null) {
+            this.created = new Date();
+        }
+    }
+    
     @Column(name = "location")
     private BigInteger location;
 
@@ -94,13 +100,13 @@ public class Chore implements Serializable {
     }
 
     public Chore(Long choreId) {
-        this.choreId = choreId;
+        this.choreId = choreId;   
     }
 
-    public Chore(Long choreId, ChoreSpec choreSpec, ChoreGroupUser doer, ChoreStatus status, int duration, Date created, Date updated) {
+    public Chore(Long choreId, ChoreSpec choreSpec, ChoreGroupUser choreDoer, ChoreStatus status, int duration, Date created, Date updated) {
         this.choreId = choreId;
         this.choreSpec = choreSpec;
-        this.doer = doer;
+        this.choreDoer = choreDoer;
         this.status = status;
         this.duration = duration;
         this.created = created;
@@ -123,12 +129,12 @@ public class Chore implements Serializable {
         this.choreSpec = choreSpec;
     }
 
-    public ChoreGroupUser getDoer() {
-        return doer;
+    public ChoreGroupUser getChoreDoer() {
+        return choreDoer;
     }
 
-    public void setDoer(ChoreGroupUser doer) {
-        this.doer = doer;
+    public void setChoreDoer(ChoreGroupUser choreDoer) {
+        this.choreDoer = choreDoer;
     }
 
     public ChoreStatus getStatus() {

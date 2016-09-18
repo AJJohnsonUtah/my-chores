@@ -6,7 +6,11 @@
 package com.njin.mychores.dao;
 
 import com.njin.mychores.model.Chore;
+import com.njin.mychores.model.ChoreGroup;
+import com.njin.mychores.model.ChoreGroupUser;
+import com.njin.mychores.model.ChoreSpec;
 import com.njin.mychores.model.ChoreStatus;
+import com.njin.mychores.model.ChoreUser;
 import java.util.List;
 
 /**
@@ -17,11 +21,11 @@ public interface ChoreDao {
     public void createChore(Chore chore);
     public void updateChore(Chore chore);
     public Chore findChore(Long choreId);
-    public List<Chore> findChoresWithChoreSpecId(Long choreGroupUserId);
-    public List<Chore> findChoresWithChoreGroupUserId(Long choreGroupUserId);    
-    public List<Chore> findChoresWithChoreGroupUserIdAndStatus(Long choreGroupUserId, ChoreStatus status);
-    public List<Chore> findChoresWithChoreGroupId(Long choreGroupId);
-    public List<Chore> findChoresWithChoreGroupIdAndStatus(Long choreGroupId, ChoreStatus status);
-    public List<Chore> findChoresWithChoreUser(Long choreUserId);
-    public List<Chore> findChoresWithChoreUserAndStatus(Long choreUserId, ChoreStatus status);
+    public List<Chore> findChoresWithChoreSpec(ChoreSpec choreSpec);
+    public List<Chore> findChoresWithChoreGroupUser(ChoreGroupUser choreGroupUser);    
+    public List<Chore> findChoresWithChoreGroupUserAndStatus(ChoreGroupUser choreGroupUser, ChoreStatus status);
+    public List<Chore> findChoresWithChoreGroup(ChoreGroup choreGroup);
+    public List<Chore> findChoresWithChoreGroupAndStatus(ChoreGroup choreGroup, ChoreStatus status);
+    public List<Chore> findChoresWithChoreUser(ChoreUser choreUser);
+    public List<Chore> findChoresWithChoreUserAndStatus(ChoreUser choreUser, ChoreStatus status);
 }
