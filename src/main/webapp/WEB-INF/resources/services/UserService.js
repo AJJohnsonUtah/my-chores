@@ -1,7 +1,7 @@
 /*global angular*/
 
-angular.module('myChoresApp').factory('userService', ['$interval', 'choreGroupInvitationService',
-    function ($interval, choreGroupInvitationService) {
+angular.module('myChoresApp').factory('userService', ['$interval', 'apiService',
+    function ($interval, api) {
         'use strict';        
 
         var userServiceData = {'user': null, 'sentInvitations': null, 'receivedInvitations': null};
@@ -17,13 +17,13 @@ angular.module('myChoresApp').factory('userService', ['$interval', 'choreGroupIn
         }       
         
         function reloadSentInvitations () {
-            choreGroupInvitationService.getSentInvitations().success(function(responseData) {
+            api.choreGroupUserService.getSentInvitations().success(function(responseData) {
                 setSentInvitations(responseData);
             });
         }
         
         function reloadReceivedInvitations () {
-            choreGroupInvitationService.getReceivedInvitations().success(function(responseData) {
+            api.choreGroupUserService.getReceivedInvitations().success(function(responseData) {
                 setReceivedInvitations(responseData);
             });
         }

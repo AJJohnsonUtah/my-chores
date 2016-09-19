@@ -1,7 +1,7 @@
 /*global angular, alert */
-function registerGroupsController($scope, choreGroupService, choreGroupInvitationService, userService, $timeout) {
+function registerGroupsController($scope, api, userService, $timeout) {
     "use strict";
-    angular.extend($scope, {
+    angular.extend($scope, {        
         selected: {
             choreGroup: null,
             updatedName: null
@@ -26,7 +26,7 @@ function registerGroupsController($scope, choreGroupService, choreGroupInvitatio
             return $scope.userServiceData.user.email === choreGroupUser.choreUser.email;
         },
         loadMyChoreGroups: function () {
-            choreGroupInvitationService.findAll().success(function (currentChoreGroupUsers) { 
+            api.choreGroupUserService.findAll().success(function (currentChoreGroupUsers) { 
                 $scope.currentUserChoreGroupUsers = currentChoreGroupUsers;
                 if($scope.currentUserChoreGroupUsers.length > 0) {
                     $scope.selected.choreGroupUser = ($scope.currentUserChoreGroupUsers.length > 0 ? $scope.currentUserChoreGroupUsers[0] : null);
@@ -38,14 +38,14 @@ function registerGroupsController($scope, choreGroupService, choreGroupInvitatio
             if (!$scope.newChoreGroupName.length) {
                 return;
             }
-            choreGroupService.create($scope.newChoreGroupName).success(function(createdChoreGroupOwner) {
+            api.choreGroupService.create($scope.newChoreGroupName).success(function(createdChoreGroupOwner) {
                 $scope.currentUserChoreGroupUsers.push(createdChoreGroupOwner);
                 $scope.selected.choreGroupUser = createdChoreGroupOwner;
                 $scope.creatingChoreGroup = false;
             });
         },
         sendInvitation: function (choreGroup, recipientEmail) {
-            choreGroupInvitationService.sendInvite(choreGroup, recipientEmail).success(function() {
+            api.choreGroupUserService.sendInvite(choreGroup, recipientEmail).success(function() {
                 $scope.inviteErrorMessage = '';
                 $scope.successfulInvite = recipientEmail;
                 userService.reloadSentInvitations();
@@ -62,9 +62,9 @@ function registerGroupsController($scope, choreGroupService, choreGroupInvitatio
         getAllMembers: function (choreGroup) {
             var promise;
             if($scope.selected.choreGroupUser.choreGroupUserRole === 'MEMBER') {
-                promise = choreGroupService.getActiveMembers(choreGroup);
+                promise = api.choreGroupService.getActiveMembers(choreGroup);
             } else {
-                promise = choreGroupService.getAllMembers(choreGroup);
+                promise = api.choreGroupService.getAllMembers(choreGroup);
             }
             
             promise.success(function(allMembers) {
@@ -78,14 +78,14 @@ function registerGroupsController($scope, choreGroupService, choreGroupInvitatio
             });
         },
         removeChoreGroupUser: function (choreGroup, choreGroupUser) {
-            choreGroupInvitationService.removeChoreGroupUser(choreGroupUser).success(function() {
-                choreGroupService.getAllMembers(choreGroup);
+            api.choreGroupUserService.removeChoreGroupUser(choreGroupUser).success(function() {
+                api.choreGroupService.getAllMembers(choreGroup);
                 choreGroupUser.status = 'REMOVED';
             });
         },
         updateChoreGroupUserRole: function (choreGroup, choreGroupUser) {
-            choreGroupInvitationService.updateChoreGroupUserRole(choreGroupUser).success(function() {
-                choreGroupService.getAllMembers(choreGroup);
+            api.choreGroupUserService.updateChoreGroupUserRole(choreGroupUser).success(function() {
+                api.choreGroupService.getAllMembers(choreGroup);
             });
         },
         beginCreatingChoreGroup: function () {
@@ -116,7 +116,7 @@ function registerGroupsController($scope, choreGroupService, choreGroupInvitatio
             } else {
                 choreGroup.choreGroupName = updatedName;
                 if(choreGroup.id) {                   
-                    choreGroupService.update(choreGroup).success(function (updatedChoreGroup) {
+                    api.choreGroupService.update(choreGroup).success(function (updatedChoreGroup) {
                         $scope.editError = '';
                         $scope.editingName = false;
                     }).error(function (response) {
@@ -124,7 +124,7 @@ function registerGroupsController($scope, choreGroupService, choreGroupInvitatio
                     });                    
                 } else {
                     $scope.tryingToCreate = true;
-                    choreGroupService.create(choreGroup).success(function (createdChoreGroupUser) {
+                    api.choreGroupService.create(choreGroup).success(function (createdChoreGroupUser) {
                         $scope.getAllMembers(createdChoreGroupUser.choreGroup);
                         $scope.editError = '';
                         $scope.editingName = false;                        
@@ -137,7 +137,7 @@ function registerGroupsController($scope, choreGroupService, choreGroupInvitatio
             }
         },
         deleteChoreGroup: function(choreGroup) {
-            choreGroupService.delete(choreGroup).success(function() {
+            api.choreGroupService.delete(choreGroup).success(function() {
                 for(var i = 0; i < $scope.currentUserChoreGroupUsers.length; i++) {
                     if($scope.currentUserChoreGroupUsers[i].choreGroup.id === choreGroup.id) {
                         $scope.currentUserChoreGroupUsers.splice(i, 1);
@@ -156,4 +156,4 @@ function registerGroupsController($scope, choreGroupService, choreGroupInvitatio
     $scope.loadMyChoreGroups(null);
 }
 
-angular.module('myChoresApp').controller('groupsController', ['$scope', 'choreGroupService', 'choreGroupInvitationService', 'userService', '$timeout', registerGroupsController]);
+angular.module('myChoresApp').controller('groupsController', ['$scope', 'apiService', 'userService', '$timeout', registerGroupsController]);

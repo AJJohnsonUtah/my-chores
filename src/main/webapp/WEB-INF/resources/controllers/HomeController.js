@@ -1,4 +1,4 @@
-angular.module('myChoresApp').controller('homeController', ['userService', '$scope', 'choreGroupInvitationService', '$location', function (userService, $scope, choreGroupInvitationService, $location) {
+angular.module('myChoresApp').controller('homeController', ['userService', '$scope', 'apiService', '$location', function (userService, $scope, api, $location) {
     'use strict';
     angular.extend($scope, {      
         userServiceData: userService.getUserServiceData(),
@@ -6,12 +6,12 @@ angular.module('myChoresApp').controller('homeController', ['userService', '$sco
             return $scope.userServiceData.receivedInvitations && $scope.userServiceData.receivedInvitations.length > 0;
         },
         acceptInvitation: function (invitation) {
-            choreGroupInvitationService.acceptInvitation(invitation).success(function () {
+            api.choreGroupUserService.acceptInvitation(invitation).success(function () {
                 userService.reloadReceivedInvitations();
             });
         },
         declineInvitation: function (invitation) {
-            choreGroupInvitationService.declineInvitation(invitation).success(function () {
+            api.choreGroupUserService.declineInvitation(invitation).success(function () {
                 userService.reloadReceivedInvitations();
             });
         }

@@ -1,112 +1,84 @@
 /*global angular */
-//Factory for retrieving static data from the API
-
-angular.module('myChoresApp').factory('choreGroupService', ['$http', '$location',
+angular.module('myChoresApp').factory('apiService', ['$http', '$location',
     function ($http, $location) {
         'use strict';
+        var BASE_API_URL = 'http://' + $location.host() + '/api';
+        var API_URL_PATHS = {
+            chore: '/chore',
+            choreSpec: '/chore-spec',
+            choreGroup: '/chore-group',
+            choreGroupUser: '/chore-group-user'
+        };
+        
         return {
-            create: function (choreGroup) {
-                var url, promise;
-                url = 'http://' + $location.host() + '/api/chore-group/create';                
-                promise = $http.post(url, choreGroup);
-                return promise;
-            },            
-            update: function (choreGroup) {
-                var url, promise, postData;
-                url = 'http://' + $location.host() + '/api/chore-group/update';                
-                postData = {
-                    choreGroupName: choreGroup.choreGroupName,
-                    id: choreGroup.id
-                };
-                promise = $http.post(url, choreGroup);
-                return promise;
+            choreService: {
+                
             },
-            delete: function (choreGroup) {
-                var url, promise;
-                url = 'http://' + $location.host() + '/api/chore-group/delete/' + choreGroup.id;                
-                promise = $http.delete(url);
-                return promise;
+            choreSpecService: {
+                
             },
-            getActiveMembers: function (choreGroup) {
-                var url, promise;
-                url = 'http://' + $location.host() + '/api/chore-group/active-members';
-                promise = $http.post(url, choreGroup);
-                return promise;
+            choreGroupService: {
+                create: function (choreGroup) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroup + '/create';
+                    return $http.post(url, choreGroup);
+                },            
+                update: function (choreGroup) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroup + '/update';                
+                    return $http.post(url, choreGroup);
+                },
+                delete: function (choreGroup) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroup + '/delete/' + choreGroup.id;                
+                    return $http.delete(url);                    
+                },
+                getActiveMembers: function (choreGroup) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroup + '/active-members';
+                    return $http.post(url, choreGroup);
+                },
+                getAllMembers: function (choreGroup) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroup + '/members';
+                    return $http.post(url, choreGroup);
+                }
             },
-            getAllMembers: function (choreGroup) {
-                var url, promise;
-                url = 'http://' + $location.host() + '/api/chore-group/members';
-                promise = $http.post(url, choreGroup);
-                return promise;
+            choreGroupUserService: {
+                sendInvite: function (choreGroup, recipientEmail) {
+                    var url, postData;
+                    url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/invite';
+                    postData = {
+                        choreGroup: choreGroup,
+                        choreUser: {
+                            email: recipientEmail
+                        }                    
+                    };
+                    return $http.post(url, postData);                    
+                },
+                getSentInvitations: function () {
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/find-all-sent';
+                    return $http.get(url);
+                },
+                getReceivedInvitations: function () {
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/find-all-received';
+                    return $http.get(url);
+                },
+                acceptInvitation: function (invitation) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/accept';
+                    return $http.post(url, invitation);
+                },
+                declineInvitation: function (invitation) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/decline';
+                    return $http.post(url, invitation);
+                },
+                removeChoreGroupUser: function (choreGroupUser) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/remove';                    
+                    return $http.post(url, choreGroupUser);
+                },
+                updateChoreGroupUser: function (choreGroupUser) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/update-role';
+                    return $http.post(url, choreGroupUser);
+                },
+                findAll: function () {
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/find-all';
+                    return $http.get(url);
+                }
             }
         };
-    }]);
-
-angular.module('myChoresApp').factory('choreGroupInvitationService', ['$http', '$location',
-    function ($http, $location) {
-        'use strict';
-        return {
-            sendInvite: function (choreGroup, recipientEmail) {
-                var url, postData, promise;
-                url = 'http://' + $location.host() + '/api/chore-group-user/invite';
-                postData = {
-                    choreGroup: choreGroup,
-                    choreUser: {
-                        email: recipientEmail
-                    }                    
-                };
-
-                promise = $http.post(url, postData);
-                return promise;
-            },
-            getSentInvitations: function () {
-                var url, promise;
-                url = 'http://' + $location.host() + '/api/chore-group-user/find-all-sent';
-                promise = $http.get(url);
-                return promise;
-            },
-            getReceivedInvitations: function () {
-                var url, promise;
-                url = 'http://' + $location.host() + '/api/chore-group-user/find-all-received';
-                promise = $http.get(url);
-                return promise;
-            },
-            acceptInvitation: function (invitation) {
-                var url, postData, promise;
-                url = 'http://' + $location.host() + '/api/chore-group-user/accept';
-                postData = invitation;
-                promise = $http.post(url, postData);
-                return promise;
-            },
-            declineInvitation: function (invitation) {
-                var url, postData, promise;
-                url = 'http://' + $location.host() + '/api/chore-group-user/decline';
-                postData = invitation;
-                promise = $http.post(url, postData);
-                return promise;
-            },
-            removeChoreGroupUser: function (choreGroupUser) {
-                var url, postData, promise;
-                url = 'http://' + $location.host() + '/api/chore-group-user/remove';
-                postData = choreGroupUser;
-                promise = $http.post(url, postData);
-                return promise;
-            },
-            updateChoreGroupUserRole: function (choreGroupUser) {
-                var url, postData, promise;
-                url = 'http://' + $location.host() + '/api/chore-group-user/update-role';
-                postData = {
-                    id: choreGroupUser.id,
-                    choreGroupUserRole: choreGroupUser.choreGroupUserRole
-                };
-                promise = $http.post(url, postData);
-                return promise;
-            },
-            findAll: function () {
-                var url, promise;
-                url = 'http://' + $location.host() + '/api/chore-group-user/find-all';
-                promise = $http.get(url);
-                return promise;
-            }
-        }; 
     }]);

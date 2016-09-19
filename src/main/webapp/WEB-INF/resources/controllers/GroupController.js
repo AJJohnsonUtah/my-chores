@@ -1,10 +1,9 @@
 /*global angular, alert */
-function registerGroupController($scope, choreGroupService, choreGroupInvitationService, userService, $routeParams) {
+function registerGroupController($scope, api, $routeParams) {
     "use strict";
     angular.extend($scope, {
-        choreGroupUserId: $routeParams.choreGroupUserId
-    });    
-    
+        choreGroupUserId: $routeParams.choreGroupUserId        
+    });        
 }
 
-angular.module('myChoresApp').controller('groupController', ['$scope', 'choreGroupService', 'choreGroupInvitationService', 'userService', '$routeParams', registerGroupController]);
+angular.module('myChoresApp').controller('groupController', ['$scope', 'apiService', '$routeParams', registerGroupController]);
