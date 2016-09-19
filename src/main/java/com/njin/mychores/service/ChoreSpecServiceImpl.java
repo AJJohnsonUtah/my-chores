@@ -8,6 +8,7 @@ package com.njin.mychores.service;
 import com.njin.mychores.dao.ChoreSpecDao;
 import com.njin.mychores.model.ChoreGroupUser;
 import com.njin.mychores.model.ChoreSpec;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -48,7 +49,7 @@ public class ChoreSpecServiceImpl implements ChoreSpecService {
         
         choreSpecDao.createChoreSpec(choreSpec);        
         
-        if(choreSpec.getNextInstanceDate().before(new Date())) {
+        if(choreSpec.getNextInstanceDate().isBefore(LocalDateTime.now())) {
             choreService.createChoreFromChoreSpec(choreSpec);
         }
         
@@ -90,6 +91,13 @@ public class ChoreSpecServiceImpl implements ChoreSpecService {
     @Override
     public List<ChoreSpec> findChoreSpecsWithPastNextInstanceDates() {
         return choreSpecDao.findChoreSpecsWithPastNextInstanceDates();
+    }
+
+    @Override
+    public void autoUpdateNextInstance(ChoreSpec choreSpec) {
+        if(choreSpec.getNextInstanceDate() == null) {
+            choreSpec.setNextInstanceDate(choreSpec.getFrequency().getTimeOfNextInstance(LocalDateTime.now()));
+        }
     }
         
 }

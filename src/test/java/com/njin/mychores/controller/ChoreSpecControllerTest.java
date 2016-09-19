@@ -5,6 +5,7 @@ import com.njin.mychores.model.Chore;
 import com.njin.mychores.model.ChoreGroupUser;
 import com.njin.mychores.model.ChoreSpec;
 import com.njin.mychores.model.ChoreUser;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import javax.activity.InvalidActivityException;
@@ -115,8 +116,8 @@ public class ChoreSpecControllerTest extends BaseTest {
     public void createChoreSpecInFuture() throws InvalidActivityException, IllegalAccessException {        
         ChoreUser currentUser = createTestUserAndLogin();
         ChoreGroupUser owner = createTestChoreGroup();        
-        Date futureDate = new Date();
-        futureDate.setTime(futureDate.getTime() + 10000000);
+        LocalDateTime futureDate = LocalDateTime.now();
+        futureDate = futureDate.plusDays(10);
         ChoreSpec choreSpec = createTestChoreSpecWithPreferredUserAndDate(owner, futureDate);
                 
         assertNotNull("A chore spec should be created, even if the date is in the future.", choreSpec);

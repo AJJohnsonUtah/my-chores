@@ -7,7 +7,9 @@ package com.njin.mychores.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.njin.mychores.converter.ChoreFrequencyConverter;
+import com.njin.mychores.converter.LocalDateTimeConverter;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -21,8 +23,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -71,8 +71,8 @@ public class ChoreSpec implements Serializable {
     private ChoreFrequency frequency;
 
     @Column(name = "next_instance_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date nextInstanceDate;
+    @Convert(converter = LocalDateTimeConverter.class)
+    private LocalDateTime nextInstanceDate;
 
     public ChoreSpec() {
     }
@@ -128,11 +128,11 @@ public class ChoreSpec implements Serializable {
     }
 
     @JsonIgnore
-    public Date getNextInstanceDate() {
+    public LocalDateTime getNextInstanceDate() {
         return nextInstanceDate;
     }
 
-    public void setNextInstanceDate(Date nextInstanceDate) {
+    public void setNextInstanceDate(LocalDateTime nextInstanceDate) {
         this.nextInstanceDate = nextInstanceDate;
     }
 

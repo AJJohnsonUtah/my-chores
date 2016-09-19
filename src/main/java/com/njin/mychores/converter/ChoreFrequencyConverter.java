@@ -6,7 +6,7 @@
 package com.njin.mychores.converter;
 
 import com.njin.mychores.model.ChoreFrequency;
-import com.njin.mychores.model.WeekDay;
+import java.time.DayOfWeek;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.AttributeConverter;
@@ -26,25 +26,25 @@ public class ChoreFrequencyConverter implements AttributeConverter<ChoreFrequenc
             result = -1 * x.getTimeBetweenRepeats();
         } else if(!x.getDaysToRepeat().isEmpty()) {
             Integer daysInteger = 0;
-            if (x.getDaysToRepeat().contains(WeekDay.SUNDAY)) {
+            if (x.getDaysToRepeat().contains(DayOfWeek.SUNDAY)) {
                 daysInteger = daysInteger | (1);
             }
-            if (x.getDaysToRepeat().contains(WeekDay.MONDAY)) {
+            if (x.getDaysToRepeat().contains(DayOfWeek.MONDAY)) {
                 daysInteger = daysInteger | (1 << 1);
             }
-            if (x.getDaysToRepeat().contains(WeekDay.TUESDAY)) {
+            if (x.getDaysToRepeat().contains(DayOfWeek.TUESDAY)) {
                 daysInteger = daysInteger | (1 << 2);
             }
-            if (x.getDaysToRepeat().contains(WeekDay.WEDNESDAY)) {
+            if (x.getDaysToRepeat().contains(DayOfWeek.WEDNESDAY)) {
                 daysInteger = daysInteger | (1 << 3);
             }
-            if (x.getDaysToRepeat().contains(WeekDay.THURSDAY)) {
+            if (x.getDaysToRepeat().contains(DayOfWeek.THURSDAY)) {
                 daysInteger = daysInteger | (1 << 4);
             }
-            if (x.getDaysToRepeat().contains(WeekDay.FRIDAY)) {
+            if (x.getDaysToRepeat().contains(DayOfWeek.FRIDAY)) {
                 daysInteger = daysInteger | (1 << 5);
             }
-            if (x.getDaysToRepeat().contains(WeekDay.SATURDAY)) {
+            if (x.getDaysToRepeat().contains(DayOfWeek.SATURDAY)) {
                 daysInteger = daysInteger | (1 << 6);
             }
             result = daysInteger;
@@ -60,27 +60,27 @@ public class ChoreFrequencyConverter implements AttributeConverter<ChoreFrequenc
         if (valToConvert < 0) {
             choreFrequency = new ChoreFrequency(valToConvert * -1);
         } else {
-            Set<WeekDay> daysToRepeat = new HashSet<>();
+            Set<DayOfWeek> daysToRepeat = new HashSet<>();
             if ((valToConvert & (1)) > 0) {
-                daysToRepeat.add(WeekDay.SUNDAY);
+                daysToRepeat.add(DayOfWeek.SUNDAY);
             }
             if ((valToConvert & (1 << 1)) > 0) {
-                daysToRepeat.add(WeekDay.MONDAY);
+                daysToRepeat.add(DayOfWeek.MONDAY);
             }
             if ((valToConvert & (1 << 2)) > 0) {
-                daysToRepeat.add(WeekDay.TUESDAY);
+                daysToRepeat.add(DayOfWeek.TUESDAY);
             }
             if ((valToConvert & (1 << 3)) > 0) {
-                daysToRepeat.add(WeekDay.WEDNESDAY);
+                daysToRepeat.add(DayOfWeek.WEDNESDAY);
             }
             if ((valToConvert & (1 << 4)) > 0) {
-                daysToRepeat.add(WeekDay.THURSDAY);
+                daysToRepeat.add(DayOfWeek.THURSDAY);
             }
             if ((valToConvert & (1 << 5)) > 0) {
-                daysToRepeat.add(WeekDay.FRIDAY);
+                daysToRepeat.add(DayOfWeek.FRIDAY);
             }
             if ((valToConvert & (1 << 6)) > 0) {
-                daysToRepeat.add(WeekDay.SATURDAY);
+                daysToRepeat.add(DayOfWeek.SATURDAY);
             }
             choreFrequency = new ChoreFrequency(daysToRepeat);
         }

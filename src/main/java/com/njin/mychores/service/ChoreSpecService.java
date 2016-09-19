@@ -13,6 +13,7 @@ import java.util.List;
  * @author AJ
  */
 public interface ChoreSpecService {    
+    public void autoUpdateNextInstance(ChoreSpec choreSpec);
     public ChoreSpec createChoreSpec(ChoreSpec choreSpec) throws IllegalAccessException;
     public ChoreSpec updateChoreSpec(ChoreSpec choreSpec) throws IllegalAccessException;
     public ChoreSpec findChoreSpec(Long choreSpecId) throws IllegalAccessException;

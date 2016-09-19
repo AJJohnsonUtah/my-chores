@@ -11,6 +11,7 @@ import com.njin.mychores.model.ChoreGroupUser;
 import com.njin.mychores.model.ChoreSpec;
 import com.njin.mychores.model.ChoreStatus;
 import com.njin.mychores.model.ChoreUser;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Locale;
 import javax.activity.InvalidActivityException;
@@ -86,8 +87,8 @@ public class ChoreControllerTest extends BaseTest {
         ChoreSpec choreSpec = createTestChoreSpecWithPreferredUser(owner);
         
         Chore createdChore = choreSpecController.findChoresOfChoreSpec(choreSpec.getChoreSpecId()).get(0);
-        Date created = createdChore.getCreated();
-        Date firstUpdated = createdChore.getUpdated();
+        LocalDateTime created = createdChore.getCreated();
+        LocalDateTime firstUpdated = createdChore.getUpdated();
         
         assertEquals("The created chore should begin with status TODO.", ChoreStatus.TODO, createdChore.getStatus());
         assertEquals("The created chore should have the same created and updated date", created, firstUpdated);
@@ -96,10 +97,10 @@ public class ChoreControllerTest extends BaseTest {
         choreController.updateChore(createdChore);
         
         Chore updatedChore = choreSpecController.findChoresOfChoreSpec(choreSpec.getChoreSpecId()).get(0);
-        Date secondUpdated = updatedChore.getUpdated();
+        LocalDateTime secondUpdated = updatedChore.getUpdated();
         
         assertEquals("The updated chore should have status COMPLETED.", ChoreStatus.COMPLETED, createdChore.getStatus());
-        assertTrue("The updated chore's updated time should be later than the first updated time.", secondUpdated.after(firstUpdated));
+        assertTrue("The updated chore's updated time should be later than the first updated time.", secondUpdated.isAfter(firstUpdated));
     }
             
 }

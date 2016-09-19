@@ -6,8 +6,8 @@
 package com.njin.mychores.controller;
 
 import com.njin.mychores.model.ChoreFrequency;
-import com.njin.mychores.model.WeekDay;
-import java.util.Date;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.util.EnumSet;
 
 /**
@@ -22,6 +22,6 @@ public class TestConstants {
     public static String testChoreGroupName = "Test Chore Group";
     public static String testChoreSpecName = "Test Chore Spec";
     public static ChoreFrequency frequencyDaily = new ChoreFrequency(84000000);
-    public static ChoreFrequency frequencyMondays = new ChoreFrequency(EnumSet.of(WeekDay.MONDAY));
-    public static Date currentTime = new Date();
+    public static ChoreFrequency frequencyMondays = new ChoreFrequency(EnumSet.of(DayOfWeek.MONDAY));
+    public static LocalDateTime currentTime = LocalDateTime.now();
 }

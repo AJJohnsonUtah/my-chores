@@ -67,6 +67,10 @@ public class ChoreServiceImpl implements ChoreService {
             throw new IllegalAccessException(messageSource.getMessage("not.own.data", null, Locale.getDefault()));
         }
         
+        if(chore.getStatus() == ChoreStatus.COMPLETED) {
+            choreSpecService.autoUpdateNextInstance(chore.getChoreSpec());
+        }
+        
         choreDao.updateChore(chore);
         return chore;
     }

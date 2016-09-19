@@ -5,11 +5,14 @@
  */
 package com.njin.mychores.model;
 
+import com.njin.mychores.converter.LocalDateTimeConverter;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -76,23 +79,23 @@ public class Chore implements Serializable {
 
     @Basic(optional = false)
     @Column(name = "created")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date created;
+    @Convert(converter = LocalDateTimeConverter.class)
+    private LocalDateTime created;
 
     @Basic(optional = false)
     @Column(name = "updated")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updated;
+    @Convert(converter = LocalDateTimeConverter.class)
+    private LocalDateTime updated;
 
     @PrePersist
     @PreUpdate
     public void updateDates() {
-        this.updated = new Date();
-        if(this.created == null) {
-            this.created = new Date();
+        this.updated = LocalDateTime.now();
+        if (this.created == null) {
+            this.created = LocalDateTime.now();
         }
     }
-    
+
     @Column(name = "location")
     private BigInteger location;
 
@@ -100,10 +103,10 @@ public class Chore implements Serializable {
     }
 
     public Chore(Long choreId) {
-        this.choreId = choreId;   
+        this.choreId = choreId;
     }
 
-    public Chore(Long choreId, ChoreSpec choreSpec, ChoreGroupUser choreDoer, ChoreStatus status, int duration, Date created, Date updated) {
+    public Chore(Long choreId, ChoreSpec choreSpec, ChoreGroupUser choreDoer, ChoreStatus status, int duration, LocalDateTime created, LocalDateTime updated) {
         this.choreId = choreId;
         this.choreSpec = choreSpec;
         this.choreDoer = choreDoer;
@@ -153,19 +156,19 @@ public class Chore implements Serializable {
         this.duration = duration;
     }
 
-    public Date getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 
-    public Date getUpdated() {
+    public LocalDateTime getUpdated() {
         return updated;
     }
 
-    public void setUpdated(Date updated) {
+    public void setUpdated(LocalDateTime updated) {
         this.updated = updated;
     }
 

@@ -11,7 +11,7 @@ import com.njin.mychores.model.ChoreGroupUser;
 import com.njin.mychores.model.ChoreSpec;
 import com.njin.mychores.model.ChoreUser;
 import com.njin.mychores.service.SessionService;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.activity.InvalidActivityException;
 import static org.junit.Assert.fail;
@@ -93,7 +93,7 @@ public class BaseTest {
         return choreSpecController.createChoreSpec(choreSpecToCreate);
     }
 
-    public ChoreSpec createTestChoreSpecWithPreferredUserAndDate(ChoreGroupUser choreGroupUser, Date nextInstance) throws InvalidActivityException, IllegalAccessException {
+    public ChoreSpec createTestChoreSpecWithPreferredUserAndDate(ChoreGroupUser choreGroupUser, LocalDateTime nextInstance) throws InvalidActivityException, IllegalAccessException {
         ChoreSpec choreSpecToCreate = new ChoreSpec();
         choreSpecToCreate.setChoreGroup(choreGroupUser.getChoreGroup());
         choreSpecToCreate.setName(TestConstants.testChoreSpecName);
