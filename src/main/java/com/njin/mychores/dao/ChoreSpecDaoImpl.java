@@ -7,8 +7,8 @@ package com.njin.mychores.dao;
 
 import com.njin.mychores.model.ChoreGroupUser;
 import com.njin.mychores.model.ChoreSpec;
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -56,7 +56,7 @@ public class ChoreSpecDaoImpl implements ChoreSpecDao {
     @Override
     public List<ChoreSpec> findChoreSpecsWithPastNextInstanceDates() {
         try {
-            return em.createNamedQuery("ChoreSpec.findByPastDate", ChoreSpec.class).setParameter("date", new Date()).getResultList();
+            return em.createNamedQuery("ChoreSpec.findByPastDate", ChoreSpec.class).setParameter("date", LocalDateTime.now()).getResultList();
         } catch (NoResultException ex) {
             return Collections.emptyList();
         }

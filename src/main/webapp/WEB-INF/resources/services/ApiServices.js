@@ -12,10 +12,44 @@ angular.module('myChoresApp').factory('apiService', ['$http', '$location',
         
         return {
             choreService: {
-                
+                create: function (chore) {
+                    var url = BASE_API_URL + API_URL_PATHS.chore + '/create';
+                    return $http.post(url, chore);
+                },
+                update: function (chore) {
+                    var url = BASE_API_URL + API_URL_PATHS.chore + '/update';                
+                    return $http.post(url, chore);
+                },
+                getActiveChoresForChoreGroupUser: function (choreGroupUser) {                    
+                    var url = BASE_API_URL + API_URL_PATHS.chore + '/chore-group-user/' + choreGroupUser.id;
+                    return $http.get(url);
+                },
+                getActiveChoresForCurrentUser: function () {
+                    var url = BASE_API_URL + API_URL_PATHS.chore + '/current-user';
+                    return $http.get(url);
+                },
+                getActiveChoresForChoreGroup: function (choreGroup) {
+                    var url = BASE_API_URL + API_URL_PATHS.chore + '/chore-group/' + choreGroup.id;
+                    return $http.get(url);
+                }
             },
             choreSpecService: {
-                
+                create: function (choreSpec) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreSpec + '/create';
+                    return $http.post(url, choreSpec);
+                },
+                update: function (choreSpec) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreSpec + '/update';                
+                    return $http.post(url, choreSpec);
+                },
+                find: function (choreSpec) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreSpec + '/find/' + choreSpec.id;
+                    return $http.get(url);
+                },
+                findChoresOfSpec: function (choreSpec) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreSpec + '/' + choreSpec.id + '/chores';
+                    return $http.get(url);
+                }
             },
             choreGroupService: {
                 create: function (choreGroup) {

@@ -1,5 +1,5 @@
 /*global angular, alert */
-function registerGroupsController($scope, api, userService, $timeout) {
+function registerGroupsController($scope, api, userService, $timeout, $uibModal) {
     "use strict";
     angular.extend($scope, {        
         selected: {
@@ -14,7 +14,6 @@ function registerGroupsController($scope, api, userService, $timeout) {
         },
         editingName: false,
         userServiceData: userService.getUserServiceData(),
-        creatingChoreGroup: false,
         choreGroups: [],
         isPendingMember: function (choreGroupUser) {
             return choreGroupUser.status === 'PENDING';
@@ -34,16 +33,6 @@ function registerGroupsController($scope, api, userService, $timeout) {
                 }
             });            
         },        
-        createNewChoreGroup: function () {
-            if (!$scope.newChoreGroupName.length) {
-                return;
-            }
-            api.choreGroupService.create($scope.newChoreGroupName).success(function(createdChoreGroupOwner) {
-                $scope.currentUserChoreGroupUsers.push(createdChoreGroupOwner);
-                $scope.selected.choreGroupUser = createdChoreGroupOwner;
-                $scope.creatingChoreGroup = false;
-            });
-        },
         sendInvitation: function (choreGroup, recipientEmail) {
             api.choreGroupUserService.sendInvite(choreGroup, recipientEmail).success(function() {
                 $scope.inviteErrorMessage = '';
@@ -115,25 +104,13 @@ function registerGroupsController($scope, api, userService, $timeout) {
                 return;
             } else {
                 choreGroup.choreGroupName = updatedName;
-                if(choreGroup.id) {                   
-                    api.choreGroupService.update(choreGroup).success(function (updatedChoreGroup) {
-                        $scope.editError = '';
-                        $scope.editingName = false;
-                    }).error(function (response) {
-                        $scope.editError = response.message;
-                    });                    
-                } else {
-                    $scope.tryingToCreate = true;
-                    api.choreGroupService.create(choreGroup).success(function (createdChoreGroupUser) {
-                        $scope.getAllMembers(createdChoreGroupUser.choreGroup);
-                        $scope.editError = '';
-                        $scope.editingName = false;                        
-                        $scope.currentUserChoreGroupUsers.push(createdChoreGroupUser);
-                        $scope.selected.choreGroupUser = createdChoreGroupUser;
-                    }).error(function (response) {
-                        $scope.editError = response.message;
-                    });     
-                }
+                api.choreGroupService.update(choreGroup).success(function (updatedChoreGroup) {
+                    $scope.editError = '';
+                    $scope.editingName = false;
+                }).error(function (response) {
+                    $scope.editError = response.message;
+                });                    
+                
             }
         },
         deleteChoreGroup: function(choreGroup) {
@@ -150,10 +127,36 @@ function registerGroupsController($scope, api, userService, $timeout) {
                     $scope.selected.choreGroupUser = null;
                 }
             });
+        },        
+        createGroup: function() {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'createGroupModal.html',
+                controller: 'choreGroupCreateModalController',
+                size: 'sm'	    	
+            });
+
+            modalInstance.result.then(function (choreGroup) {	
+                api.choreGroupService.create(choreGroup).success(function(createdGroupUser) {
+                    $scope.currentUserChoreGroupUsers.push(createdGroupUser);
+                    $scope.selected.choreGroupUser = createdGroupUser;
+                });
+            });			            		
         }
     });
 
     $scope.loadMyChoreGroups(null);
 }
 
-angular.module('myChoresApp').controller('groupsController', ['$scope', 'apiService', 'userService', '$timeout', registerGroupsController]);
+angular.module('myChoresApp').controller('groupsController', ['$scope', 'apiService', 'userService', '$timeout', '$uibModal', registerGroupsController]);
+
+angular.module('myChoresApp').controller('choreGroupCreateModalController', function ($scope, $uibModalInstance) {
+   angular.extend($scope, {
+      choreGroup: {
+          choreGroupName: ''
+      },
+      createChoreGroup: function() {
+          $uibModalInstance.close($scope.choreGroup);
+      }
+   });
+});
