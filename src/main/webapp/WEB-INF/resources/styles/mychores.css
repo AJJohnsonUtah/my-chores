@@ -100,3 +100,7 @@ hr {
 #create-group-btn {
     width: 100%;
 }
+
+.modal-content {
+    margin: 15px;
+}

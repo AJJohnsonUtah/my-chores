@@ -1,7 +1,7 @@
 /*global angular, alert */
 function registerGroupsController($scope, api, userService, $timeout, $uibModal) {
     "use strict";
-    angular.extend($scope, {        
+    angular.extend($scope, {
         selected: {
             choreGroup: null,
             updatedName: null
@@ -25,14 +25,14 @@ function registerGroupsController($scope, api, userService, $timeout, $uibModal)
             return $scope.userServiceData.user.email === choreGroupUser.choreUser.email;
         },
         loadMyChoreGroups: function () {
-            api.choreGroupUserService.findAll().success(function (currentChoreGroupUsers) { 
+            api.choreGroupUserService.findAll().success(function (currentChoreGroupUsers) {
                 $scope.currentUserChoreGroupUsers = currentChoreGroupUsers;
                 if($scope.currentUserChoreGroupUsers.length > 0) {
                     $scope.selected.choreGroupUser = ($scope.currentUserChoreGroupUsers.length > 0 ? $scope.currentUserChoreGroupUsers[0] : null);
                     $scope.getAllMembers($scope.selected.choreGroupUser.choreGroup);
                 }
-            });            
-        },        
+            });
+        },
         sendInvitation: function (choreGroup, recipientEmail) {
             api.choreGroupUserService.sendInvite(choreGroup, recipientEmail).success(function() {
                 $scope.inviteErrorMessage = '';
@@ -62,8 +62,7 @@ function registerGroupsController($scope, api, userService, $timeout, $uibModal)
                         $scope.currentUserChoreGroupUsers[i].choreGroup.choreGroupUsers = allMembers;
                         return;
                     }
-                }
-                
+                }                
             });
         },
         removeChoreGroupUser: function (choreGroup, choreGroupUser) {
@@ -77,41 +76,22 @@ function registerGroupsController($scope, api, userService, $timeout, $uibModal)
                 api.choreGroupService.getAllMembers(choreGroup);
             });
         },
-        beginCreatingChoreGroup: function () {
-            $scope.selected.choreGroupUser = {choreGroup: {}};
-            $scope.editingName=true;
-            $scope.selected.updatedName = '';
-            $timeout(function() {
-                document.getElementById('chore-group-name-textbox').focus();
-            }, 300);
-        },
         beginEditingChoreGroup: function () {
-            $scope.editingName=true;
-            $scope.selected.updatedName =$scope.selected.choreGroup.choreGroupName;
+            $scope.editingName = true;
+            $scope.selected.updatedName = $scope.selected.choreGroupUser.choreGroup.choreGroupName;
             $timeout(function() {
                 document.getElementById('chore-group-name-textbox').focus();
             }, 300);
         },
-        editOrCreateChoreGroup: function (choreGroup) {
-            var updatedName = $scope.selected.updatedName;
-            if(updatedName === null || updatedName === undefined || updatedName.trim() === '') {
-                $scope.editError = "Group name must not be empty.";
-                document.getElementById('chore-group-name-textbox').focus();
-                return;
-            } else if((choreGroup.choreGroupName !== undefined && choreGroup.choreGroupName !== null) && choreGroup.choreGroupName.trim() === updatedName.trim()) {                
+        editChoreGroupName: function (choreGroup) {
+            var updatedName = $scope.selected.updatedName || choreGroup.choreGroupName;
+            choreGroup.choreGroupName = updatedName;
+            api.choreGroupService.update(choreGroup).success(function (updatedChoreGroup) {
                 $scope.editError = '';
                 $scope.editingName = false;
-                return;
-            } else {
-                choreGroup.choreGroupName = updatedName;
-                api.choreGroupService.update(choreGroup).success(function (updatedChoreGroup) {
-                    $scope.editError = '';
-                    $scope.editingName = false;
-                }).error(function (response) {
-                    $scope.editError = response.message;
-                });                    
-                
-            }
+            }).error(function (response) {
+                $scope.editError = response.message;
+            });                                                
         },
         deleteChoreGroup: function(choreGroup) {
             api.choreGroupService.delete(choreGroup).success(function() {
@@ -133,13 +113,16 @@ function registerGroupsController($scope, api, userService, $timeout, $uibModal)
                 animation: true,
                 templateUrl: 'createGroupModal.html',
                 controller: 'choreGroupCreateModalController',
-                size: 'sm'	    	
+                size: 'md'	    	
             });
 
             modalInstance.result.then(function (choreGroup) {	
                 api.choreGroupService.create(choreGroup).success(function(createdGroupUser) {
                     $scope.currentUserChoreGroupUsers.push(createdGroupUser);
                     $scope.selected.choreGroupUser = createdGroupUser;
+                    api.choreGroupService.getActiveMembers(createdGroupUser.choreGroup).success(function(members) {
+                        createdGroupUser.choreGroup.choreGroupUsers = members;
+                    });
                 });
             });			            		
         }

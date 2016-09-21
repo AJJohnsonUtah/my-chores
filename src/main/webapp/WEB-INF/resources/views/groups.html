@@ -1,20 +1,18 @@
-<script type="text/ng-template" id="createGroupModal.html">
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h2>Create Group</h2>
-        </div>
-        <div class="panel-body">
-            <form data-ng-submit="createChoreGroup()">
-                <div class="input-group">
-                    <span class="input-group-addon">Name:</span>
-                    <input data-ng-model="choreGroup.choreGroupName" class="form-control" required>
-                    <div class="input-group-btn">
-                        <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-arrow-right"></span></button>
-                    </div>
+<script type="text/ng-template" id="createGroupModal.html">    
+    <div class="modal-header">
+        <h2>Create Group</h2>
+    </div>
+    <div class="modal-content">
+        <form data-ng-submit="createChoreGroup()">
+            <div class="input-group">
+                <span class="input-group-addon">Name:</span>
+                <input data-ng-model="choreGroup.choreGroupName" class="form-control" required>
+                <div class="input-group-btn">
+                    <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-arrow-right"></span></button>
                 </div>
+            </div>
 
-            </form>
-        </div>
+        </form>
     </div>
 </script>
 
@@ -35,20 +33,17 @@
     </div>
     <div class="col-md-9" id="chore-group-manager">
         <div data-ng-show="!selected.choreGroupUser">Select a chore group!</div>
-        <div data-ng-show="selected.choreGroupUser" class="panel panel-primary">
+        <div data-ng-show="selected.choreGroupUser" class="panel panel-default">
             <div class="panel-heading">
-                <h3 data-ng-show="!editingName" ><a data-ng-href="/group/{{selected.choreGroupUser.choreGroup.id}}">{{selected.choreGroupUser.choreGroup.choreGroupName}}</a> <button class="btn btn-default pull-right" data-ng-click="beginEditingChoreGroup()"><span class="glyphicon glyphicon-edit"></span></button></h3>
-                <form data-ng-show="editingName" data-ng-submit="editOrCreateChoreGroup(selected.choreGroupUser.choreGroup)">
-                    <input id="chore-group-name-textbox" class="form-control input-lg" data-ng-model="selected.updatedName" maxlength="35" required data-ng-blur="editOrCreateChoreGroup(selected.choreGroupUser.choreGroup)" placeholder="Name of group...">
-                    <div class="alert alert-danger" data-ng-show="errorMessages.editGroupName">{{errorMessages.editGroupName}}</div>
-                </form>
+                <h3><a data-ng-href="/group/{{selected.choreGroupUser.choreGroup.id}}">{{selected.choreGroupUser.choreGroup.choreGroupName}}</a></h3>                
             </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-5">                        
-                    </div>
-                    <div class="col-md-7">
-                        <h4>Group Members</h4>
+            <div class="panel-body">                
+                <uib-tabset data-justified="true">
+                    <uib-tab data-index="0">                        
+                        <uib-tab-heading>
+                            <i class="glyphicon glyphicon-user"></i> Members
+                        </uib-tab-heading>
+                        <br>
                         <form data-ng-submit="sendInvitation(selected.choreGroupUser.choreGroup, recipientEmail)">
                             <div class="input-group">
                                 <span class="input-group-addon" id="recipient-email-label">Invite user:</span>
@@ -63,52 +58,80 @@
                                 Loading users...
                             </div>
                             <div data-ng-if="selected.choreGroupUser.choreGroup.choreGroupUsers">
-                                
-                                <h4>Invited Members</h4>
-                                <div id="invited-member-list">
-                                    <div data-ng-repeat="choreGroupUser in selected.choreGroupUser.choreGroup.choreGroupUsers | filter : isPendingMember">
-                                        <div class="input-group">
-                                            <span class="input-group-addon">{{choreGroupUser.choreUser.email}}</span>
-                                            <select class="form-control" data-ng-change="updateChoreGroupUserRole(selected.choreGroupUser.choreGroup, choreGroupUser)" data-ng-model="choreGroupUser.choreGroupUserRole">
-                                                <option value="ADMIN">Admin</option>
-                                                <option value="OWNER" data-ng-if="choreGroupUser.choreGroupUserRole === 'OWNER'">Owner</option>
-                                                <option value="MEMBER">Member</option>
-                                            </select>
-                                            <div class="input-group-btn">
-                                                <button class="btn btn-danger" data-ng-click="removeChoreGroupUser(selected.choreGroupUser.choreGroup, choreGroupUser)"><span class="glyphicon glyphicon-remove"></span></button>
-                                            </div>                                       
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <h4>Active Members</h4>
-                                <div id="active-member-list">
-                                    <div data-ng-repeat="choreGroupUser in selected.choreGroupUser.choreGroup.choreGroupUsers | filter : isActiveMember">
-                                        <div class="input-group">
-                                            <span class="input-group-addon">{{choreGroupUser.choreUser.email}}</span>
-                                            <select class="form-control" data-ng-change="updateChoreGroupUserRole(selected.choreGroupUser.choreGroup, choreGroupUser)" data-ng-model="choreGroupUser.choreGroupUserRole" data-ng-disabled="choreGroupUser.choreGroupUserRole === 'OWNER' || selected.choreGroupUser.choreGroupUserRole !== 'OWNER'">
-                                                <option value="OWNER">Owner</option>
-                                                <option value="ADMIN">Admin</option>
-                                                <option value="MEMBER">Member</option>
-                                            </select>
-                                            <div class="input-group-btn">
+                                <br>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th><th>Role</th><th>Date Joined</th><th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr data-ng-repeat="choreGroupUser in selected.choreGroupUser.choreGroup.choreGroupUsers">
+                                            <td><span class="glyphicon glyphicon-user"></span> {{choreGroupUser.choreUser.email}}</td>
+                                            <td>
+                                                <select class="form-control" data-ng-change="updateChoreGroupUserRole(selected.choreGroupUser.choreGroup, choreGroupUser)" data-ng-model="choreGroupUser.choreGroupUserRole" data-ng-disabled="choreGroupUser.choreGroupUserRole === 'OWNER' || selected.choreGroupUser.choreGroupUserRole !== 'OWNER'">
+                                                    <option value="OWNER">Owner</option>
+                                                    <option value="ADMIN">Admin</option>
+                                                    <option value="MEMBER">Member</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <span data-ng-if="choreGroupUser.status ==='ACCEPTED'">{{choreGroupUser.updated | date: 'short'}}</span>
+                                                <span data-ng-if="choreGroupUser.status !=='ACCEPTED'">Invite pending</span>
+                                            </td>
+                                            <td>
                                                 <button class="btn btn-danger" data-ng-disabled="choreGroupUser.choreGroupUserRole === 'OWNER'" data-ng-click="removeChoreGroupUser(selected.choreGroupUser.choreGroup, choreGroupUser)"><span class="glyphicon glyphicon-remove"></span></button>
-                                            </div>                                       
-                                        </div>
-                                    </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </uib-tab>
+                    <uib-tab data-index="1">
+                        <uib-tab-heading>
+                            <i class="glyphicon glyphicon-wrench"></i> Chores
+                        </uib-tab-heading>
+                        <button class="btn btn-lg btn-success" data-ng-click="createChore(selecte.choreGroupUser.choreGroup)"><span class="glyphicon glyphicon-plus"></span> Create Chore</button>
+                        <table data-ng-if="">
+                            <thead>
+                                <tr>
+                                    <th>Chore</th><th>Frequency</th><th>Preferred Doer</th><th>Next Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-ng-repeat="choreSpec in choreGroupUser.choreGroup.choreSpecs">
+                                    <td>{{choreSpec.name}}</td>
+                                    <td>{{choreSpec.frequency}}</td>
+                                    <td>{{choreSpec.preferredDoer.choreUser.email}}</td>
+                                    <td>{{choreSpec.nextInstanceDate | date: 'short'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </uib-tab>
+                    <uib-tab data-index="2" data-ng-if="selected.choreGroupUser.choreGroupUserRole === 'OWNER'" data-select="selected.updatedName = selected.choreGroupUser.choreGroup.choreGroupName">
+                        <uib-tab-heading>
+                            <i class="glyphicon glyphicon-cog"></i> Settings
+                        </uib-tab-heading>
+                        
+                        <br>
+                        <div class="row">
+                            <form class="col-md-6" data-ng-submit="editChoreGroupName(selected.choreGroupUser.choreGroup)">
+                                <div class="input-group">
+                                    <div class="input-group-addon">Group Name: </div>
+                                    <input class="form-control" data-ng-model="selected.updatedName" data-ng-blur="editChoreGroupName(selected.choreGroupUser.choreGroup)">
+                                </div>
+                                <div class="alert alert-danger" data-ng-show="errorMessages.editGroupName">{{errorMessages.editGroupName}}</div>
+                            </form>
+
+                            <div class="col-md-6">
+                                <div id="delete-chore-group-btn-wrapper">
+                                    <div class="btn btn-danger btn-lg" data-ng-click="deleteChoreGroup(selected.choreGroupUser.choreGroup)">Delete Group</div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="row" data-ng-if="selected.choreGroupUser.choreGroupUserRole === 'OWNER'">
-                    <hr>
-                    <div class="col-md-12">
-                        <div id="delete-chore-group-btn-wrapper">
-                            <div class="btn btn-danger btn-lg" data-ng-click="deleteChoreGroup(selected.choreGroupUser.choreGroup)">Delete Group</div>
-                        </div>
-                    </div>
-                </div>
+                    </uib-tab>
+                </uib-tabset>                                                    
             </div>            
         </div>        
     </div>

@@ -90,9 +90,10 @@ public class Chore implements Serializable {
     @PrePersist
     @PreUpdate
     public void updateDates() {
-        this.updated = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
+        this.updated = now;
         if (this.created == null) {
-            this.created = LocalDateTime.now();
+            this.created = now;
         }
     }
 
