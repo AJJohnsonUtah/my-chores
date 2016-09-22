@@ -32,6 +32,9 @@ public class ChoreFrequency implements Serializable {
     public ChoreFrequency(Set<DayOfWeek> daysToRepeat) {
         this.daysToRepeat = daysToRepeat;
     }
+    
+    public ChoreFrequency() {        
+    };
 
     public Integer getTimeBetweenRepeats() {
         return timeBetweenRepeats;

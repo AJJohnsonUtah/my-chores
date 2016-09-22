@@ -27,11 +27,13 @@ public class ChoreSpecDaoImpl implements ChoreSpecDao {
     
     @Override
     public void createChoreSpec(ChoreSpec choreSpec) {
+        choreSpec.setNextInstanceDateFromLong(choreSpec.getNextInstanceFromLong());
         em.persist(choreSpec);
     }
 
     @Override
     public void updateChoreSpec(ChoreSpec choreSpec) {
+        choreSpec.setNextInstanceDateFromLong(choreSpec.getNextInstanceFromLong());
         em.merge(choreSpec);
     }
 

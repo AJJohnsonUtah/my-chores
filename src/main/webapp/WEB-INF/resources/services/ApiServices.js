@@ -71,7 +71,12 @@ angular.module('myChoresApp').factory('apiService', ['$http', '$location',
                 getAllMembers: function (choreGroup) {
                     var url = BASE_API_URL + API_URL_PATHS.choreGroup + '/members';
                     return $http.post(url, choreGroup);
+                },
+                getChoreSpecs: function (choreGroup) {
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroup + '/chore-specs/' + choreGroup.id;
+                    return $http.get(url);
                 }
+                
             },
             choreGroupUserService: {
                 sendInvite: function (choreGroup, recipientEmail) {

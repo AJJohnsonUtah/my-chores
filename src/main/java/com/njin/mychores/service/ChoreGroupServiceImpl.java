@@ -113,6 +113,8 @@ public class ChoreGroupServiceImpl implements ChoreGroupService {
 
     @Override
     public List<ChoreSpec> findAllChoreSpecsForChoreGroup(Long choreGroupId) throws IllegalAccessException {
-        return findChoreGroup(choreGroupId).getChoreSpecs();
+        ChoreGroup choreGroup = findChoreGroup(choreGroupId);
+        choreGroup.getChoreSpecs().size();
+        return choreGroup.getChoreSpecs();
     }
 }

@@ -49,7 +49,7 @@ public class ChoreSpecServiceImpl implements ChoreSpecService {
         
         choreSpecDao.createChoreSpec(choreSpec);        
         
-        if(choreSpec.getNextInstanceDate().isBefore(LocalDateTime.now())) {
+        if(choreSpec.getNextInstanceDate() != null && choreSpec.getNextInstanceDate().isBefore(LocalDateTime.now())) {
             choreService.createChoreFromChoreSpec(choreSpec);
         }
         

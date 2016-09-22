@@ -24,4 +24,5 @@ public class TestConstants {
     public static ChoreFrequency frequencyDaily = new ChoreFrequency(84000000);
     public static ChoreFrequency frequencyMondays = new ChoreFrequency(EnumSet.of(DayOfWeek.MONDAY));
     public static LocalDateTime currentTime = LocalDateTime.now();
+    public static LocalDateTime tomorrow = LocalDateTime.now().plusDays(1L);
 }

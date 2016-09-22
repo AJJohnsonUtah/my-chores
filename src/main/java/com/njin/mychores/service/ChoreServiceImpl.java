@@ -9,12 +9,11 @@ import com.njin.mychores.dao.ChoreDao;
 import com.njin.mychores.model.Chore;
 import com.njin.mychores.model.ChoreSpec;
 import com.njin.mychores.model.ChoreStatus;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +54,12 @@ public class ChoreServiceImpl implements ChoreService {
             throw new IllegalAccessException(messageSource.getMessage("not.own.data", null, Locale.getDefault()));
         }
 
+        choreDao.createChore(chore);
+        return chore;
+    }
+    
+    @Override
+    public Chore createChoreAutomatically(Chore chore) {
         choreDao.createChore(chore);
         return chore;
     }
@@ -124,22 +129,13 @@ public class ChoreServiceImpl implements ChoreService {
 
     @Override
     public Chore createChoreFromChoreSpec(ChoreSpec choreSpec) throws IllegalAccessException {
-        choreSpec.setNextInstanceDate(null);
+        choreSpec.setNextInstanceDate((LocalDateTime) null);
+        choreSpecService.updateChoreSpec(choreSpec);
         Chore newChore = new Chore();
         newChore.setChoreSpec(choreSpec);
         newChore.setChoreDoer(choreSpec.getPreferredDoer());
         newChore.setStatus(ChoreStatus.TODO);
-        return createChore(newChore);
-    }
-
-    @Scheduled(fixedRate = 100000L)
-    @Override
-    public void createAllScheduledChores() throws IllegalAccessException {
-        System.out.println("creating those chores!");
-        List<ChoreSpec> scheduledChoreSpecs = choreSpecService.findChoreSpecsWithPastNextInstanceDates();
-        for(ChoreSpec scheduledChoreSpec : scheduledChoreSpecs) {
-            createChoreFromChoreSpec(scheduledChoreSpec);
-        }
+        return createChoreAutomatically(newChore);
     }
 
 }

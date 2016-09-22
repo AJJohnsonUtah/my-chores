@@ -27,104 +27,128 @@ function registerGroupsController($scope, api, userService, $timeout, $uibModal)
         loadMyChoreGroups: function () {
             api.choreGroupUserService.findAll().success(function (currentChoreGroupUsers) {
                 $scope.currentUserChoreGroupUsers = currentChoreGroupUsers;
-                if($scope.currentUserChoreGroupUsers.length > 0) {
-                    $scope.selected.choreGroupUser = ($scope.currentUserChoreGroupUsers.length > 0 ? $scope.currentUserChoreGroupUsers[0] : null);
-                    $scope.getAllMembers($scope.selected.choreGroupUser.choreGroup);
+                if ($scope.currentUserChoreGroupUsers.length > 0) {
+                    $scope.selectChoreGroupUser($scope.currentUserChoreGroupUsers[0]);                    
                 }
             });
         },
         sendInvitation: function (choreGroup, recipientEmail) {
-            api.choreGroupUserService.sendInvite(choreGroup, recipientEmail).success(function() {
+            api.choreGroupUserService.sendInvite(choreGroup, recipientEmail).success(function () {
                 $scope.inviteErrorMessage = '';
                 $scope.successfulInvite = recipientEmail;
                 userService.reloadSentInvitations();
                 $scope.getAllMembers(choreGroup);
-            }).error(function(response) {
+            }).error(function (response) {
                 $scope.errorMessages.inviteUser = response.message;
             });
         },
         selectChoreGroupUser: function (choreGroupUser) {
             $scope.selected.choreGroupUser = choreGroupUser;
             $scope.getAllMembers(choreGroupUser.choreGroup);
+            $scope.getAllChoreSpecs(choreGroupUser.choreGroup);
             $scope.editingName = false;
+        },
+        getAllChoreSpecs: function (choreGroup) {
+            api.choreGroupService.getChoreSpecs(choreGroup).success(function(choreSpecs) {
+                choreGroup.choreSpecs = choreSpecs;
+            });
         },
         getAllMembers: function (choreGroup) {
             var promise;
-            if($scope.selected.choreGroupUser.choreGroupUserRole === 'MEMBER') {
+            if ($scope.selected.choreGroupUser.choreGroupUserRole === 'MEMBER') {
                 promise = api.choreGroupService.getActiveMembers(choreGroup);
             } else {
                 promise = api.choreGroupService.getAllMembers(choreGroup);
             }
-            
-            promise.success(function(allMembers) {
-                for(var i = 0; i < $scope.currentUserChoreGroupUsers.length; i++) {
-                    if($scope.currentUserChoreGroupUsers[i].choreGroup.id === choreGroup.id) {
+
+            promise.success(function (allMembers) {
+                for (var i = 0; i < $scope.currentUserChoreGroupUsers.length; i++) {
+                    if ($scope.currentUserChoreGroupUsers[i].choreGroup.id === choreGroup.id) {
                         $scope.currentUserChoreGroupUsers[i].choreGroup.choreGroupUsers = allMembers;
                         return;
                     }
-                }                
+                }
             });
         },
         removeChoreGroupUser: function (choreGroup, choreGroupUser) {
-            api.choreGroupUserService.removeChoreGroupUser(choreGroupUser).success(function() {
+            api.choreGroupUserService.removeChoreGroupUser(choreGroupUser).success(function () {
                 api.choreGroupService.getAllMembers(choreGroup);
                 choreGroupUser.status = 'REMOVED';
             });
         },
         updateChoreGroupUserRole: function (choreGroup, choreGroupUser) {
-            api.choreGroupUserService.updateChoreGroupUserRole(choreGroupUser).success(function() {
+            api.choreGroupUserService.updateChoreGroupUserRole(choreGroupUser).success(function () {
                 api.choreGroupService.getAllMembers(choreGroup);
             });
         },
-        beginEditingChoreGroup: function () {
-            $scope.editingName = true;
-            $scope.selected.updatedName = $scope.selected.choreGroupUser.choreGroup.choreGroupName;
-            $timeout(function() {
-                document.getElementById('chore-group-name-textbox').focus();
-            }, 300);
-        },
         editChoreGroupName: function (choreGroup) {
-            var updatedName = $scope.selected.updatedName || choreGroup.choreGroupName;
+            if ($scope.selected.updatedName === null || $scope.selected.updatedName === undefined || $scope.selected.updatedName.trim().length === 0) {
+                $scope.selected.updatedName = choreGroup.choreGroupName;
+                return;
+            }
+            var updatedName = $scope.selected.updatedName;
             choreGroup.choreGroupName = updatedName;
             api.choreGroupService.update(choreGroup).success(function (updatedChoreGroup) {
                 $scope.editError = '';
                 $scope.editingName = false;
             }).error(function (response) {
                 $scope.editError = response.message;
-            });                                                
+            });
         },
-        deleteChoreGroup: function(choreGroup) {
-            api.choreGroupService.delete(choreGroup).success(function() {
-                for(var i = 0; i < $scope.currentUserChoreGroupUsers.length; i++) {
-                    if($scope.currentUserChoreGroupUsers[i].choreGroup.id === choreGroup.id) {
+        deleteChoreGroup: function (choreGroup) {
+            api.choreGroupService.delete(choreGroup).success(function () {
+                for (var i = 0; i < $scope.currentUserChoreGroupUsers.length; i++) {
+                    if ($scope.currentUserChoreGroupUsers[i].choreGroup.id === choreGroup.id) {
                         $scope.currentUserChoreGroupUsers.splice(i, 1);
                         break;
                     }
                 }
-                if($scope.currentUserChoreGroupUsers.length > 0) {
+                if ($scope.currentUserChoreGroupUsers.length > 0) {
                     $scope.selected.choreGroupUser = $scope.currentUserChoreGroupUsers[0];
                 } else {
                     $scope.selected.choreGroupUser = null;
                 }
             });
-        },        
-        createGroup: function() {
+        },
+        createGroup: function () {
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'createGroupModal.html',
                 controller: 'choreGroupCreateModalController',
-                size: 'md'	    	
+                size: 'md'
             });
 
-            modalInstance.result.then(function (choreGroup) {	
-                api.choreGroupService.create(choreGroup).success(function(createdGroupUser) {
+            modalInstance.result.then(function (choreGroup) {
+                api.choreGroupService.create(choreGroup).success(function (createdGroupUser) {
                     $scope.currentUserChoreGroupUsers.push(createdGroupUser);
                     $scope.selected.choreGroupUser = createdGroupUser;
-                    api.choreGroupService.getActiveMembers(createdGroupUser.choreGroup).success(function(members) {
+                    api.choreGroupService.getActiveMembers(createdGroupUser.choreGroup).success(function (members) {
                         createdGroupUser.choreGroup.choreGroupUsers = members;
                     });
                 });
-            });			            		
+            });
+        },
+        createChoreSpec: function () {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'createChoreSpecModal.html',
+                controller: 'choreSpecCreateModalController',
+                size: 'md',
+                resolve: {
+                    choreGroup: function () {
+                        return $scope.selected.choreGroupUser.choreGroup;
+                    }
+                }
+            });
+            
+            modalInstance.result.then(function (choreSpec) {
+                api.choreSpecService.create(choreSpec).success(function (createdChoreSpec) {
+                    if(!$scope.selected.choreGroupUser.choreGroup.choreSpecs) {
+                        $scope.selected.choreGroupUser.choreGroup.choreSpecs = [];
+                    }
+                    $scope.selected.choreGroupUser.choreGroup.choreSpecs.push(createdChoreSpec);                    
+                });
+            });
         }
     });
 
@@ -134,12 +158,63 @@ function registerGroupsController($scope, api, userService, $timeout, $uibModal)
 angular.module('myChoresApp').controller('groupsController', ['$scope', 'apiService', 'userService', '$timeout', '$uibModal', registerGroupsController]);
 
 angular.module('myChoresApp').controller('choreGroupCreateModalController', function ($scope, $uibModalInstance) {
-   angular.extend($scope, {
-      choreGroup: {
-          choreGroupName: ''
-      },
-      createChoreGroup: function() {
-          $uibModalInstance.close($scope.choreGroup);
-      }
-   });
+    angular.extend($scope, {
+        choreGroup: {
+            choreGroupName: ''
+        },
+        createChoreGroup: function () {
+            $uibModalInstance.close($scope.choreGroup);
+        }
+    });
+});
+
+angular.module('myChoresApp').controller('choreSpecCreateModalController', function ($scope, $uibModalInstance, choreGroup) {
+    angular.extend($scope, {
+        members: choreGroup.choreGroupUsers,
+        repeatOption: null,
+        selectedWeekdays: {},
+        startDate: new Date(),
+        daysOfWeek: [
+            {name: 'Sunday', selected: false},
+            {name: 'Monday', selected: false},
+            {name: 'Tuesday', selected: false},
+            {name: 'Wednesday', selected: false},
+            {name: 'Thursday', selected: false},
+            {name: 'Friday', selected: false},
+            {name: 'Saturday', selected: false} 
+        ],
+        selected: {
+            frequency: null
+        },
+        repeatOptions: [
+            { name: 'Daily', millis: 1000*60*60*24}, {name: 'Every Other Day', millis: 1000*60*60*24*2}, {name: 'Weekly', millis: 1000*60*60*24*7}, {name: 'Every Other Week', millis: 1000*60*60*24*14}, {name: 'Every Other Day', millis: 1000*60*60*24*30}
+        ],        
+        createChoreSpec: function () {
+            var choreSpec = {
+                name: $scope.choreSpecName,
+                preferredDoer: $scope.preferredDoer,            
+                nextInstance: $scope.startDate,
+                choreGroup: {id: choreGroup.id, choreGroupName: choreGroup.choreGroupName},
+                frequency: {}
+            };
+            if(choreSpec.nextInstance) {
+                choreSpec.nextInstance = choreSpec.nextInstance.getTime();
+            }
+            if($scope.repeatOption === 'fixed') {
+                choreSpec.frequency.timeBetweenRepeats = $scope.selected.frequency.millis;
+            } else if ($scope.repeatOption === 'weekdays') {
+                var weekdays = [];
+                for(var weekday in $scope.selectedWeekdays) {
+                    if($scope.selectedWeekdays.hasOwnProperty(weekday) && $scope.selectedWeekdays[weekday]) {
+                        weekdays.push(weekday.toUpperCase());
+                    }
+                }
+                choreSpec.frequency.daysToRepeat = weekdays;
+            } else if($scope.repeatOption === 'onetime') {
+                choreSpec.frequency.daysToRepeat = [];
+            }
+            
+            $uibModalInstance.close(choreSpec);
+        }
+    });
 });

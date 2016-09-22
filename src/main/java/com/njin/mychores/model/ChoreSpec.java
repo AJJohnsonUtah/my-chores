@@ -9,8 +9,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.njin.mychores.converter.ChoreFrequencyConverter;
 import com.njin.mychores.converter.LocalDateTimeConverter;
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.ZoneOffset;
+import java.util.TimeZone;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -23,6 +25,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -73,6 +76,9 @@ public class ChoreSpec implements Serializable {
     @Column(name = "next_instance_date")
     @Convert(converter = LocalDateTimeConverter.class)
     private LocalDateTime nextInstanceDate;
+        
+    @Transient
+    private Long nextInstance;
 
     public ChoreSpec() {
     }
@@ -134,6 +140,27 @@ public class ChoreSpec implements Serializable {
 
     public void setNextInstanceDate(LocalDateTime nextInstanceDate) {
         this.nextInstanceDate = nextInstanceDate;
+    }
+    
+    public void setNextInstanceDateFromLong(Long nextInstanceDate) {
+        if (nextInstanceDate == null && this.nextInstanceDate == null) {
+            this.nextInstanceDate = null;
+        } else if(this.nextInstanceDate == null) {
+            this.nextInstanceDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(nextInstanceDate), TimeZone.getDefault().toZoneId());
+        }
+    }   
+    
+    public void setNextInstance(Long nextInstance) {        
+        this.nextInstance = nextInstance;
+    }
+    
+    public Long getNextInstance() {
+        return (this.nextInstanceDate == null ? null : this.nextInstanceDate.toEpochSecond(ZoneOffset.UTC));
+    }
+    
+    @JsonIgnore
+    public Long getNextInstanceFromLong() {
+        return this.nextInstance;
     }
 
     @Override
