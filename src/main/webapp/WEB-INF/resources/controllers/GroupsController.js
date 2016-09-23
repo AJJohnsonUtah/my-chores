@@ -76,8 +76,8 @@ function registerGroupsController($scope, api, userService, $timeout, $uibModal)
                 choreGroupUser.status = 'REMOVED';
             });
         },
-        updateChoreGroupUserRole: function (choreGroup, choreGroupUser) {
-            api.choreGroupUserService.updateChoreGroupUserRole(choreGroupUser).success(function () {
+        updateChoreGroupUser: function (choreGroup, choreGroupUser) {
+            api.choreGroupUserService.updateChoreGroupUser(choreGroupUser).success(function () {
                 api.choreGroupService.getAllMembers(choreGroup);
             });
         },
@@ -149,6 +149,26 @@ function registerGroupsController($scope, api, userService, $timeout, $uibModal)
                     $scope.selected.choreGroupUser.choreGroup.choreSpecs.push(createdChoreSpec);                    
                 });
             });
+        },
+        toReadableFrequency: function (frequency) {
+            if(frequency.timeBetweenRepeats) {
+                switch(frequency.timeBetweenRepeats) {
+                    case 1000*60*60*24: return 'Daily';
+                    case 1000*60*60*24*2: return 'Every Other Day';
+                    case 1000*60*60*24*7: return 'Weekly';
+                    case 1000*60*60*24*14: return 'Every Other Week';
+                    case 1000*60*60*24: return 'Monthly';
+                    default: return 'Every ' + frequency.timeBetweenRepeats/(1000*60*60) + ' hours.';
+                }
+            } else if (frequency.daysToRepeat && frequency.daysToRepeat.length > 0) {
+                var readable = "";
+                for(var i = 0; i < frequency.daysToRepeat.length; i++) {
+                    readable += frequency.daysToRepeat[i] + (i < frequency.daysToRepeat.length - 1 ? ", " : "");
+                }
+                return readable;
+            } else {
+                return 'Once';
+            }
         }
     });
 
@@ -172,6 +192,9 @@ angular.module('myChoresApp').controller('choreSpecCreateModalController', funct
     angular.extend($scope, {
         members: choreGroup.choreGroupUsers,
         repeatOption: null,
+        datePickerOptions: {
+            minDate: new Date()
+        },
         selectedWeekdays: {},
         startDate: new Date(),
         daysOfWeek: [

@@ -49,7 +49,7 @@
             <br>
             <div class="input-group">
                 <span class="input-group-addon">Start Date:</span>
-                <input type="text" data-ng-model="startDate" class="form-control" data-uib-datepicker-popup="shortDate" data-is-open="datePickerOpen" required>
+                <input type="text" data-ng-model="startDate" class="form-control" data-uib-datepicker-popup="shortDate" data-is-open="datePickerOpen" data-datepicker-options="datePickerOptions" required>
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-primary" ng-click="datePickerOpen = !datePickerOpen"><span class="glyphicon glyphicon-calendar"></span></button>
                 </span>
@@ -109,11 +109,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr data-ng-repeat="choreGroupUser in selected.choreGroupUser.choreGroup.choreGroupUsers">
+                                        <tr data-ng-repeat="choreGroupUser in selected.choreGroupUser.choreGroup.choreGroupUsers" data-ng-if="choreGroupUser.status !== 'REMOVED'">
                                             <td><span class="glyphicon glyphicon-user"></span> {{choreGroupUser.choreUser.email}}</td>
                                             <td>
-                                                <select class="form-control" data-ng-change="updateChoreGroupUserRole(selected.choreGroupUser.choreGroup, choreGroupUser)" data-ng-model="choreGroupUser.choreGroupUserRole" data-ng-disabled="choreGroupUser.choreGroupUserRole === 'OWNER' || selected.choreGroupUser.choreGroupUserRole !== 'OWNER'">
-                                                    <option value="OWNER">Owner</option>
+                                                <select class="form-control" data-ng-change="updateChoreGroupUser(selected.choreGroupUser.choreGroup, choreGroupUser)" data-ng-model="choreGroupUser.choreGroupUserRole" data-ng-disabled="choreGroupUser.choreGroupUserRole === 'OWNER' || selected.choreGroupUser.choreGroupUserRole !== 'OWNER'">
+                                                    <option value="OWNER" data-ng-if="choreGroupUser.choreGroupUserRole === 'OWNER'">Owner</option>
                                                     <option value="ADMIN">Admin</option>
                                                     <option value="MEMBER">Member</option>
                                                 </select>
@@ -135,8 +135,12 @@
                         <uib-tab-heading>
                             <i class="glyphicon glyphicon-wrench"></i> Chores
                         </uib-tab-heading>
-                        <button class="btn btn-lg btn-success" data-ng-click="createChoreSpec(selected.choreGroupUser.choreGroup)"><span class="glyphicon glyphicon-plus"></span> Create Chore</button>
-                        <table data-ng-if="selected.choreGroupUser.choreGroup.choreSpecs && selected.choreGroupUser.choreGroup.choreSpecs.length > 0">
+                        <div class="row">
+                            <div class="col-md-12" id="create-chore-btn-wrapper">
+                                <button class="btn btn-lg btn-success" data-ng-click="createChoreSpec(selected.choreGroupUser.choreGroup)"><span class="glyphicon glyphicon-plus"></span> Create Chore</button>
+                            </div>
+                        </div>
+                        <table class="table table-striped" data-ng-if="selected.choreGroupUser.choreGroup.choreSpecs && selected.choreGroupUser.choreGroup.choreSpecs.length > 0">
                             <thead>
                                 <tr>
                                     <th>Chore</th><th>Frequency</th><th>Preferred Doer</th><th>Next Date</th>
@@ -145,9 +149,9 @@
                             <tbody>
                                 <tr data-ng-repeat="choreSpec in selected.choreGroupUser.choreGroup.choreSpecs">
                                     <td>{{choreSpec.name}}</td>
-                                    <td>{{choreSpec.frequency}}</td>
+                                    <td>{{toReadableFrequency(choreSpec.frequency)}}</td>
                                     <td>{{choreSpec.preferredDoer.choreUser.email}}</td>
-                                    <td>{{choreSpec.nextInstance ? choreSpec.nextInstance * 1000 : null | date: 'dd/MM/yy'}}</td>
+                                    <td>{{choreSpec.nextInstance ? choreSpec.nextInstance * 1000 : null | date: 'MM/dd/yy'}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -174,8 +178,8 @@
                             </div>
                         </div>
                     </uib-tab>
-                </uib-tabset>                                                    
-            </div>            
-        </div>        
+                </uib-tabset>
+            </div>
+        </div>
     </div>
 </div>

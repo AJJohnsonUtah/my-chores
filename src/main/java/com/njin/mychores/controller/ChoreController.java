@@ -40,7 +40,7 @@ public class ChoreController extends BaseController {
     @RequestMapping(value = "/update", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public Chore updateChore(@RequestBody Chore chore) throws InvalidActivityException, IllegalAccessException {
         checkRequiredAuthentication();
-        return choreService.createChore(chore);
+        return choreService.updateChore(chore);
     }
     
     @RequestMapping(value = "/chore-group-user/{choreGroupUserId}", method = RequestMethod.GET)

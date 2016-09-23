@@ -5,12 +5,14 @@
  */
 package com.njin.mychores.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.njin.mychores.converter.LocalDateTimeConverter;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.ZoneOffset;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -24,8 +26,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+
 import javax.validation.constraints.NotNull;
 
 /**
@@ -59,11 +60,11 @@ public class Chore implements Serializable {
     private Long choreId;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "chore_spec")
     private ChoreSpec choreSpec;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "doer")
     private ChoreGroupUser choreDoer;
 
@@ -157,16 +158,26 @@ public class Chore implements Serializable {
         this.duration = duration;
     }
 
+    @JsonIgnore
     public LocalDateTime getCreated() {
         return created;
+    }
+    
+    public Long getCreateDate() {
+        return (this.created == null ? null : this.created.toEpochSecond(ZoneOffset.UTC));
     }
 
     public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 
+    @JsonIgnore
     public LocalDateTime getUpdated() {
         return updated;
+    }
+    
+    public Long getUpdateDate() {
+        return (this.updated == null ? null : this.updated.toEpochSecond(ZoneOffset.UTC));
     }
 
     public void setUpdated(LocalDateTime updated) {
