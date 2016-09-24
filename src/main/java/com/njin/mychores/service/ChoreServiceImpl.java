@@ -136,7 +136,7 @@ public class ChoreServiceImpl implements ChoreService {
         newChore.setChoreSpec(choreSpec);
         newChore.setChoreDoer(choreSpec.getPreferredDoer());
         newChore.setStatus(ChoreStatus.TODO);
-        return createChoreAutomatically(newChore);
+        return createChoreAutomatically(newChore);        
     }
 
 }

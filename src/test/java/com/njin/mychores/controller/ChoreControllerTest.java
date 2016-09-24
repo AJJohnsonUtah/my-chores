@@ -11,18 +11,21 @@ import com.njin.mychores.model.ChoreGroupUser;
 import com.njin.mychores.model.ChoreSpec;
 import com.njin.mychores.model.ChoreStatus;
 import com.njin.mychores.model.ChoreUser;
+import com.njin.mychores.service.ChoreService;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Locale;
 import javax.activity.InvalidActivityException;
 import static junit.framework.TestCase.assertTrue;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
@@ -42,6 +45,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ChoreControllerTest extends BaseTest {
     
+    @Autowired
+    ChoreService choreService;
     
     public ChoreControllerTest() {
     }
@@ -102,5 +107,31 @@ public class ChoreControllerTest extends BaseTest {
         assertEquals("The updated chore should have status COMPLETED.", ChoreStatus.COMPLETED, createdChore.getStatus());
         assertTrue("The updated chore's updated time should be later than the first updated time.", secondUpdated.isAfter(firstUpdated));
     }
-            
+
+    @Test
+    public void createAndCompleteChoreTest() throws InvalidActivityException, IllegalAccessException {
+        ChoreUser currentUser = createTestUserAndLogin();
+        ChoreGroupUser owner = createTestChoreGroup();
+        ChoreSpec choreSpec = createTestChoreSpecWithPreferredUser(owner);
+        
+        Chore createdChore = choreSpecController.findChoresOfChoreSpec(choreSpec.getChoreSpecId()).get(0);
+        
+        assertNull("The next instance date should be null, since a chore exists.", choreSpec.getNextInstanceDate());
+        
+        createdChore.setStatus(ChoreStatus.COMPLETED);
+        choreController.updateChore(createdChore);
+        
+        Chore updatedChore = choreSpecController.findChoresOfChoreSpec(choreSpec.getChoreSpecId()).get(0);
+
+        choreSpec = choreSpecController.findChoreSpec(choreSpec.getChoreSpecId());
+        
+        assertNotNull("The next instance date should be non-null, since a chore was completed.", choreSpec.getNextInstanceDate());
+        
+        choreSpec.setNextInstanceDate(LocalDateTime.now());
+        choreSpecController.updateChoreSpec(choreSpec);
+        assertEquals("There should be one more active chore again.", 1, choreSpecController.findChoresOfChoreSpec(choreSpec.getChoreSpecId()).size());
+        choreService.createChoreFromChoreSpec(choreSpec);
+        assertEquals("There should be one more active chore again.", 2, choreSpecController.findChoresOfChoreSpec(choreSpec.getChoreSpecId()).size());
+    }
+    
 }
