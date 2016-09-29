@@ -131,7 +131,7 @@ public class ChoreServiceImpl implements ChoreService {
     @Override
     public Chore createChoreFromChoreSpec(ChoreSpec choreSpec) throws IllegalAccessException {
         choreSpec.setNextInstanceDate((LocalDateTime) null);
-        choreSpecService.updateChoreSpec(choreSpec);
+        choreSpecService.autoUpdateChoreSpec(choreSpec);
         Chore newChore = new Chore();
         newChore.setChoreSpec(choreSpec);
         newChore.setChoreDoer(choreSpec.getPreferredDoer());

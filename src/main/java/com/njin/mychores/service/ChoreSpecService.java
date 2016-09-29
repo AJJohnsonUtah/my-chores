@@ -19,4 +19,5 @@ public interface ChoreSpecService {
     public ChoreSpec findChoreSpec(Long choreSpecId) throws IllegalAccessException;
     public List<ChoreSpec> findChoreSpecsWithPreferredDoer(Long choreGroupUserId) throws IllegalAccessException;
     public List<ChoreSpec> findChoreSpecsWithPastNextInstanceDates();
+    public void autoUpdateChoreSpec(ChoreSpec choreSpec);
 }

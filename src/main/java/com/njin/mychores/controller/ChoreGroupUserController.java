@@ -13,6 +13,7 @@ import javax.activity.InvalidActivityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,19 +36,19 @@ public class ChoreGroupUserController extends BaseController {
         choreGroupUserService.inviteUserToChoreGroup(choreGroupUser);
     }
     
-    @RequestMapping(value = "/accept", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void acceptChoreGroupInvitation(@RequestBody ChoreGroupUser choreGroupUser) throws IllegalAccessException {
+    @RequestMapping(value = "/accept/{choreGroupUserId}", method = RequestMethod.GET)
+    public void acceptChoreGroupInvitation(@PathVariable("choreGroupUserId") Long choreGroupUserId) throws IllegalAccessException {
         checkRequiredAuthentication();
-        choreGroupUserService.acceptChoreGroupInvitation(choreGroupUser);
+        choreGroupUserService.acceptChoreGroupInvitation(choreGroupUserService.findChoreGroupUser(choreGroupUserId));
     }
     
-    @RequestMapping(value = "/decline", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void declineChoreGroupInvitation(@RequestBody ChoreGroupUser choreGroupUser) throws IllegalAccessException {
+    @RequestMapping(value = "/decline/{choreGroupUserId}", method = RequestMethod.GET)
+    public void declineChoreGroupInvitation(@PathVariable("choreGroupUserId") Long choreGroupUserId) throws IllegalAccessException {
         checkRequiredAuthentication();
-        choreGroupUserService.declineChoreGroupInvitation(choreGroupUser);
+        choreGroupUserService.declineChoreGroupInvitation(choreGroupUserService.findChoreGroupUser(choreGroupUserId));
     }
     
-    @RequestMapping(value = "/find-all ", method = RequestMethod.GET)
+    @RequestMapping(value = "/find-all", method = RequestMethod.GET)
     public List<ChoreGroupUser> findChoreGroupUsersForCurrentUser() throws IllegalAccessException {        
         checkRequiredAuthentication();
         return choreGroupUserService.findAllForUser(sessionService.getCurrentUser());
@@ -65,10 +66,10 @@ public class ChoreGroupUserController extends BaseController {
         return choreGroupUserService.findAllForUserWithStatus(sessionService.getCurrentUser(), ChoreGroupUserStatus.PENDING);
     }
     
-    @RequestMapping(value = "/remove", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void removeChoreGroupUser(@RequestBody ChoreGroupUser choreGroupUser) throws IllegalAccessException, InvalidActivityException {
+    @RequestMapping(value = "/remove/{choreGroupUserId}", method = RequestMethod.GET)
+    public void removeChoreGroupUser(@PathVariable("choreGroupUserId") Long choreGroupUserId) throws IllegalAccessException, InvalidActivityException {
         checkRequiredAuthentication();
-        choreGroupUserService.removeChoreGroupUser(choreGroupUser);
+        choreGroupUserService.removeChoreGroupUser(choreGroupUserService.findChoreGroupUser(choreGroupUserId));
     }
     
     @RequestMapping(value = "/update-role", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

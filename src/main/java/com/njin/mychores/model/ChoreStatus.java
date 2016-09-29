@@ -10,5 +10,5 @@ package com.njin.mychores.model;
  * @author AJ
  */
 public enum ChoreStatus {
-    TODO, IN_PROGRESS, COMPLETED;
+    TODO, COMPLETED;
 }

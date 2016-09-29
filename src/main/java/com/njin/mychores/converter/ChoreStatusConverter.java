@@ -21,10 +21,8 @@ public class ChoreStatusConverter implements AttributeConverter<ChoreStatus, Int
         switch(x) {
             case TODO:
                 return 1;
-            case IN_PROGRESS:
-                return 2;
             case COMPLETED:
-                return 3;                                
+                return 2;                                
         }
         return null;
     }
@@ -35,8 +33,6 @@ public class ChoreStatusConverter implements AttributeConverter<ChoreStatus, Int
             case 1:
                 return ChoreStatus.TODO;
             case 2:
-                return ChoreStatus.IN_PROGRESS;
-            case 3:
                 return ChoreStatus.COMPLETED;
         }
         return null;

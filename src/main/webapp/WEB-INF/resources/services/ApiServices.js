@@ -99,16 +99,16 @@ angular.module('myChoresApp').factory('apiService', ['$http', '$location',
                     return $http.get(url);
                 },
                 acceptInvitation: function (invitation) {
-                    var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/accept';
-                    return $http.post(url, invitation);
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/accept/' + invitation.id;
+                    return $http.get(url);
                 },
                 declineInvitation: function (invitation) {
-                    var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/decline';
-                    return $http.post(url, invitation);
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/decline/' + invitation.id;
+                    return $http.get(url);
                 },
                 removeChoreGroupUser: function (choreGroupUser) {
-                    var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/remove';                    
-                    return $http.post(url, choreGroupUser);
+                    var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/remove/' + choreGroupUser.id;                    
+                    return $http.get(url);
                 },
                 updateChoreGroupUser: function (choreGroupUser) {
                     var url = BASE_API_URL + API_URL_PATHS.choreGroupUser + '/update-role';

@@ -154,8 +154,8 @@ public class ChoreSpec implements Serializable {
         this.nextInstance = nextInstance;
     }
     
-    public Long getNextInstance() {
-        return (this.nextInstanceDate == null ? null : this.nextInstanceDate.toEpochSecond(ZoneOffset.UTC));
+    public LocalDateTime getNextInstance() {
+        return this.nextInstanceDate;
     }
     
     @JsonIgnore

@@ -21,7 +21,7 @@ public class TestConstants {
     public static String testPassword2 = "TESTabc1234?";
     public static String testChoreGroupName = "Test Chore Group";
     public static String testChoreSpecName = "Test Chore Spec";
-    public static ChoreFrequency frequencyDaily = new ChoreFrequency(84000000);
+    public static ChoreFrequency frequencyDaily = new ChoreFrequency(84000000L);
     public static ChoreFrequency frequencyMondays = new ChoreFrequency(EnumSet.of(DayOfWeek.MONDAY));
     public static LocalDateTime currentTime = LocalDateTime.now();
     public static LocalDateTime tomorrow = LocalDateTime.now().plusDays(1L);

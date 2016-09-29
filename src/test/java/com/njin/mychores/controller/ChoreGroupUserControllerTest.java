@@ -100,7 +100,7 @@ public class ChoreGroupUserControllerTest extends BaseTest {
         assertEquals("The recipient should not have any active chore groups yet", ChoreGroupUserStatus.PENDING, activeChoreGroups.get(0).getStatus());
         
         
-        choreGroupUserController.acceptChoreGroupInvitation(invitation);
+        choreGroupUserController.acceptChoreGroupInvitation(invitation.getId());
         
         receivedInvitations = choreGroupUserController.findAllPendingReceivedInvitations();
         assertEquals("0 invitations should exist .", 0, receivedInvitations.size());
@@ -163,7 +163,7 @@ public class ChoreGroupUserControllerTest extends BaseTest {
         assertEquals("The recipient should have 1 chore group.", 1, activeChoreGroups.size());
         assertEquals("The recipient should not have any active chore groups yet", ChoreGroupUserStatus.PENDING, activeChoreGroups.get(0).getStatus());
 
-        choreGroupUserController.declineChoreGroupInvitation(invitation);
+        choreGroupUserController.declineChoreGroupInvitation(invitation.getId());
         
         receivedInvitations = choreGroupUserController.findAllPendingReceivedInvitations();
         assertEquals("0 invitations should exist .", 0, receivedInvitations.size());
@@ -202,7 +202,7 @@ public class ChoreGroupUserControllerTest extends BaseTest {
         
         List<ChoreGroupUser> receivedInvitations = choreGroupUserController.findAllPendingReceivedInvitations();
         invitation = receivedInvitations.get(0);        
-        choreGroupUserController.declineChoreGroupInvitation(invitation);       
+        choreGroupUserController.declineChoreGroupInvitation(invitation.getId());       
         
         userController.logout();
         userController.login(userWhoInvited);
@@ -263,7 +263,7 @@ public class ChoreGroupUserControllerTest extends BaseTest {
         
         List<ChoreGroupUser> receivedInvitations = choreGroupUserController.findAllPendingReceivedInvitations();
         invitation = receivedInvitations.get(0);        
-        choreGroupUserController.acceptChoreGroupInvitation(invitation);       
+        choreGroupUserController.acceptChoreGroupInvitation(invitation.getId());       
         
         userController.logout();
         userController.login(userWhoInvited);
@@ -330,7 +330,7 @@ public class ChoreGroupUserControllerTest extends BaseTest {
         }
         assertNotNull(invited);
         
-        choreGroupUserController.removeChoreGroupUser(invited);
+        choreGroupUserController.removeChoreGroupUser(invited.getId());
         
         activeMembers = choreGroupController.activeMembersOfChoreGroup(choreGroup);
         allMembers = choreGroupController.membersOfChoreGroup(choreGroup);
@@ -383,7 +383,7 @@ public class ChoreGroupUserControllerTest extends BaseTest {
         ChoreGroupUser owner = createTestChoreGroup();
 
         try {
-            choreGroupUserController.removeChoreGroupUser(owner);
+            choreGroupUserController.removeChoreGroupUser(owner.getId());
             fail("The owner of the group should not be able to be removed.");
         } catch (InvalidActivityException ex) {
             assertEquals("Removing the owner of a group should be an invalid activity", ex.getMessage(), messageSource.getMessage("non.valid.action", null, Locale.getDefault()));

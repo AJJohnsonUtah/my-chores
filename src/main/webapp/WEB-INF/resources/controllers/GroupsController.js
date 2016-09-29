@@ -1,7 +1,8 @@
 /*global angular, alert */
-function registerGroupsController($scope, api, userService, $timeout, $uibModal) {
+function registerGroupsController($scope, api, userService, $uibModal, util) {
     "use strict";
     angular.extend($scope, {
+        util: util,
         selected: {
             choreGroup: null,
             updatedName: null
@@ -27,8 +28,11 @@ function registerGroupsController($scope, api, userService, $timeout, $uibModal)
         loadMyChoreGroups: function () {
             api.choreGroupUserService.findAll().success(function (currentChoreGroupUsers) {
                 $scope.currentUserChoreGroupUsers = currentChoreGroupUsers;
-                if ($scope.currentUserChoreGroupUsers.length > 0) {
-                    $scope.selectChoreGroupUser($scope.currentUserChoreGroupUsers[0]);                    
+                for(var i = 0; i < $scope.currentUserChoreGroupUsers.length; i++) {
+                    if($scope.isActiveMember($scope.currentUserChoreGroupUsers[i])) {
+                        $scope.selectChoreGroupUser($scope.currentUserChoreGroupUsers[i]);
+                        break;
+                    }
                 }
             });
         },
@@ -155,9 +159,10 @@ function registerGroupsController($scope, api, userService, $timeout, $uibModal)
                 switch(frequency.timeBetweenRepeats) {
                     case 1000*60*60*24: return 'Daily';
                     case 1000*60*60*24*2: return 'Every Other Day';
+                    case 1000*60*60*24*5: return 'Every Five Days';
                     case 1000*60*60*24*7: return 'Weekly';
                     case 1000*60*60*24*14: return 'Every Other Week';
-                    case 1000*60*60*24: return 'Monthly';
+                    case 1000*60*60*24*30: return 'Monthly';
                     default: return 'Every ' + frequency.timeBetweenRepeats/(1000*60*60) + ' hours.';
                 }
             } else if (frequency.daysToRepeat && frequency.daysToRepeat.length > 0) {
@@ -175,7 +180,7 @@ function registerGroupsController($scope, api, userService, $timeout, $uibModal)
     $scope.loadMyChoreGroups(null);
 }
 
-angular.module('myChoresApp').controller('groupsController', ['$scope', 'apiService', 'userService', '$timeout', '$uibModal', registerGroupsController]);
+angular.module('myChoresApp').controller('groupsController', ['$scope', 'apiService', 'userService', '$uibModal', 'utilService', registerGroupsController]);
 
 angular.module('myChoresApp').controller('choreGroupCreateModalController', function ($scope, $uibModalInstance) {
     angular.extend($scope, {
@@ -210,7 +215,7 @@ angular.module('myChoresApp').controller('choreSpecCreateModalController', funct
             frequency: null
         },
         repeatOptions: [
-            { name: 'Daily', millis: 1000*60*60*24}, {name: 'Every Other Day', millis: 1000*60*60*24*2}, {name: 'Weekly', millis: 1000*60*60*24*7}, {name: 'Every Other Week', millis: 1000*60*60*24*14}, {name: 'Every Other Day', millis: 1000*60*60*24*30}
+            { name: 'Daily', millis: 1000*60*60*24}, {name: 'Every Other Day', millis: 1000*60*60*24*2}, {name: 'Every Five Days', millis: 1000*60*60*24*5}, {name: 'Weekly', millis: 1000*60*60*24*7}, {name: 'Every Other Week', millis: 1000*60*60*24*14}, {name: 'Monthly', millis: 1000*60*60*24*30}
         ],        
         createChoreSpec: function () {
             var choreSpec = {

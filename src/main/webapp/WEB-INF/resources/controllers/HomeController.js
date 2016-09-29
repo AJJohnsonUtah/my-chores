@@ -1,6 +1,7 @@
-angular.module('myChoresApp').controller('homeController', ['userService', '$scope', 'apiService', '$location', function (userService, $scope, api, $location) {
+angular.module('myChoresApp').controller('homeController', ['userService', '$scope', 'apiService', 'utilService', function (userService, $scope, api, util) {
     'use strict';
     angular.extend($scope, {      
+        util: util,
         taskList: [],
         userServiceData: userService.getUserServiceData(),
         hasNotifications: function() {

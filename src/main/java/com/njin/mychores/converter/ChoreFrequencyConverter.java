@@ -17,15 +17,15 @@ import javax.persistence.Converter;
  * @author AJ
  */
 @Converter
-public class ChoreFrequencyConverter implements AttributeConverter<ChoreFrequency, Integer> {
+public class ChoreFrequencyConverter implements AttributeConverter<ChoreFrequency, Long> {
 
     @Override
-    public Integer convertToDatabaseColumn(ChoreFrequency x) {
-        Integer result;
+    public Long convertToDatabaseColumn(ChoreFrequency x) {
+        Long result;
         if (x.getTimeBetweenRepeats() != null) {
             result = -1 * x.getTimeBetweenRepeats();
         } else if(!x.getDaysToRepeat().isEmpty()) {
-            Integer daysInteger = 0;
+            Long daysInteger = 0L;
             if (x.getDaysToRepeat().contains(DayOfWeek.SUNDAY)) {
                 daysInteger = daysInteger | (1);
             }
@@ -49,13 +49,13 @@ public class ChoreFrequencyConverter implements AttributeConverter<ChoreFrequenc
             }
             result = daysInteger;
         } else {
-            result = 0;
+            result = 0L;
         }
         return result;
     }
 
     @Override
-    public ChoreFrequency convertToEntityAttribute(Integer valToConvert) {        
+    public ChoreFrequency convertToEntityAttribute(Long valToConvert) {        
         ChoreFrequency choreFrequency;
         if (valToConvert < 0) {
             choreFrequency = new ChoreFrequency(valToConvert * -1);

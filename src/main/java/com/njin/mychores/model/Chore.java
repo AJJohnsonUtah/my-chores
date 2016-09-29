@@ -163,8 +163,8 @@ public class Chore implements Serializable {
         return created;
     }
     
-    public Long getCreateDate() {
-        return (this.created == null ? null : this.created.toEpochSecond(ZoneOffset.UTC));
+    public LocalDateTime getCreateDate() {
+        return this.created;
     }
 
     public void setCreated(LocalDateTime created) {
@@ -176,8 +176,8 @@ public class Chore implements Serializable {
         return updated;
     }
     
-    public Long getUpdateDate() {
-        return (this.updated == null ? null : this.updated.toEpochSecond(ZoneOffset.UTC));
+    public LocalDateTime getUpdateDate() {
+        return this.updated;
     }
 
     public void setUpdated(LocalDateTime updated) {

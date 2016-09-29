@@ -97,7 +97,13 @@ public class ChoreSpecServiceImpl implements ChoreSpecService {
     public void autoUpdateNextInstance(ChoreSpec choreSpec) {
         if(choreSpec.getNextInstanceDate() == null) {
             choreSpec.setNextInstanceDate(choreSpec.getFrequency().getTimeOfNextInstance(LocalDateTime.now()));
+            choreSpecDao.updateChoreSpec(choreSpec);
         }
+    }
+    
+    @Override
+    public void autoUpdateChoreSpec(ChoreSpec choreSpec) {
+        choreSpecDao.updateChoreSpec(choreSpec);        
     }
         
 }

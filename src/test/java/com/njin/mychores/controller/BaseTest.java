@@ -126,7 +126,7 @@ public class BaseTest {
     public void acceptAllInvitations() {
         try {
             for (ChoreGroupUser invitation : choreGroupUserController.findAllPendingReceivedInvitations()) {
-                choreGroupUserController.acceptChoreGroupInvitation(invitation);
+                choreGroupUserController.acceptChoreGroupInvitation(invitation.getId());
             }
         } catch (IllegalAccessException ex) {
             fail("Chore group creation should not fail if logged in.");

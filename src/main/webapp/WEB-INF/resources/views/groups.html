@@ -70,7 +70,7 @@
         <div class="well" data-ng-if="currentUserChoreGroupUsers.length > 0">
             <h4>Groups</h4>
             <div class="btn-group-vertical" >
-                <div class="btn btn-default" data-ng-class="selected.choreGroupUser === currentUserChoreGroupUser ? 'active' : ''" data-ng-repeat="currentUserChoreGroupUser in currentUserChoreGroupUsers" data-ng-click="selectChoreGroupUser(currentUserChoreGroupUser);">{{currentUserChoreGroupUser.choreGroup.choreGroupName}}</div>            
+                <div class="btn btn-default" data-ng-class="selected.choreGroupUser === currentUserChoreGroupUser ? 'active' : ''" data-ng-if="isActiveMember(currentUserChoreGroupUser)" data-ng-repeat="currentUserChoreGroupUser in currentUserChoreGroupUsers" data-ng-click="selectChoreGroupUser(currentUserChoreGroupUser);">{{currentUserChoreGroupUser.choreGroup.choreGroupName}}</div>            
             </div>
         </div>        
     </div>
@@ -119,7 +119,7 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <span data-ng-if="choreGroupUser.status ==='ACCEPTED'">{{choreGroupUser.updated | date: 'short'}}</span>
+                                                <span data-ng-if="choreGroupUser.status ==='ACCEPTED'">{{util.toRelativeDate(util.toDateObj(choreGroupUser.lastUpdated))}}</span>
                                                 <span data-ng-if="choreGroupUser.status !=='ACCEPTED'">Invite pending</span>
                                             </td>
                                             <td>
@@ -151,7 +151,7 @@
                                     <td>{{choreSpec.name}}</td>
                                     <td>{{toReadableFrequency(choreSpec.frequency)}}</td>
                                     <td>{{choreSpec.preferredDoer.choreUser.email}}</td>
-                                    <td>{{choreSpec.nextInstance ? choreSpec.nextInstance * 1000 : null | date: 'MM/dd/yy'}}</td>
+                                    <td>{{util.toRelativeDate(util.toDateObj(choreSpec.nextInstance))}}</td>
                                 </tr>
                             </tbody>
                         </table>

@@ -6,10 +6,12 @@
 package com.njin.mychores.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.njin.mychores.converter.LocalDateTimeConverter;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -19,8 +21,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  *
@@ -61,13 +64,14 @@ public class ChoreGroupUser implements Serializable {
     private ChoreGroupUserStatus status;
 
     @Column(name = "updated")
-    private Timestamp updated;
+    @Convert(converter = LocalDateTimeConverter.class)
+    private LocalDateTime updated;
     
     @OneToMany(mappedBy="preferredDoer", fetch = FetchType.LAZY)
     private List<ChoreSpec> choresThatPreferUser;
 
     @OneToMany(mappedBy="choreDoer", fetch = FetchType.LAZY)
-    private List<Chore> chores;
+    private List<Chore> chores;   
     
     public ChoreGroupUser() {
     }
@@ -128,11 +132,16 @@ public class ChoreGroupUser implements Serializable {
         this.status = status;
     }
 
-    public Timestamp getUpdated() {
+    @JsonIgnore
+    public LocalDateTime getUpdated() {
+        return updated;
+    }
+    
+    public LocalDateTime getLastUpdated() {
         return updated;
     }
 
-    public void setUpdated(Timestamp updated) {
+    public void setUpdated(LocalDateTime updated) {
         this.updated = updated;
     }
 

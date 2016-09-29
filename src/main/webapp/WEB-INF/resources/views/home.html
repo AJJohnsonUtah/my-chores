@@ -19,27 +19,25 @@
                 <div id="task-list" data-ng-if="taskList && taskList.length > 0">
                     <table class="table">
                         <thead>
-                            <th>Chore</th>
-                            <th>Created date</th>
-                            <th>Status</th>
+                            <tr>
+                                <th>Chore</th>
+                                <th>Created date</th>
+                                <th>Status</th>
+                            </tr>                                
                         </thead>
                         <tbody>
                             <tr data-ng-repeat="task in taskList">
                                 <td>{{task.choreSpec.name}}</td>
-                                <td>{{task.createDate ? task.createDate * 1000 : null | date : 'MM/dd/yy'}}</td>
+                                <td>{{util.toRelativeDate(util.toDateObj(task.createDate))}}</td>
                                 <td>
                                     <select class="form-control" data-ng-change="updateChore(task)" data-ng-model="task.status">
                                         <option value="TODO">To Do</option>
-                                        <option value="IN_PROGRESS">In Progress</option>
                                         <option value="COMPLETED">Completed</option>
                                     </select>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <div data-ng-repeat="task in taskList">            
-                        task!
-                    </div>
                 </div>
                 <div id="no-task-list" data-ng-if="!taskList || taskList.length <= 0">
                     No outstanding tasks!

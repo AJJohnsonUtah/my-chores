@@ -8,9 +8,7 @@ package com.njin.mychores.model;
 import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoField;
-import java.util.Date;
 import java.util.Set;
 
 /**
@@ -19,12 +17,12 @@ import java.util.Set;
  */
 public class ChoreFrequency implements Serializable {
 
-    private Integer timeBetweenRepeats;
+    private Long timeBetweenRepeats;
     private Set<DayOfWeek> daysToRepeat;
 
-    private static Integer MILLIS_IN_DAY = 86400000 - 1;
+    private static Long MILLIS_IN_DAY = 86400000L - 1L;
 
-    public ChoreFrequency(Integer timeBetweenRepeats) {
+    public ChoreFrequency(Long timeBetweenRepeats) {
         daysToRepeat = null;
         this.timeBetweenRepeats = timeBetweenRepeats;
     }
@@ -36,11 +34,11 @@ public class ChoreFrequency implements Serializable {
     public ChoreFrequency() {        
     };
 
-    public Integer getTimeBetweenRepeats() {
+    public Long getTimeBetweenRepeats() {
         return timeBetweenRepeats;
     }
 
-    public void setTimeBetweenRepeats(Integer timeBetweenRepeats) {
+    public void setTimeBetweenRepeats(Long timeBetweenRepeats) {
         this.timeBetweenRepeats = timeBetweenRepeats;
     }
 
@@ -55,9 +53,13 @@ public class ChoreFrequency implements Serializable {
     public LocalDateTime getTimeOfNextInstance(LocalDateTime previousInstanceFinished) {
         LocalDateTime effectiveDate = previousInstanceFinished;
 
+        if ((getDaysToRepeat() == null || getDaysToRepeat().isEmpty()) && getTimeBetweenRepeats() == null) {
+            return null;
+        }
+        
         if (getDaysToRepeat() != null && !getDaysToRepeat().isEmpty()) {
             for (int i = 0; i < 7; i++) {
-                effectiveDate.plusDays(1);
+                effectiveDate = effectiveDate.plusDays(1);
                 if (getDaysToRepeat().contains(effectiveDate.getDayOfWeek())) {
                     break;
                 }
