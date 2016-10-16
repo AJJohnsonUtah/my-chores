@@ -39,7 +39,7 @@
                 <select data-ng-model="selected.frequency" class="form-control" data-ng-options="option as option.name for option in repeatOptions"></select>
             </div>
             <div class="btn-group" data-ng-if="repeatOption === 'weekdays'">                
-                <label class="btn btn-default" data-ng-model="selectedWeekdays[dayOfWeek.name]" data-uib-btn-checkbox data-ng-repeat="dayOfWeek in daysOfWeek">{{dayOfWeek.name}}</label>
+                <label class="btn btn-default" data-ng-model="selectedWeekdays[dayOfWeek.id]" data-uib-btn-checkbox data-ng-repeat="dayOfWeek in daysOfWeek">{{dayOfWeek.name}}</label>
             </div>
             <br>
             <div class="input-group">
@@ -143,7 +143,7 @@
                         <table class="table table-striped" data-ng-if="selected.choreGroupUser.choreGroup.choreSpecs && selected.choreGroupUser.choreGroup.choreSpecs.length > 0">
                             <thead>
                                 <tr>
-                                    <th>Chore</th><th>Frequency</th><th>Preferred Doer</th><th>Next Date</th>
+                                    <th>Chore</th><th>Frequency</th><th>Preferred Doer</th><th>Next Date</th><th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -152,6 +152,7 @@
                                     <td>{{toReadableFrequency(choreSpec.frequency)}}</td>
                                     <td>{{choreSpec.preferredDoer.choreUser.email}}</td>
                                     <td>{{util.toRelativeDate(util.toDateObj(choreSpec.nextInstance))}}</td>
+                                    <td><button class="btn btn-default" data-ng-click="editChoreSpec(choreSpec)"><span class="glyphicon glyphicon-edit"></span></button></td>
                                 </tr>
                             </tbody>
                         </table>

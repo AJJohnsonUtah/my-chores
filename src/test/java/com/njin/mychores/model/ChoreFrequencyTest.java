@@ -64,24 +64,16 @@ public class ChoreFrequencyTest {
         assertEquals("Chore frequency should have values from constructor input", 1, dailyFrequency.getDaysToRepeat().size());
         assertTrue("Chore frequency should have values from constructor input", dailyFrequency.getDaysToRepeat().contains(DayOfWeek.MONDAY));
         
-        LocalDateTime currentDate = LocalDateTime.now();
+        LocalDateTime currentDate = LocalDateTime.now();                
         
-        LocalDateTime timeOfNextInstance = dailyFrequency.getTimeOfNextInstance(currentDate);
+        LocalDateTime timeOfNextInstance = dailyFrequency.getTimeOfNextInstance(currentDate);        
         
         assertNotEquals("The time of the next instance should be changed", currentDate, timeOfNextInstance);
-        assertTrue("The next instance time should be after this one.", timeOfNextInstance.isAfter(currentDate));
+        assertTrue("The next instance time should be after this one.", timeOfNextInstance.isAfter(currentDate));                
+        assertTrue("Is within 1 week from now", timeOfNextInstance.isBefore(currentDate.plusDays(7)));
         
-        LocalDateTime expectedTimeOfNextInstance = currentDate.plusDays(1);
-        for (int i = 0; i < 7; i++) {
-            if(expectedTimeOfNextInstance.getDayOfWeek() == DayOfWeek.MONDAY) {                        
-                expectedTimeOfNextInstance = expectedTimeOfNextInstance.withHour(5);
-                expectedTimeOfNextInstance = expectedTimeOfNextInstance.withMinute(0);
-                break;
-            }
-        }
-        
-        assertEquals("The date of the next instance should be as expected", expectedTimeOfNextInstance.getDayOfMonth(), timeOfNextInstance.getDayOfMonth());
-        assertEquals("The time of the next instance should be as expected", expectedTimeOfNextInstance.getHour(), timeOfNextInstance.getHour());
-        assertEquals("The time of the next instance should be as expected", expectedTimeOfNextInstance.getMinute(), timeOfNextInstance.getMinute());                
+        assertEquals("The date of the next instance should be as expected", DayOfWeek.MONDAY, timeOfNextInstance.getDayOfWeek());
+        assertEquals("The time of the next instance should be as expected", 5, timeOfNextInstance.getHour());
+        assertEquals("The time of the next instance should be as expected", 0, timeOfNextInstance.getMinute());                
     }
 }

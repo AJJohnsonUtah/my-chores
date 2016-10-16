@@ -28,8 +28,8 @@ function registerGroupsController($scope, api, userService, $uibModal, util) {
         loadMyChoreGroups: function () {
             api.choreGroupUserService.findAll().success(function (currentChoreGroupUsers) {
                 $scope.currentUserChoreGroupUsers = currentChoreGroupUsers;
-                for(var i = 0; i < $scope.currentUserChoreGroupUsers.length; i++) {
-                    if($scope.isActiveMember($scope.currentUserChoreGroupUsers[i])) {
+                for (var i = 0; i < $scope.currentUserChoreGroupUsers.length; i++) {
+                    if ($scope.isActiveMember($scope.currentUserChoreGroupUsers[i])) {
                         $scope.selectChoreGroupUser($scope.currentUserChoreGroupUsers[i]);
                         break;
                     }
@@ -53,7 +53,7 @@ function registerGroupsController($scope, api, userService, $uibModal, util) {
             $scope.editingName = false;
         },
         getAllChoreSpecs: function (choreGroup) {
-            api.choreGroupService.getChoreSpecs(choreGroup).success(function(choreSpecs) {
+            api.choreGroupService.getChoreSpecs(choreGroup).success(function (choreSpecs) {
                 choreGroup.choreSpecs = choreSpecs;
             });
         },
@@ -144,30 +144,66 @@ function registerGroupsController($scope, api, userService, $uibModal, util) {
                     }
                 }
             });
-            
+
             modalInstance.result.then(function (choreSpec) {
                 api.choreSpecService.create(choreSpec).success(function (createdChoreSpec) {
-                    if(!$scope.selected.choreGroupUser.choreGroup.choreSpecs) {
+                    if (!$scope.selected.choreGroupUser.choreGroup.choreSpecs) {
                         $scope.selected.choreGroupUser.choreGroup.choreSpecs = [];
                     }
-                    $scope.selected.choreGroupUser.choreGroup.choreSpecs.push(createdChoreSpec);                    
+                    $scope.selected.choreGroupUser.choreGroup.choreSpecs.push(createdChoreSpec);
+                });
+            });
+        },
+        editChoreSpec: function (choreSpec) {
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'createChoreSpecModal.html',
+                controller: 'choreSpecEditModalController',
+                size: 'md',
+                resolve: {
+                    choreGroup: function () {
+                        return $scope.selected.choreGroupUser.choreGroup;
+                    },
+                    existingSpec: function () {
+                        return choreSpec;
+                    },
+                    util: function () {
+                        return util;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (choreSpec) {
+                api.choreSpecService.update(choreSpec).success(function (editedChoreSpec) {
+                    for (var i = 0; i < $scope.selected.choreGroupUser.choreGroup.choreSpecs.length; i++) {
+                        if ($scope.selected.choreGroupUser.choreGroup.choreSpecs[i].choreSpecId === editedChoreSpec.choreSpecId) {
+                            $scope.selected.choreGroupUser.choreGroup.choreSpecs[i] = editedChoreSpec;
+                        }
+                    }
                 });
             });
         },
         toReadableFrequency: function (frequency) {
-            if(frequency.timeBetweenRepeats) {
-                switch(frequency.timeBetweenRepeats) {
-                    case 1000*60*60*24: return 'Daily';
-                    case 1000*60*60*24*2: return 'Every Other Day';
-                    case 1000*60*60*24*5: return 'Every Five Days';
-                    case 1000*60*60*24*7: return 'Weekly';
-                    case 1000*60*60*24*14: return 'Every Other Week';
-                    case 1000*60*60*24*30: return 'Monthly';
-                    default: return 'Every ' + frequency.timeBetweenRepeats/(1000*60*60) + ' hours.';
+            if (frequency.timeBetweenRepeats) {
+                switch (frequency.timeBetweenRepeats) {
+                    case 1000 * 60 * 60 * 24:
+                        return 'Daily';
+                    case 1000 * 60 * 60 * 24 * 2:
+                        return 'Every Other Day';
+                    case 1000 * 60 * 60 * 24 * 5:
+                        return 'Every Five Days';
+                    case 1000 * 60 * 60 * 24 * 7:
+                        return 'Weekly';
+                    case 1000 * 60 * 60 * 24 * 14:
+                        return 'Every Other Week';
+                    case 1000 * 60 * 60 * 24 * 30:
+                        return 'Monthly';
+                    default:
+                        return 'Every ' + frequency.timeBetweenRepeats / (1000 * 60 * 60) + ' hours.';
                 }
             } else if (frequency.daysToRepeat && frequency.daysToRepeat.length > 0) {
                 var readable = "";
-                for(var i = 0; i < frequency.daysToRepeat.length; i++) {
+                for (var i = 0; i < frequency.daysToRepeat.length; i++) {
                     readable += frequency.daysToRepeat[i] + (i < frequency.daysToRepeat.length - 1 ? ", " : "");
                 }
                 return readable;
@@ -193,6 +229,91 @@ angular.module('myChoresApp').controller('choreGroupCreateModalController', func
     });
 });
 
+angular.module('myChoresApp').controller('choreSpecEditModalController', function ($scope, $uibModalInstance, choreGroup, existingSpec, util) {
+    angular.extend($scope, {
+        members: choreGroup.choreGroupUsers,
+        repeatOption: null,
+        datePickerOptions: {
+            minDate: new Date()
+        },
+        selectedWeekdays: {},
+        startDate: new Date(),
+        daysOfWeek: [
+            {id: 'SUNDAY', name: 'Sunday', selected: false},
+            {id: 'MONDAY', name: 'Monday', selected: false},
+            {id: 'TUESDAY', name: 'Tuesday', selected: false},
+            {id: 'WEDNESDAY', name: 'Wednesday', selected: false},
+            {id: 'THURSDAY', name: 'Thursday', selected: false},
+            {id: 'FRIDAY', name: 'Friday', selected: false},
+            {id: 'SATURDAY', name: 'Saturday', selected: false}
+        ],
+        selected: {
+            frequency: null
+        },
+        repeatOptions: [
+            {name: 'Daily', millis: 1000 * 60 * 60 * 24}, {name: 'Every Other Day', millis: 1000 * 60 * 60 * 24 * 2}, {name: 'Every Five Days', millis: 1000 * 60 * 60 * 24 * 5}, {name: 'Weekly', millis: 1000 * 60 * 60 * 24 * 7}, {name: 'Every Other Week', millis: 1000 * 60 * 60 * 24 * 14}, {name: 'Monthly', millis: 1000 * 60 * 60 * 24 * 30}
+        ],
+        createChoreSpec: function () {
+            var choreSpec = {
+                choreSpecId: existingSpec.choreSpecId,
+                name: $scope.choreSpecName,
+                preferredDoer: $scope.preferredDoer,
+                nextInstance: $scope.startDate,
+                choreGroup: {id: choreGroup.id, choreGroupName: choreGroup.choreGroupName},
+                frequency: {}
+            };
+            if (choreSpec.nextInstance) {
+                choreSpec.nextInstance = choreSpec.nextInstance.getTime();
+            }
+            if ($scope.repeatOption === 'fixed') {
+                choreSpec.frequency.timeBetweenRepeats = $scope.selected.frequency.millis;
+            } else if ($scope.repeatOption === 'weekdays') {
+                var weekdays = [];
+                for (var weekday in $scope.selectedWeekdays) {
+                    if ($scope.selectedWeekdays.hasOwnProperty(weekday) && $scope.selectedWeekdays[weekday]) {
+                        weekdays.push(weekday.toUpperCase());
+                    }
+                }
+                choreSpec.frequency.daysToRepeat = weekdays;
+            } else if ($scope.repeatOption === 'onetime') {
+                choreSpec.frequency.daysToRepeat = [];
+                
+            }
+
+            $uibModalInstance.close(choreSpec);
+        }
+
+    });
+
+    if (existingSpec) {
+        for(var i = 0; i < $scope.members.length; i++) {
+            if(existingSpec.preferredDoer.choreSpecId === $scope.members[i].choreSpecId) {
+                $scope.preferredDoer = $scope.members[i];
+                break;
+            }
+        }
+        if(existingSpec.frequency.daysToRepeat && existingSpec.frequency.daysToRepeat.length === 0 && existingSpec.frequency.timeBetweenRepeats === null) {
+            $scope.repeatOption = 'onetime';
+        } else if (existingSpec.frequency.timeBetweenRepeats !== null) {
+            $scope.repeatOption = 'fixed';
+            for(var i = 0; i < $scope.repeatOptions.length; i++) {
+                if($scope.repeatOptions[i].millis === existingSpec.frequency.timeBetweenRepeats) {
+                    $scope.selected.frequency = $scope.repeatOptions[i];
+                    break;
+                }
+            }            
+        } else {
+            $scope.repeatOption = 'weekdays';
+            $scope.selectedWeekdays = {};
+            for(var i = 0; i < existingSpec.frequency.daysToRepeat.length; i++) {
+                $scope.selectedWeekdays[existingSpec.frequency.daysToRepeat[i]] = true;
+            }
+        }
+        $scope.choreSpecName = existingSpec.name;
+        $scope.startDate = util.toDateObj(existingSpec.nextInstanceDate);
+    }
+});
+
 angular.module('myChoresApp').controller('choreSpecCreateModalController', function ($scope, $uibModalInstance, choreGroup) {
     angular.extend($scope, {
         members: choreGroup.choreGroupUsers,
@@ -203,46 +324,47 @@ angular.module('myChoresApp').controller('choreSpecCreateModalController', funct
         selectedWeekdays: {},
         startDate: new Date(),
         daysOfWeek: [
-            {name: 'Sunday', selected: false},
-            {name: 'Monday', selected: false},
-            {name: 'Tuesday', selected: false},
-            {name: 'Wednesday', selected: false},
-            {name: 'Thursday', selected: false},
-            {name: 'Friday', selected: false},
-            {name: 'Saturday', selected: false} 
+            {id: 'SUNDAY', name: 'Sunday', selected: false},
+            {id: 'MONDAY', name: 'Monday', selected: false},
+            {id: 'TUESDAY', name: 'Tuesday', selected: false},
+            {id: 'WEDNESDAY', name: 'Wednesday', selected: false},
+            {id: 'THURSDAY', name: 'Thursday', selected: false},
+            {id: 'FRIDAY', name: 'Friday', selected: false},
+            {id: 'SATURDAY', name: 'Saturday', selected: false}
         ],
         selected: {
             frequency: null
         },
         repeatOptions: [
-            { name: 'Daily', millis: 1000*60*60*24}, {name: 'Every Other Day', millis: 1000*60*60*24*2}, {name: 'Every Five Days', millis: 1000*60*60*24*5}, {name: 'Weekly', millis: 1000*60*60*24*7}, {name: 'Every Other Week', millis: 1000*60*60*24*14}, {name: 'Monthly', millis: 1000*60*60*24*30}
-        ],        
+            {name: 'Daily', millis: 1000 * 60 * 60 * 24}, {name: 'Every Other Day', millis: 1000 * 60 * 60 * 24 * 2}, {name: 'Every Five Days', millis: 1000 * 60 * 60 * 24 * 5}, {name: 'Weekly', millis: 1000 * 60 * 60 * 24 * 7}, {name: 'Every Other Week', millis: 1000 * 60 * 60 * 24 * 14}, {name: 'Monthly', millis: 1000 * 60 * 60 * 24 * 30}
+        ],
         createChoreSpec: function () {
             var choreSpec = {
                 name: $scope.choreSpecName,
-                preferredDoer: $scope.preferredDoer,            
+                preferredDoer: $scope.preferredDoer,
                 nextInstance: $scope.startDate,
                 choreGroup: {id: choreGroup.id, choreGroupName: choreGroup.choreGroupName},
                 frequency: {}
             };
-            if(choreSpec.nextInstance) {
+            if (choreSpec.nextInstance) {
                 choreSpec.nextInstance = choreSpec.nextInstance.getTime();
             }
-            if($scope.repeatOption === 'fixed') {
+            if ($scope.repeatOption === 'fixed') {
                 choreSpec.frequency.timeBetweenRepeats = $scope.selected.frequency.millis;
             } else if ($scope.repeatOption === 'weekdays') {
                 var weekdays = [];
-                for(var weekday in $scope.selectedWeekdays) {
-                    if($scope.selectedWeekdays.hasOwnProperty(weekday) && $scope.selectedWeekdays[weekday]) {
+                for (var weekday in $scope.selectedWeekdays) {
+                    if ($scope.selectedWeekdays.hasOwnProperty(weekday) && $scope.selectedWeekdays[weekday]) {
                         weekdays.push(weekday.toUpperCase());
                     }
                 }
                 choreSpec.frequency.daysToRepeat = weekdays;
-            } else if($scope.repeatOption === 'onetime') {
+            } else if ($scope.repeatOption === 'onetime') {
                 choreSpec.frequency.daysToRepeat = [];
             }
-            
+
             $uibModalInstance.close(choreSpec);
         }
+
     });
 });
