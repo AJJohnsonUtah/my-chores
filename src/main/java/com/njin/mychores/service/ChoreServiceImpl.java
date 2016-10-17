@@ -67,8 +67,7 @@ public class ChoreServiceImpl implements ChoreService {
     @Override
     public Chore updateChore(Chore chore) throws IllegalAccessException {
         ChoreSpec choreSpec = chore.getChoreSpec();
-        if (!choreGroupUserService.isOwnerOfChoreGroup(sessionService.getCurrentUser(), choreSpec.getChoreGroup())
-                && !choreGroupUserService.isAdminOfChoreGroup(sessionService.getCurrentUser(), choreSpec.getChoreGroup())) {
+        if (!choreGroupUserService.isActiveMemberOfChoreGroup(sessionService.getCurrentUser(), choreSpec.getChoreGroup())) {
             throw new IllegalAccessException(messageSource.getMessage("not.own.data", null, Locale.getDefault()));
         }
         
@@ -130,8 +129,10 @@ public class ChoreServiceImpl implements ChoreService {
 
     @Override
     public Chore createChoreFromChoreSpec(ChoreSpec choreSpec) throws IllegalAccessException {
-        choreSpec.setNextInstanceDate((LocalDateTime) null);
+        choreSpec.setNextInstance(null);
+        choreSpec.setNextInstanceDate(null);
         choreSpecService.autoUpdateChoreSpec(choreSpec);
+        
         Chore newChore = new Chore();
         newChore.setChoreSpec(choreSpec);
         newChore.setChoreDoer(choreSpec.getPreferredDoer());

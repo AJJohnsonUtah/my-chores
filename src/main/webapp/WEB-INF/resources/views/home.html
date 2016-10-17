@@ -49,7 +49,12 @@
         <div class="panel panel-default">
             <div class="panel-heading"><h3>Summary</h3></div>
             <div class="panel-body">
-                Here's a summary of whatever you want.
+                <div data-ng-if="completedChores && completedChores.length > 0">
+                    You have completed {{completedChores.length}} chores.
+                </div>
+                <div data-ng-if="completedChores && completedChores.length === 0">
+                    You haven't completed any chores yet!
+                </div>
             </div>
         </div>
     </div>

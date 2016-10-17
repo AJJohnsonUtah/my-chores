@@ -31,6 +31,10 @@ angular.module('myChoresApp').factory('apiService', ['$http', '$location',
                 getActiveChoresForChoreGroup: function (choreGroup) {
                     var url = BASE_API_URL + API_URL_PATHS.chore + '/chore-group/' + choreGroup.id;
                     return $http.get(url);
+                },
+                getCompletedChoresForCurrentUser: function () {
+                    var url = BASE_API_URL + API_URL_PATHS.chore + '/current-user/completed';
+                    return $http.get(url);
                 }
             },
             choreSpecService: {

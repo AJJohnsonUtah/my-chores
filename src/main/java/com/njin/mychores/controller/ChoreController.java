@@ -59,4 +59,9 @@ public class ChoreController extends BaseController {
         return choreService.findChoresWithChoreGroupIdAndStatus(choreGroupId, ChoreStatus.TODO);
     }
     
+    @RequestMapping(value = "/current-user/completed", method = RequestMethod.GET)
+    public List<Chore> getCompletedChoresForCurrentUser() throws IllegalAccessException, InvalidActivityException {
+        return choreService.findChoresWithChoreUserAndStatus(sessionService.getCurrentUser().getId(), ChoreStatus.COMPLETED);
+    }
+    
 }

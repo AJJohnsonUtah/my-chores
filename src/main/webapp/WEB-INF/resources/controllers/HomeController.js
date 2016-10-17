@@ -21,10 +21,14 @@ angular.module('myChoresApp').controller('homeController', ['userService', '$sco
             api.choreService.getActiveChoresForCurrentUser().success(function (myChores) {
                 $scope.taskList = myChores;
             });
+            api.choreService.getCompletedChoresForCurrentUser().success(function (completedChores) {
+                $scope.completedChores = completedChores;
+            });
         },
         updateChore: function (chore) {
             api.choreService.update(chore).success(function (updatedChore) {
-                chore = updatedChore;
+                chore = updatedChore;   
+                $scope.getMyChores();
             });
         }
     });
